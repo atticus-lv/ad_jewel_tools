@@ -18,3 +18,10 @@ class ADJT_OT_SetUnits(bpy.types.Operator):
         self.report({"INFO"}, "已设置为场景单位毫米")
 
         return {"FINISHED"}
+
+def register():
+    bpy.utils.register_class(ADJT_OT_SetUnits)
+
+
+def unregister():
+    bpy.utils.unregister_class(ADJT_OT_SetUnits)

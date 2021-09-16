@@ -1,10 +1,11 @@
-def is_right_unit(context):
+
+def check_unit(context):
     unit = context.scene.unit_settings
 
     if unit.system == "METRIC" and round(unit.scale_length, 4) != 0.001:
-        return
+        return True
 
     if unit.system == "IMPERIAL":
-        return
+        return True
 
-    return True
+    return False
