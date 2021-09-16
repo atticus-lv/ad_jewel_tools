@@ -1,7 +1,14 @@
 import bpy
 
 
-def est_curve_length(ob: Object) -> float:
+def copy_obj(obj):
+    new_obj = obj.copy()
+    new_obj.data = obj.data.copy()
+    new_obj.animation_data_clear()
+    bpy.context.collection.objects.link(new_obj)
+    return new_obj
+
+def est_curve_length(ob) -> float:
     if ob.modifiers:
 
         # Reset curve
