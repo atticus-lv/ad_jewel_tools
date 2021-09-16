@@ -7,6 +7,7 @@ class ADJT_OT_ExtractEdgeAsCurve(bpy.types.Operator):
 物体模式选择一个物体，并且在编辑模式选择边"""
     bl_idname = 'adjt.extract_edge_as_curve'
     bl_label = '边到曲线'
+    bl_options = {"REGISTER", "UNDO"}
 
     @classmethod
     def poll(self, context):

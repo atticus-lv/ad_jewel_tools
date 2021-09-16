@@ -19,6 +19,7 @@ class ADJT_PT_SidePanel(SidebarSetup, bpy.types.Panel):
 
         layout.operator('adjt.split_curve_and_flow_mesh')
         layout.operator('adjt.extract_edge_as_curve')
+        layout.operator('adjt.offset_curve_by_length')
 
         pass
 
