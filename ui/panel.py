@@ -8,7 +8,7 @@ class SidebarSetup:
 
 
 class ADJT_PT_SidePanel(SidebarSetup, bpy.types.Panel):
-    bl_label = 'AD珠宝小工具'
+    bl_label = 'AD Jewel Tools'
 
     def draw(self, context):
         layout = self.layout

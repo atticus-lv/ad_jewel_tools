@@ -1,5 +1,5 @@
 bl_info = {
-    "name": "AD Jewel Tool",
+    "name": "AD Jewel Tools",
     "author": "Atticus",
     "version": (0, 1),
     "blender": (2, 93, 0),
