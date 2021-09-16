@@ -15,6 +15,9 @@ class ADJT_OT_ExtractEdgeAsCurve(bpy.types.Operator):
             return context.active_object.mode == 'EDIT' and context.active_object.type == 'MESH'
 
     def execute(self, context):
+        # update mesh
+        bpy.ops.object.mode_set(mode='OBJECT')
+        bpy.ops.object.mode_set(mode='EDIT')
         # copy
         ori_obj = context.active_object
         ori_name = ori_obj.name

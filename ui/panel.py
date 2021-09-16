@@ -14,12 +14,14 @@ class ADJT_PT_SidePanel(SidebarSetup, bpy.types.Panel):
         layout = self.layout
         set = check_unit(context)
         if set:
-            layout.label(text='场景不是最佳建模单位')
-            layout.operator('adjt.set_units')
+            box = layout.box()
+            box.label(text='场景不是最佳建模单位')
+            box.operator('adjt.set_units')
 
-        layout.operator('adjt.split_curve_and_flow_mesh')
         layout.operator('adjt.extract_edge_as_curve')
+        layout.operator('adjt.flow_mesh_on_curve')
         layout.operator('adjt.offset_curve_by_length')
+        layout.operator('adjt.split_curve_and_flow_mesh')
 
         pass
 

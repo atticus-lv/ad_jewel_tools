@@ -13,10 +13,13 @@ class ADJT_OT_OffsetCurvByLength(bpy.types.Operator):
     bl_options = {"REGISTER", "UNDO"}
 
     direction: EnumProperty(name='Direction', items=[
-        ('+X', '+X', ''),
-        ('-X', '-X', ''),
-        ('+Y', '+Y', ''),
-        ('-Y', '-Y', ''),
+        ('X', 'X', ''),
+        ('Y', 'Y', ''),
+    ])
+
+    offset_len:EnumProperty(name='Length', items=[
+        ('-0.5', '-1/2', ''),
+        ('0.5', '1/2', ''),
     ])
 
     @classmethod
@@ -26,7 +29,7 @@ class ADJT_OT_OffsetCurvByLength(bpy.types.Operator):
 
     def execute(self, context):
         curve = context.active_object
-        curve_len = est_curve_length(curve) / 2
+        curve_len = est_curve_length(curve) * float(self.offset_len)
         origin_loc = curve.location
 
         cur_ori_loc = bpy.context.scene.cursor.location  # returns a vector
@@ -35,14 +38,10 @@ class ADJT_OT_OffsetCurvByLength(bpy.types.Operator):
         y = origin_loc[1]
         z = origin_loc[2]
 
-        if self.direction == '+X':
+        if self.direction == 'X':
             x += curve_len
-        elif self.direction == '-X':
-            x -= curve_len
-        elif self.direction == '+Y':
+        elif self.direction == 'Y':
             y += curve_len
-        elif self.direction == '-Y':
-            y -= curve_len
 
         bpy.context.scene.cursor.location = Vector((x, y, z))
 
