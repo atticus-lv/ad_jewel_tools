@@ -1,7 +1,7 @@
 bl_info = {
     "name": "AD Jewel Tools",
     "author": "Atticus",
-    "version": (0, 1),
+    "version": (0, 2),
     "blender": (2, 93, 0),
     "location": "3D View > Side Panel",
     "description": "AD的珠宝小工具合集",
