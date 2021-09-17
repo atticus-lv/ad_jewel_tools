@@ -12,8 +12,8 @@ class ADJT_OT_CamFrame(bpy.types.Operator):
     bl_idname = "adjt.cam_frame"
     bl_options = {"REGISTER", "UNDO"}
 
-    length: IntProperty(name='Focal Length', description="Camera length",
-                        default=250, min=1, soft_max=250, )
+    length: IntProperty(name='Focal Length', description="Camera Focal length",
+                        default=300, min=1, soft_max=300)
 
     safe_pixel: IntProperty(name='Safe area pixel', description="Empty area for the selection and camera frame",
                             default=50)

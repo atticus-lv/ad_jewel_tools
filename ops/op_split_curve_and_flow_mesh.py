@@ -4,7 +4,7 @@ from .utils import copy_obj
 
 class ADJT_OT_SplitCurveAndFlowMesh(bpy.types.Operator):
     """First select mesh then add select curve
-先选网格物体再加选曲线曲线"""
+先选网格物体再加选曲线"""
     bl_idname = "adjt.split_curve_and_flow_mesh"
     bl_label = "分离曲线并流动网格"
     bl_options = {'REGISTER', 'UNDO'}

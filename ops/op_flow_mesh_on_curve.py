@@ -5,7 +5,7 @@ from bpy.props import BoolProperty
 
 class ADJT_OT_FlowMeshOnCurve(bpy.types.Operator):
     """First select mesh then add select curve
-先选网格物体再加选曲线曲线"""
+先选网格物体再加选曲线"""
     bl_idname = "adjt.flow_mesh_on_curve"
     bl_label = "流动网格到曲线"
     bl_options = {'REGISTER', 'UNDO'}
