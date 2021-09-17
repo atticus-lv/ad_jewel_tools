@@ -13,26 +13,27 @@ class ADJT_PT_SidePanel(SidebarSetup, bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
+
         set = check_unit(context)
         if set:
             box = layout.box()
-            box.label(text='场景不是最佳建模单位')
-            box.operator('adjt.set_units')
+            box.label(text='场景不是最佳建模单位', icon='ERROR')
+            box.operator('adjt.set_units', icon='MOD_LENGTH')
 
         box = layout.box()
-        box.label(text='曲线')
-        box.operator('adjt.extract_edge_as_curve')
-        box.operator('adjt.offset_curve_by_length')
+        box.label(text='Curve', icon='OUTLINER_OB_CURVE')
+        box.operator('adjt.extract_edge_as_curve', icon='CURVE_NCURVE')
+        box.operator('adjt.offset_curve_by_length', icon='MOD_LENGTH')
 
-        box.label(text='流动')
-        box.operator('adjt.flow_mesh_on_curve')
-        box.operator('adjt.offset_curve_by_length')
-        box.operator('adjt.split_curve_and_flow_mesh')
+        box = layout.box()
+        box.label(text='Flow', icon='CURVE_DATA')
+        box.operator('adjt.flow_mesh_on_curve', icon='FORCE_CURVE')
+        box.operator('adjt.split_curve_and_flow_mesh', icon='GP_MULTIFRAME_EDITING')
 
-        box.label(text='摆放')
-        box.operator('adjt.view_align')
-        box.operator('adjt.cam_frame')
-        pass
+        box = layout.box()
+        box.label(text='Render', icon='SCENE')
+        box.operator('adjt.view_align', icon='MOD_ARRAY')
+        box.operator('adjt.cam_frame', icon='IMAGE_PLANE')
 
 
 def register():

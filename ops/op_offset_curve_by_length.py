@@ -6,8 +6,8 @@ from .utils import est_curve_length
 
 
 class ADJT_OT_OffsetCurvByLength(bpy.types.Operator):
-    """Select one obj in object mode and edges in edge mode
-物体模式选择一个物体，并且在编辑模式选择边"""
+    """Offset Curve Origin by its length
+按长度偏移曲线原点"""
     bl_idname = 'adjt.offset_curve_by_length'
     bl_label = '按长度偏移曲线'
     bl_options = {"REGISTER", "UNDO"}
