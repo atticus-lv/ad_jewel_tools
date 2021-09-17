@@ -1,6 +1,7 @@
 import bpy
 
-
+# some code from jewelcraft
+# https://github.com/mrachinskiy/jewelcraft
 class ADJT_OT_SetUnits(bpy.types.Operator):
     '''Set Units
 设置场景单位为厘米'''

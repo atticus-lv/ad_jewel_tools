@@ -9,6 +9,8 @@ def copy_obj(obj, link_data=False):
 
 
 def est_curve_length(ob) -> float:
+    # some code from jewelcraft
+    # https://github.com/mrachinskiy/jewelcraft
     if ob.modifiers:
 
         # Reset curve
