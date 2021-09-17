@@ -23,7 +23,7 @@ class ADJT_PT_SidePanel(SidebarSetup, bpy.types.Panel):
         box = layout.box()
         box.label(text='Curve', icon='OUTLINER_OB_CURVE')
         box.operator('adjt.extract_edge_as_curve', icon='CURVE_NCURVE')
-        box.operator('adjt.offset_curve_by_length', icon='MOD_LENGTH')
+        box.operator('adjt.offset_curve_by_length', icon='DRIVER_DISTANCE')
 
         box = layout.box()
         box.label(text='Flow', icon='CURVE_DATA')
