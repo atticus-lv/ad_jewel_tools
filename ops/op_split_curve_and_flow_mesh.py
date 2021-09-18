@@ -1,7 +1,8 @@
 import bpy
 from .utils import copy_obj
 
-
+# TODO active object as mesh for easier operate
+# TODO toggle mesh modifiers easier operate
 class ADJT_OT_SplitCurveAndFlowMesh(bpy.types.Operator):
     """First select mesh then add select curve
 先选网格物体再加选曲线"""

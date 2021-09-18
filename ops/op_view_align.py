@@ -3,6 +3,9 @@ import os
 
 from .. import __folder_name__
 
+# TODO fix error in2.93
+# TODO use instance instead of mesh
+# TODO new angel and view
 
 class ADJT_OT_ViewAlign(bpy.types.Operator):
     '''Copy the select obj to align view

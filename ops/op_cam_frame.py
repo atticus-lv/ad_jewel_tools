@@ -4,7 +4,7 @@ from bpy.props import IntProperty, EnumProperty
 
 from .. import __folder_name__
 
-
+# TODO camera clip fix
 class ADJT_OT_CamFrame(bpy.types.Operator):
     '''Select the object you want to add frame camera
 选择你想要添加的框选相机的物体'''
