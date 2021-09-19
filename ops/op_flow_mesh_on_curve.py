@@ -7,7 +7,7 @@ class ADJT_OT_FlowMeshOnCurve(bpy.types.Operator):
     """First select mesh then add select curve(shift for array)
 先选网格物体再加选曲线(shift阵列)"""
     bl_idname = "adjt.flow_mesh_on_curve"
-    bl_label = "流动网格到曲线"
+    bl_label = "Flow mesh on curve"
     bl_options = {'REGISTER', 'UNDO'}
 
     use_array: BoolProperty(name='Use Array', default=False)
@@ -16,7 +16,7 @@ class ADJT_OT_FlowMeshOnCurve(bpy.types.Operator):
     def poll(self, context):
         return context.active_object and context.active_object.type == 'CURVE' and len(context.selected_objects) == 2
 
-    def invoke(self,context,event):
+    def invoke(self, context, event):
         if event.shift: self.use_array = True
         return self.execute(context)
 
@@ -31,13 +31,13 @@ class ADJT_OT_FlowMeshOnCurve(bpy.types.Operator):
 
     def add_modifiers(self, obj, curve):
         if self.use_array:
-            mod_array = obj.modifiers.new(name ='Array',type = 'ARRAY')
+            mod_array = obj.modifiers.new(name='Array', type='ARRAY')
             mod_array.fit_type = 'FIT_CURVE'
             mod_array.curve = curve
             mod_array.use_merge_vertices = True
             mod_array.use_merge_vertices_cap = True
 
-        mod_curve = obj.modifiers.new(name ='Curve',type = 'CURVE')
+        mod_curve = obj.modifiers.new(name='Curve', type='CURVE')
         mod_curve.object = curve
 
 

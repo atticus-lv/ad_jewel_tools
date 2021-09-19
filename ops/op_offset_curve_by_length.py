@@ -9,7 +9,7 @@ class ADJT_OT_OffsetCurvByLength(bpy.types.Operator):
     """Offset Curve Origin by its length
 按长度偏移曲线原点"""
     bl_idname = 'adjt.offset_curve_by_length'
-    bl_label = '按长度偏移曲线'
+    bl_label = 'Offset Curve by Length'
     bl_options = {"REGISTER", "UNDO"}
 
     direction: EnumProperty(name='Direction', items=[

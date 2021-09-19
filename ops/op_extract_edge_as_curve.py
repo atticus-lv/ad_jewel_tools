@@ -6,7 +6,7 @@ class ADJT_OT_ExtractEdgeAsCurve(bpy.types.Operator):
     """Select one obj in object mode and edges in edge mode
 物体模式选择一个物体，并且在编辑模式选择边"""
     bl_idname = 'adjt.extract_edge_as_curve'
-    bl_label = '边到曲线'
+    bl_label = 'Extract edge as curve'
     bl_options = {"REGISTER", "UNDO"}
 
     @classmethod

@@ -5,7 +5,7 @@ import bpy
 class ADJT_OT_SetUnits(bpy.types.Operator):
     '''Set Units
 设置场景单位为厘米'''
-    bl_label = "设置场景单位"
+    bl_label = "Set Units (mm)"
     bl_idname = "adjt.set_units"
     bl_options = {"REGISTER", "UNDO", "INTERNAL"}
 
