@@ -1,8 +1,5 @@
 import bpy
-import os
 from bpy.props import IntProperty, EnumProperty
-
-from .. import __folder_name__
 
 
 class ADJT_OT_CamFrame(bpy.types.Operator):
