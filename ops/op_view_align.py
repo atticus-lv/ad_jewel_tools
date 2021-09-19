@@ -3,11 +3,10 @@ import os
 from bpy.props import StringProperty
 from .. import __folder_name__
 
+from .op_utils import ADJT_OT_ModalTemplate
 
-# TODO fix error in2.93
-# TODO use instance instead of mesh
 
-class ADJT_OT_ViewAlign(bpy.types.Operator):
+class ADJT_OT_ViewAlign(ADJT_OT_ModalTemplate):
     '''Copy the select obj to align view
 选择并复制当前物体为三视图'''
     bl_label = "View Align"
@@ -22,7 +21,7 @@ class ADJT_OT_ViewAlign(bpy.types.Operator):
         if context.active_object:
             return len(context.selected_objects) == 1 and context.active_object.type == 'MESH'
 
-    def execute(self, context):
+    def main(self, context):
         # set and hide origin obj
         self.object = context.active_object
         self.object.hide_render = 1
@@ -52,7 +51,7 @@ class ADJT_OT_ViewAlign(bpy.types.Operator):
         # set active
         context.view_layer.objects.active = ob
 
-        return {"FINISHED"}
+        self._finish = True
 
     def get_preset(sellf, node_group_name):
         base_dir = os.path.join(bpy.utils.user_resource('SCRIPTS'), 'addons', __folder_name__, 'preset',

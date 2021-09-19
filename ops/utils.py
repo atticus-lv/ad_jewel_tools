@@ -148,6 +148,8 @@ class DrawHelper():
         self.alpha = alpha
         blf.color(font_id, self.color[0], self.color[1], self.color[2], self.alpha)
 
+        self.width, self.height = self.get_region_size()
+
     def set_alpha(self, alpha):
         self.alpha = alpha
         blf.color = (self.font_id, self.color[0], self.color[1], self.color[2], self.alpha)
@@ -155,17 +157,28 @@ class DrawHelper():
     def get_text_length(self, text, height=False):
         return blf.dimensions(self.font_id, text)[0] if not height else blf.dimensions(self.font_id, text)[1]
 
-    def draw_title(self, size=200, x=0, y=0, text="test title"):
-        blf.size(self.font_id, size, 72)
+    def draw_title(self, size=50, x=0, y=0, text="test title", align_center_x=True):
+        # if align_center_x:
+        #     dim_x = blf.dimensions(self.font_id, text)[0] / 2
+        #     blf.position(self.font_id, self.width / 2 - dim_x, y, 0)
+        # else:
         blf.position(self.font_id, x, y, 0)
+
+        blf.size(self.font_id, size, 72)
         blf.draw(self.font_id, text)
 
-    def draw_info(self, size=175, x=0, y=0, text="test info"):
-        blf.size(self.font_id, size, 72)
+    def draw_info(self, size=25, x=0, y=0, text="test info", align_center_x=True):
+        # if align_center_x:
+        #     dim_x = blf.dimensions(self.font_id, text)[0] / 2
+        #     blf.position(self.font_id, self.width / 2 - dim_x, y, 0)
+        # else:
         blf.position(self.font_id, x, y, 0)
+
+        blf.size(self.font_id, size, 72)
         blf.draw(self.font_id, text)
 
     @staticmethod
-    def get_region_size(percentage_x=1, percentage_y=1):
-        region = bpy.context.region
-        return percentage_x * region.width, percentage_y * region.height
+    def get_region_size(muti_x=1, muti_y=1):
+        width = bpy.context.region.width
+        height = bpy.context.region.height
+        return width * muti_x, height * muti_y

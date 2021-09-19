@@ -3,9 +3,9 @@ from bpy.props import EnumProperty
 from mathutils import Vector
 
 from .utils import est_curve_length
+from .op_utils import ADJT_OT_ModalTemplate
 
-
-class ADJT_OT_OffsetCurvByLength(bpy.types.Operator):
+class ADJT_OT_OffsetCurvByLength(ADJT_OT_ModalTemplate):
     """Offset Curve Origin by its length
 按长度偏移曲线原点"""
     bl_idname = 'adjt.offset_curve_by_length'
@@ -27,7 +27,7 @@ class ADJT_OT_OffsetCurvByLength(bpy.types.Operator):
         if context.active_object is not None and len(context.selected_objects) == 1:
             return context.active_object.mode == 'OBJECT' and context.active_object.type == 'CURVE'
 
-    def execute(self, context):
+    def main(self, context):
         curve = context.active_object
         curve_len = est_curve_length(curve) * float(self.offset_len)
         origin_loc = curve.location
@@ -48,7 +48,7 @@ class ADJT_OT_OffsetCurvByLength(bpy.types.Operator):
         bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
         bpy.context.scene.cursor.location = cur_ori_loc
 
-        return {'FINISHED'}
+        self._finish = True
 
 
 def register():

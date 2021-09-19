@@ -1,6 +1,7 @@
 import bpy
 import bgl, blf, gpu
 
+from .op_utils import ADJT_OT_ModalTemplate
 from .utils import DrawHelper, est_curve_length
 from bpy.props import BoolProperty, EnumProperty
 
@@ -42,11 +43,11 @@ def draw_move_object_callback_px(self, context):
     curve = 'Curve: ' + str(deform_axis_dict[self.deform_axis_list[self.deform_axis_index]])
     text = array + ' | ' + curve + ' ' + 'Num: ' + str(self.array_count)
 
-    msg.draw_title(x=x_align - msg.get_text_length(text), y=y_align + top, text=text)
+    msg.draw_title(x=x_align/2 - msg.get_text_length(text), y=y_align + top, text=text, size=30)
 
     for i, t in enumerate(tips):
         offset = 0.5 * msg.get_text_length(tips[i])
-        msg.draw_info(x=x_align - offset, y=y_align + top - step * (i + 1), text=tips[i])
+        msg.draw_info(x=x_align/2 - offset, y=y_align + top - step * (i + 1), text=tips[i], size=15)
 
 
 def finish(self, context):
@@ -55,7 +56,7 @@ def finish(self, context):
         context.window.cursor_modal_restore()
         context.area.tag_redraw()
     # modifier
-    self.remove_modifiers(remove_all=self._cancel)
+    self.remove_modifiers()
     # set active object
     if self._cancel:
         context.view_layer.objects.active = self.ori_curve
@@ -221,11 +222,11 @@ class ADJT_OT_FlowMeshAlongCurve(bpy.types.Operator):
         context.window_manager.modal_handler_add(self)
         return {'RUNNING_MODAL'}
 
-    def remove_modifiers(self, remove_all=False):
+    def remove_modifiers(self):
         if self.use_array is False:
             self.ori_mesh.modifiers.remove(self.mod_array)
             self.mod_array = None
-        if remove_all:
+        if self._cancel:
             self.ori_mesh.modifiers.remove(self.mod_array)
             self.ori_mesh.modifiers.remove(self.mod_curve)
             self.mod_array = None

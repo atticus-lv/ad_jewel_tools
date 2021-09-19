@@ -1,25 +1,55 @@
 import bpy
 import bgl, blf, gpu
+from gpu_extras.batch import batch_for_shader
 
 from .utils import DrawHelper
 from bpy.props import BoolProperty
 
 
 def draw_template_callback_px(self, context):
+    bgl.glLineWidth(1)
+    bgl.glEnable(bgl.GL_BLEND)
+    bgl.glEnable(bgl.GL_LINE_SMOOTH)
+    bgl.glHint(bgl.GL_LINE_SMOOTH_HINT, bgl.GL_NICEST)
+
     msg = DrawHelper(0, self.color, self.alpha)
 
     x_align, y_align = msg.get_region_size(0.5, 0.03)
 
     top = 150
     step = 20
+    backgroud_width = 500
+    backgroud_height = backgroud_width * 0.382
 
-    text = self.title
+    vertices = (
+        (x_align - backgroud_width / 2, y_align + top + backgroud_height / 2),  # left top
+        (x_align + backgroud_width / 2, y_align + top + backgroud_height / 2),  # right top
+        (x_align - backgroud_width / 2, y_align + top - backgroud_height / 2),  # left bottom
+        (x_align + backgroud_width / 2, y_align + top - backgroud_height / 2))  # right bottom
 
-    msg.draw_title(x=x_align - msg.get_text_length(text), y=y_align + top, text=text)
+    indices = ((0, 1, 3), (0, 2, 3))
+
+    # draw backgroud
+    shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')
+    batch = batch_for_shader(shader, 'TRIS', {"pos": vertices}, indices=indices)
+
+    shader.bind()
+    shader.uniform_float("color", (0, 0, 0, self.alpha * 0.5))
+    batch.draw(shader)
+
+    # draw text
+    text = self.bl_label
+
+    msg.draw_title(x=x_align - msg.get_text_length(text), y=y_align + top, text=text, size=30)
 
     for i, t in enumerate(self.tips):
         offset = 0.5 * msg.get_text_length(self.tips[i])
-        msg.draw_info(x=x_align - offset, y=y_align + top - step * (i + 1), text=self.tips[i])
+        msg.draw_info(x=x_align - offset, y=y_align + top - step * (i + 1), text=self.tips[i], size=15)
+
+    # restore
+    #####################
+    bgl.glDisable(bgl.GL_BLEND)
+    bgl.glDisable(bgl.GL_LINE_SMOOTH)
 
 
 def finish(self, context):
@@ -30,7 +60,7 @@ def finish(self, context):
 
 
 class ADJT_OT_ModalTemplate(bpy.types.Operator):
-    bl_label = "Flow mesh along curve"
+    bl_label = "ADJT Title"
     bl_options = {'REGISTER', 'UNDO'}
 
     # state
@@ -39,12 +69,9 @@ class ADJT_OT_ModalTemplate(bpy.types.Operator):
     cursor_set = False
 
     # UI
-    title = 'ADJT Title'
+    ui_delay = 0.2
     tips = [
         '',
-        'tips 1'
-        'tips 2'
-        'tips 3'
     ]
 
     def remove_handle(self, context, cancel):
@@ -81,10 +108,13 @@ class ADJT_OT_ModalTemplate(bpy.types.Operator):
             # fade drawing
             if self._cancel or self._finish:
                 # context.window.cursor_modal_restore()
-                if self.alpha > 0:
-                    self.alpha -= 0.015  # fade
+                if self.ui_delay > 0:
+                    self.ui_delay -= 0.01
                 else:
-                    return self.remove_handle(context, cancel=self._cancel)
+                    if self.alpha > 0:
+                        self.alpha -= 0.01  # fade
+                    else:
+                        return self.remove_handle(context, cancel=self._cancel)
 
         return {'PASS_THROUGH'}
 

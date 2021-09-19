@@ -1,20 +1,22 @@
 import bpy
 from .utils import copy_obj
+from .op_utils import ADJT_OT_ModalTemplate
 
 
-class ADJT_OT_ExtractEdgeAsCurve(bpy.types.Operator):
+class ADJT_OT_ExtractEdgeAsCurve(ADJT_OT_ModalTemplate):
     """Select one obj in object mode and edges in edge mode
 物体模式选择一个物体，并且在编辑模式选择边"""
     bl_idname = 'adjt.extract_edge_as_curve'
     bl_label = 'Extract edge as curve'
     bl_options = {"REGISTER", "UNDO"}
 
+
     @classmethod
     def poll(self, context):
         if context.active_object is not None and len(context.selected_objects) == 1:
             return context.active_object.mode == 'EDIT' and context.active_object.type == 'MESH'
 
-    def execute(self, context):
+    def main(self, context):
         # update bmesh
         bpy.ops.object.mode_set(mode='OBJECT')
         bpy.ops.object.mode_set(mode='EDIT')
@@ -46,7 +48,7 @@ class ADJT_OT_ExtractEdgeAsCurve(bpy.types.Operator):
         curve = context.active_object
         curve.data.splines[0].use_endpoint_u = True
 
-        return {'FINISHED'}
+        self._finish = True
 
 
 def register():

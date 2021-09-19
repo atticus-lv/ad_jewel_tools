@@ -1,8 +1,10 @@
 import bpy
 from bpy.props import BoolProperty
-from .utils import copy_obj
 
-class ADJT_OT_SplitCurveAndFlowMesh(bpy.types.Operator):
+from .utils import copy_obj
+from .op_utils import ADJT_OT_ModalTemplate
+
+class ADJT_OT_SplitCurveAndFlowMesh(ADJT_OT_ModalTemplate):
     """First select mesh then add select curve(shift to use instance)
 先选网格物体再加选曲线(shift 使用实例)"""
     bl_idname = "adjt.split_curve_and_flow_mesh"
@@ -15,7 +17,7 @@ class ADJT_OT_SplitCurveAndFlowMesh(bpy.types.Operator):
     def poll(self, context):
         return context.active_object and context.active_object.type == 'CURVE' and len(context.selected_objects) == 2
 
-    def execute(self, context):
+    def main(self, context):
         ori_curve = context.active_object
         ori_mesh = [obj for obj in context.selected_objects if obj != ori_curve][0]
         bpy.ops.object.select_all(action='DESELECT')
@@ -47,7 +49,7 @@ class ADJT_OT_SplitCurveAndFlowMesh(bpy.types.Operator):
         # set active object as mesh for easier operate
         context.view_layer.objects.active = ori_mesh
 
-        return {'FINISHED'}
+        self._finish = True
 
     def replace_modifier_curve(self, obj, src_curve, new_curve):
         for mod in obj.modifiers:

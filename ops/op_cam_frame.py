@@ -13,7 +13,6 @@ class ADJT_OT_CamFrame(ADJT_OT_ModalTemplate):
     bl_idname = "adjt.cam_frame"
     bl_options = {"REGISTER", "UNDO"}
 
-    title = 'Frame Camera'
     tips = [
         ''
     ]
@@ -74,7 +73,7 @@ class ADJT_OT_CamFrame(ADJT_OT_ModalTemplate):
         # remove modifiers
         if mod:
             ori_select.modifiers.remove(mod)
-
+            self.use_bound = True
         self._finish = True
 
     def get_preset(sellf, node_group_name):
