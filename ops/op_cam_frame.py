@@ -1,15 +1,22 @@
 import bpy
 import os
 from bpy.props import IntProperty, EnumProperty, BoolProperty
+
+from .op_utils import ADJT_OT_ModalTemplate
 from .. import __folder_name__
 
 
-class ADJT_OT_CamFrame(bpy.types.Operator):
+class ADJT_OT_CamFrame(ADJT_OT_ModalTemplate):
     '''Select the object you want to add frame camera
 选择你想要添加的框选相机的物体'''
     bl_label = "Frame Camera"
     bl_idname = "adjt.cam_frame"
     bl_options = {"REGISTER", "UNDO"}
+
+    title = 'Frame Camera'
+    tips = [
+        ''
+    ]
 
     safe_pixel: IntProperty(name='Safe area pixel', description="Empty area for the selection and camera frame",
                             default=50)
@@ -19,10 +26,10 @@ class ADJT_OT_CamFrame(bpy.types.Operator):
     def poll(self, context):
         return context.active_object and context.active_object.mode == 'OBJECT'
 
-    def invoke(self, context, event):
+    def main(self, context):
         if context.scene.render.resolution_x < context.scene.render.resolution_y:
-            self.report({"ERROR"}, 'Only work when resolution X > resolution Y')
-            return {"CANCELLED"}
+            self.tips.append("ERROR: 'Only work when resolution X > resolution Y'")
+            self._cancel = True
 
         # use bound geo nodes to measure instances
         self.use_bound = False
@@ -31,9 +38,6 @@ class ADJT_OT_CamFrame(bpy.types.Operator):
                 self.use_bound = True
                 break
 
-        return self.execute(context)
-
-    def execute(self, context):
         ori_select = context.active_object
 
         # add bound
@@ -70,7 +74,8 @@ class ADJT_OT_CamFrame(bpy.types.Operator):
         # remove modifiers
         if mod:
             ori_select.modifiers.remove(mod)
-        return {"FINISHED"}
+
+        self._finish = True
 
     def get_preset(sellf, node_group_name):
         base_dir = os.path.join(bpy.utils.user_resource('SCRIPTS'), 'addons', __folder_name__, 'preset',
