@@ -21,7 +21,7 @@ class ADJT_OT_ExtractEdgeAsCurve(bpy.types.Operator):
         # copy
         ori_obj = context.active_object
         ori_name = ori_obj.name
-        ori_obj.name = 'Curve from' + ori_obj.name
+        ori_obj.name = 'Curve from ' + ori_obj.name
         new_obj = copy_obj(ori_obj)
         new_obj.name = ori_name
 
@@ -38,6 +38,13 @@ class ADJT_OT_ExtractEdgeAsCurve(bpy.types.Operator):
         bpy.ops.object.mode_set(mode='OBJECT')
         bpy.ops.object.convert(target='CURVE')
 
+        # set nurbs type
+        bpy.ops.object.mode_set(mode='EDIT')
+        bpy.ops.curve.spline_type_set(type='NURBS')
+        bpy.ops.object.mode_set(mode='OBJECT')
+
+        curve = context.active_object
+        curve.data.splines[0].use_endpoint_u = True
         # restore
         ori_obj = None
         new_obj = None
