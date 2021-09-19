@@ -1,11 +1,11 @@
 bl_info = {
     "name": "AD Jewel Tools",
     "author": "Atticus",
-    "version": (0, 2),
+    "version": (0, 3),
     "blender": (3, 0, 0),
     "location": "3D View > Side Panel",
-    "description": "AD的珠宝小工具合集",
-    'warning': "持续开发中",
+    "description": "AD's tool set for jewel",
+    'warning': "developing",
     # "doc_url"    : "https://atticus-lv.github.io/RenderStackNode/#/",
     "category": "Model",
 }
