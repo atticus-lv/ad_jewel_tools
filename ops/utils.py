@@ -1,4 +1,5 @@
 import bpy
+import blf, bgl, gpu
 
 
 def copy_obj(obj, link_data=False):
@@ -138,3 +139,33 @@ class ObjectHelper():
     def get_obj_minz(obj) -> float:
         return min((obj.matrix_world @ v.co)[2] for v in obj.data.vertices) if obj.type == "MESH" else \
             obj.matrix_world.translation[2]
+
+
+class DrawHelper():
+    def __init__(self, font_id, color3, alpha):
+        self.font_id = font_id
+        self.color = color3
+        self.alpha = alpha
+        blf.color(font_id, self.color[0], self.color[1], self.color[2], self.alpha)
+
+    def set_alpha(self, alpha):
+        self.alpha = alpha
+        blf.color = (self.font_id, self.color[0], self.color[1], self.color[2], self.alpha)
+
+    def get_text_length(self, text, height=False):
+        return blf.dimensions(self.font_id, text)[0] if not height else blf.dimensions(self.font_id, text)[1]
+
+    def draw_title(self, size=200, x=0, y=0, text="test title"):
+        blf.size(self.font_id, size, 72)
+        blf.position(self.font_id, x, y, 0)
+        blf.draw(self.font_id, text)
+
+    def draw_info(self, size=175, x=0, y=0, text="test info"):
+        blf.size(self.font_id, size, 72)
+        blf.position(self.font_id, x, y, 0)
+        blf.draw(self.font_id, text)
+
+    @staticmethod
+    def get_region_size(percentage_x=1, percentage_y=1):
+        region = bpy.context.region
+        return percentage_x * region.width, percentage_y * region.height

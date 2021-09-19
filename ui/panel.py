@@ -29,7 +29,7 @@ class ADJT_PT_SidePanel(SidebarSetup, bpy.types.Panel):
 
         box = layout.box()
         box.label(text='Flow', icon='CURVE_DATA')
-        box.operator('adjt.flow_mesh_on_curve', icon='FORCE_CURVE')
+        box.operator('adjt.flow_mesh_along_curve', icon='FORCE_CURVE')
         box.operator('adjt.split_curve_and_flow_mesh', icon='GP_MULTIFRAME_EDITING')
 
         box = layout.box()
