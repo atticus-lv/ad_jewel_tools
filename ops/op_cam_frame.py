@@ -73,7 +73,7 @@ class ADJT_OT_CamFrame(ADJT_OT_ModalTemplate):
         # remove modifiers
         if mod:
             ori_select.modifiers.remove(mod)
-            self.use_bound = True
+            self.use_bound = True # prevent crash
         self._finish = True
 
     def get_preset(sellf, node_group_name):
