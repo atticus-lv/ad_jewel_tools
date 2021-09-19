@@ -45,9 +45,7 @@ class ADJT_OT_ExtractEdgeAsCurve(bpy.types.Operator):
 
         curve = context.active_object
         curve.data.splines[0].use_endpoint_u = True
-        # restore
-        ori_obj = None
-        new_obj = None
+
         return {'FINISHED'}
 
 
