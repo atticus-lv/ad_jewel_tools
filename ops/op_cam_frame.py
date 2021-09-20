@@ -63,7 +63,7 @@ class ADJT_OT_CamFrame(ADJT_OT_ModalTemplate):
             self.mouseDX = self.mouseDX - event.mouse_x
             self.mouseDY = self.mouseDY - event.mouse_y
 
-            speed = 0.05 / 5 if event.shift else 0.05
+            speed = 0.01 / 5 if event.shift else 0.01
             # multi offset
             offset = self.mouseDX
             self.cam.data.ortho_scale -= offset * speed
