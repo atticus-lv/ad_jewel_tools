@@ -2,16 +2,11 @@ import bpy
 import bgl, blf, gpu
 
 from .op_utils import ADJT_OT_ModalTemplate
-from .utils import DrawHelper, est_curve_length
+from .utils import DrawMsgHelper, est_curve_length
 from bpy.props import BoolProperty, EnumProperty
 
 # base info
-tips = [
-    '',
-    'A to toggle Array, X/Y/Z to switch direction',
-    'Wheel UP/Down to Curve deform axis',
-    'Left to Confirm / Right to Cancel',
-]
+
 
 deform_axis_dict = {
     'POS_X': 'X',
@@ -24,7 +19,7 @@ deform_axis_dict = {
 
 
 def draw_move_object_callback_px(self, context):
-    msg = DrawHelper(0, self.color, self.alpha)
+    msg = DrawMsgHelper(0, self.color, self.alpha)
 
     x_align, y_align = msg.get_region_size(0.5, 0.03)
 
@@ -43,25 +38,11 @@ def draw_move_object_callback_px(self, context):
     curve = 'Curve: ' + str(deform_axis_dict[self.deform_axis_list[self.deform_axis_index]])
     text = array + ' | ' + curve + ' ' + 'Num: ' + str(self.array_count)
 
-    msg.draw_title(x=x_align/2 - msg.get_text_length(text), y=y_align + top, text=text, size=30)
+    msg.draw_title(x=x_align - msg.get_text_length(text) * 1.15, y=y_align + top, text=text, size=30)
 
-    for i, t in enumerate(tips):
-        offset = 0.5 * msg.get_text_length(tips[i])
-        msg.draw_info(x=x_align/2 - offset, y=y_align + top - step * (i + 1), text=tips[i], size=15)
-
-
-def finish(self, context):
-    # draw Handle
-    if self.cursor_set:
-        context.window.cursor_modal_restore()
-        context.area.tag_redraw()
-    # modifier
-    self.remove_modifiers()
-    # set active object
-    if self._cancel:
-        context.view_layer.objects.active = self.ori_curve
-    else:
-        context.view_layer.objects.active = self.ori_mesh
+    for i, t in enumerate(self.tips):
+        offset = 0.5 * msg.get_text_length(self.tips[i])
+        msg.draw_info(x=x_align - offset, y=y_align + top - step * (i + 1), text=self.tips[i], size=15)
 
 
 class ADJT_OT_FlowMeshAlongCurve(bpy.types.Operator):
@@ -70,10 +51,6 @@ class ADJT_OT_FlowMeshAlongCurve(bpy.types.Operator):
     bl_idname = "adjt.flow_mesh_along_curve"
     bl_label = "Flow mesh along curve"
     bl_options = {'REGISTER', 'GRAB_CURSOR', 'BLOCKING', 'UNDO'}
-
-    # state
-    _finish = BoolProperty(update=finish)
-    _cancel = BoolProperty(update=finish)
 
     # user option
     use_array: BoolProperty(name='Use Array', default=True)
@@ -99,15 +76,49 @@ class ADJT_OT_FlowMeshAlongCurve(bpy.types.Operator):
     ]
     deform_axis_index = 0
 
+    # state
+    _finish = BoolProperty(default=False)
+    _cancel = BoolProperty(default=False)
+
+    # UI
+    tips = [
+        '',
+        'A to toggle Array, X/Y/Z to switch direction',
+        'Wheel UP/Down to Curve deform axis',
+        'Left to Confirm / Right to Cancel',
+    ]
+
     @classmethod
     def poll(self, context):
         return context.active_object and context.active_object.type == 'CURVE' and len(context.selected_objects) == 2
+
+    def append_handle(self, context):
+        # append handle
+        self._timer = context.window_manager.event_timer_add(0.01, window=context.window)
+        args = (self, context)
+        self._handle = bpy.types.SpaceView3D.draw_handler_add(draw_move_object_callback_px, args, 'WINDOW',
+                                                              'POST_PIXEL')
+        context.window_manager.modal_handler_add(self)
 
     def remove_handle(self, context, cancel):
         context.window_manager.event_timer_remove(self._timer)
         bpy.types.SpaceView3D.draw_handler_remove(self._handle, 'WINDOW')
 
         return {'FINISHED'} if cancel else {'CANCELLED'}
+
+    def finish(self, context):
+        # draw Handle
+        if self.cursor_set:
+            context.window.cursor_modal_restore()
+            context.area.tag_redraw()
+        # modifier
+        self.remove_modifiers()
+        # set active object
+        if self._cancel and context.active_object != self.ori_curve:
+            context.view_layer.objects.active = self.ori_curve
+        elif not self._cancel and context.active_object != self.ori_mesh:
+            context.view_layer.objects.active = self.ori_mesh
+
 
     def modal(self, context, event):
         context.area.tag_redraw()
@@ -116,7 +127,8 @@ class ADJT_OT_FlowMeshAlongCurve(bpy.types.Operator):
         if event.type == 'TIMER':
             # fade drawing
             if self._cancel or self._finish:
-                context.window.cursor_modal_restore()
+                self.finish(context)
+
                 if self.alpha > 0:
                     self.alpha -= 0.04  # fade
                 else:
@@ -205,6 +217,7 @@ class ADJT_OT_FlowMeshAlongCurve(bpy.types.Operator):
         # modal
         self._finish = False
         self._cancel = False
+
         self.color = 1, 1, 1
         self.alpha = 0.8
         self.mouseDX = event.mouse_x
@@ -214,23 +227,23 @@ class ADJT_OT_FlowMeshAlongCurve(bpy.types.Operator):
         self.cursor_set = True
         context.window.cursor_modal_set('MOVE_X')
 
-        # append handle
-        self._timer = context.window_manager.event_timer_add(0.01, window=context.window)
-        args = (self, context)
-        self._handle = bpy.types.SpaceView3D.draw_handler_add(draw_move_object_callback_px, args, 'WINDOW',
-                                                              'POST_PIXEL')
-        context.window_manager.modal_handler_add(self)
+        self.append_handle(context)
         return {'RUNNING_MODAL'}
 
     def remove_modifiers(self):
-        if self.use_array is False:
+        if self.use_array is False and self.mod_array:
+
             self.ori_mesh.modifiers.remove(self.mod_array)
             self.mod_array = None
+
         if self._cancel:
-            self.ori_mesh.modifiers.remove(self.mod_array)
-            self.ori_mesh.modifiers.remove(self.mod_curve)
-            self.mod_array = None
-            self.mod_curve = None
+            if self.mod_array:
+                self.ori_mesh.modifiers.remove(self.mod_array)
+                self.mod_array = None
+
+            if self.mod_curve:
+                self.ori_mesh.modifiers.remove(self.mod_curve)
+                self.mod_curve = None
 
     def add_modifiers(self):
         mod_array = self.ori_mesh.modifiers.new(name='Array', type='ARRAY')

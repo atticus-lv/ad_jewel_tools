@@ -10,6 +10,9 @@ class ADJT_OT_ExtractEdgeAsCurve(ADJT_OT_ModalTemplate):
     bl_label = 'Extract edge as curve'
     bl_options = {"REGISTER", "UNDO"}
 
+    tips = [
+        '',
+    ]
 
     @classmethod
     def poll(self, context):
@@ -26,6 +29,8 @@ class ADJT_OT_ExtractEdgeAsCurve(ADJT_OT_ModalTemplate):
         ori_obj.name = 'Curve from ' + ori_obj.name
         new_obj = copy_obj(ori_obj)
         new_obj.name = ori_name
+
+        self.tips.append(f'"{ori_obj.name}" has been extract')
 
         # print("NEW", new_obj)
         ori_obj.select_set(1)

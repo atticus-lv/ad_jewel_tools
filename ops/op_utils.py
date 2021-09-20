@@ -1,55 +1,61 @@
 import bpy
+from bpy.props import BoolProperty
+
 import bgl, blf, gpu
 from gpu_extras.batch import batch_for_shader
 
-from .utils import DrawHelper
-from bpy.props import BoolProperty
+from .utils import DrawMsgHelper
+from .utils import draw_pre, draw_post, draw_round_rectangle
 
 
 def draw_template_callback_px(self, context):
-    bgl.glLineWidth(1)
-    bgl.glEnable(bgl.GL_BLEND)
-    bgl.glEnable(bgl.GL_LINE_SMOOTH)
-    bgl.glHint(bgl.GL_LINE_SMOOTH_HINT, bgl.GL_NICEST)
+    draw_pre()
 
-    msg = DrawHelper(0, self.color, self.alpha)
+    msg = DrawMsgHelper(0, self.color, self.alpha)
 
-    x_align, y_align = msg.get_region_size(0.5, 0.03)
+    x_align, y_align = msg.get_region_size(0.5, 0.03)  # middle start point
+    y_align = y_align + 150  # top start point
 
-    top = 150
     step = 20
-    backgroud_width = 500
-    backgroud_height = backgroud_width * 0.382
 
-    vertices = (
-        (x_align - backgroud_width / 2, y_align + top + backgroud_height / 2),  # left top
-        (x_align + backgroud_width / 2, y_align + top + backgroud_height / 2),  # right top
-        (x_align - backgroud_width / 2, y_align + top - backgroud_height / 2),  # left bottom
-        (x_align + backgroud_width / 2, y_align + top - backgroud_height / 2))  # right bottom
+    text = self.bl_label
+    title_width = msg.get_text_length(text)
+    title_height = msg.get_text_height(text)
 
-    indices = ((0, 1, 3), (0, 2, 3))
+    background_width = 400
+    background_height = background_width * 0.382
 
-    # draw backgroud
     shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')
-    batch = batch_for_shader(shader, 'TRIS', {"pos": vertices}, indices=indices)
 
-    shader.bind()
-    shader.uniform_float("color", (0, 0, 0, self.alpha * 0.5))
-    batch.draw(shader)
+    # draw background
+    vertices = (
+        (x_align + background_width / 2, y_align + background_height / 2),  # right top
+        (x_align - background_width / 2, y_align + background_height / 2),  # left top
+        (x_align - background_width / 2, y_align - background_height / 2),  # left bottom
+        (x_align + background_width / 2, y_align - background_height / 2),  # right bottom
+    )
+    inner = 3
+    shadow_vertices = (
+        (x_align + background_width / 2 - inner, y_align + background_height / 2 - inner),  # right top
+        (x_align - background_width / 2 + inner, y_align + background_height / 2 - inner),  # left top
+        (x_align - background_width / 2 + inner, y_align - background_height / 2 + inner),  # left bottom
+        (x_align + background_width / 2 - inner, y_align - background_height / 2 + inner),  # right bottom
+    )
+
+    draw_round_rectangle(shader, vertices, colour=(0.1, 0.1, 0.1, self.alpha * 0.5), radius=20)
+    draw_round_rectangle(shader, shadow_vertices, colour=(0, 0, 0, self.alpha * 0.5), radius=20)
 
     # draw text
-    text = self.bl_label
-
-    msg.draw_title(x=x_align - msg.get_text_length(text), y=y_align + top, text=text, size=30)
+    msg.draw_title(x=x_align - title_width * 1.15,
+                   y=y_align + (len(self.tips) - 1) * step - title_height / 2,  # len-1 for separator ''
+                   text=text, size=30)
 
     for i, t in enumerate(self.tips):
         offset = 0.5 * msg.get_text_length(self.tips[i])
-        msg.draw_info(x=x_align - offset, y=y_align + top - step * (i + 1), text=self.tips[i], size=15)
+        msg.draw_info(x=x_align - offset, y=y_align - step * (i + 1), text=self.tips[i], size=18)
 
     # restore
-    #####################
-    bgl.glDisable(bgl.GL_BLEND)
-    bgl.glDisable(bgl.GL_LINE_SMOOTH)
+    draw_post()
 
 
 def finish(self, context):
@@ -96,8 +102,11 @@ class ADJT_OT_ModalTemplate(bpy.types.Operator):
         self._finish = True
 
     def execute(self, context):
-        self.main(context)
-
+        try:
+            self.main(context)
+        except Exception as e:
+            self.report({"ERROR"}, str(e))
+            self._cancel = True
         return {'RUNNING_MODAL'}
 
     def modal(self, context, event):
