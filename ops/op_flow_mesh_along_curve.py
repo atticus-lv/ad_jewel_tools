@@ -100,11 +100,11 @@ class ADJT_OT_FlowMeshAlongCurve(bpy.types.Operator):
                                                               'POST_PIXEL')
         context.window_manager.modal_handler_add(self)
 
-    def remove_handle(self, context, cancel):
+    def remove_handle(self, context):
         context.window_manager.event_timer_remove(self._timer)
         bpy.types.SpaceView3D.draw_handler_remove(self._handle, 'WINDOW')
 
-        return {'FINISHED'} if cancel else {'CANCELLED'}
+        return {'CANCELLED'} if self._cancel else {'FINISHED'}
 
     def finish(self, context):
         # draw Handle
@@ -132,7 +132,7 @@ class ADJT_OT_FlowMeshAlongCurve(bpy.types.Operator):
                 if self.alpha > 0:
                     self.alpha -= 0.04  # fade
                 else:
-                    return self.remove_handle(context, cancel=self._cancel)
+                    return self.remove_handle(context)
 
         if event.type == "MIDDLEMOUSE" or (
                 (event.alt or event.shift or event.ctrl) and event.type == "MIDDLEMOUSE"):
