@@ -22,11 +22,61 @@ class ADJT_OT_CamFrame(ADJT_OT_ModalTemplate):
                             default=50)
     use_bound: BoolProperty(name='Add Boundary', default=False)
 
+    cam = None
+
     @classmethod
     def poll(self, context):
         return context.active_object and context.active_object.mode == 'OBJECT' and context.active_object.type == 'MESH'
 
+    def finish(self, context):
+        if self._cancel and self.cam:
+            bpy.data.objects.remove(self.cam)
+            self.cam = None
+
+    def modal(self, context, event):
+        context.area.tag_redraw()
+
+        if event.type in {"MIDDLEMOUSE", 'WHEELUPMOUSE', 'WHEELDOWNMOUSE'} or (
+                (event.alt or event.shift or event.ctrl) and event.type == "MIDDLEMOUSE"):
+            return {'PASS_THROUGH'}
+
+        if event.type == 'TIMER':
+            # fade drawing
+            if self._cancel or self._finish:
+                self.finish(context)
+
+                if self.ui_delay > 0:
+                    self.ui_delay -= 0.01
+                else:
+                    if self.alpha > 0:
+                        self.alpha -= 0.02  # fade
+                    else:
+                        return self.remove_handle(context)
+
+        if event.type == 'LEFTMOUSE':
+            self._finish = True
+
+        if event.type in {'RIGHTMOUSE', 'ESC'}:
+            self._cancel = True
+
+        if event.type == 'MOUSEMOVE' and not (self._cancel or self._finish):
+            self.mouseDX = self.mouseDX - event.mouse_x
+            self.mouseDY = self.mouseDY - event.mouse_y
+
+            speed = 0.05 / 5 if event.shift else 0.05
+            # multi offset
+            offset = self.mouseDX
+            self.cam.data.ortho_scale -= offset * speed
+            # reset
+            self.mouseDX = event.mouse_x
+            self.mouseDY = event.mouse_y
+
+        return {"RUNNING_MODAL"}
+
     def main(self, context):
+        pass
+
+    def pre(self, context, event):
         if context.scene.render.resolution_x < context.scene.render.resolution_y:
             self.tips.append("ERROR: 'Only work when resolution X > resolution Y'")
             self._cancel = True
@@ -48,12 +98,12 @@ class ADJT_OT_CamFrame(ADJT_OT_ModalTemplate):
 
         # add cam and correct viewport
         camera_data = bpy.data.cameras.new(name='Camera')
-        cam = bpy.data.objects.new('Camera', camera_data)
-        context.scene.collection.objects.link(cam)
-        context.scene.camera = cam
+        self.cam = bpy.data.objects.new('Camera', camera_data)
+        context.scene.collection.objects.link(self.cam)
+        context.scene.camera = self.cam
 
-        cam.data.type = 'ORTHO'
-        cam.data.show_name = True
+        self.cam.data.type = 'ORTHO'
+        self.cam.data.show_name = True
 
         context.area.spaces[0].region_3d.view_perspective = 'PERSP'
         override = {'area': context.area,
@@ -61,7 +111,7 @@ class ADJT_OT_CamFrame(ADJT_OT_ModalTemplate):
         bpy.ops.view3d.camera_to_view(override)
 
         # set frame obj
-        cam.select_set(0)
+        self.cam.select_set(0)
         ori_select.select_set(1)
 
         # set safe area
@@ -70,14 +120,12 @@ class ADJT_OT_CamFrame(ADJT_OT_ModalTemplate):
         bpy.ops.view3d.camera_to_view_selected()  # center the objects
         # if cam on x axis then measure the x axis dimension
         size = max(ori_select.dimensions)
-        cam.data.ortho_scale = (1 + safe_scale) * size
+        self.cam.data.ortho_scale = (1 + safe_scale) * size
 
         # remove modifiers
         if mod:
             ori_select.modifiers.remove(mod)
-            self.use_bound = False # prevent crash
-
-        self._finish = True
+            self.use_bound = False  # prevent crash
 
     def get_preset(sellf, node_group_name):
         base_dir = os.path.join(bpy.utils.user_resource('SCRIPTS'), 'addons', __folder_name__, 'preset',
