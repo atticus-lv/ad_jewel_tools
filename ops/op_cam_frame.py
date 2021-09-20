@@ -5,7 +5,7 @@ from bpy.props import IntProperty, EnumProperty, BoolProperty
 from .op_utils import ADJT_OT_ModalTemplate
 from .. import __folder_name__
 
-
+# TODO add cursor icon
 class ADJT_OT_CamFrame(ADJT_OT_ModalTemplate):
     '''Select the object you want to add frame camera
 选择你想要添加的框选相机的物体'''

@@ -5,6 +5,7 @@ from .. import __folder_name__
 
 from .op_utils import ADJT_OT_ModalTemplate
 
+# TODO add cursor icon
 class ADJT_OT_ViewAlign(ADJT_OT_ModalTemplate):
     '''Copy the select obj to align view
 选择并复制当前物体为三视图'''
