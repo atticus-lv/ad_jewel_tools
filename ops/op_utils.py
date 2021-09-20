@@ -4,8 +4,8 @@ from bpy.props import BoolProperty
 import bgl, blf, gpu
 from gpu_extras.batch import batch_for_shader
 
-from .utils import DrawMsgHelper
-from .utils import draw_pre, draw_post, draw_round_rectangle
+from .utils import DrawMsgHelper,DrawHandle
+from .utils import draw_pre, draw_post, draw_round_rectangle, draw_nurbs_curve
 
 
 def draw_template_callback_px(self, context):
@@ -13,12 +13,12 @@ def draw_template_callback_px(self, context):
 
     msg = DrawMsgHelper(0, self.color, self.alpha)
 
-    x_align, y_align = msg.get_region_size(0.5, 0.03)  # middle start point
-    y_align = y_align + 150  # top start point
+    x_align, y_align = msg.get_region_size(0.5, 0.03)  # middle start_pos point
+    y_align = y_align + 150  # top start_pos point
 
     step = 20
 
-    text = self.bl_label
+    text = self.bl_label if self.title == '' else self.title
     title_width = msg.get_text_length(text)
     title_height = msg.get_text_height(text)
 
@@ -42,8 +42,8 @@ def draw_template_callback_px(self, context):
         (x_align + background_width / 2 - inner, y_align - background_height / 2 + inner),  # right bottom
     )
 
-    draw_round_rectangle(shader, vertices, colour=(0.1, 0.1, 0.1, self.alpha * 0.5), radius=20)
-    draw_round_rectangle(shader, shadow_vertices, colour=(0, 0, 0, self.alpha * 0.5), radius=20)
+    draw_round_rectangle(shader, vertices, color=(0.1, 0.1, 0.1, self.alpha * 0.5), radius=20)
+    draw_round_rectangle(shader, shadow_vertices, color=(0, 0, 0, self.alpha * 0.5), radius=20)
 
     # draw text
     msg.draw_title(x=x_align - title_width * 1.15,
@@ -54,15 +54,23 @@ def draw_template_callback_px(self, context):
         offset = 0.5 * msg.get_text_length(self.tips[i])
         msg.draw_info(x=x_align - offset, y=y_align - step * (i + 1), text=self.tips[i], size=18)
 
+    # if len(self.draw_curves) > 0:
+    #     for obj in self.draw_curves:
+    #         draw_nurbs_curve(obj, color=(1, 0, 0, self.alpha))
+
     # restore
     draw_post()
 
 
-def finish(self, context):
+def end(self, context):
     # draw Handle
     if self.cursor_set:
         context.window.cursor_modal_restore()
         context.area.tag_redraw()
+    if self._finish:
+        self.title = 'Confirm!'
+    elif self._cancel:
+        self.title = 'Cancel!'
 
 
 class ADJT_OT_ModalTemplate(bpy.types.Operator):
@@ -70,21 +78,27 @@ class ADJT_OT_ModalTemplate(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     # state
-    _finish = BoolProperty(update=finish)
-    _cancel = BoolProperty(update=finish)
+    _finish = BoolProperty(update=end)
+    _cancel = BoolProperty(update=end)
     cursor_set = False
 
     # UI
     ui_delay = 0.2
+
+    title = ''
     tips = [
         '',
     ]
 
-    def remove_handle(self, context, cancel):
+    # draw objects
+    draw_curves = []
+    draw_meshes = []
+
+    def remove_handle(self, context):
         context.window_manager.event_timer_remove(self._timer)
         bpy.types.SpaceView3D.draw_handler_remove(self._handle, 'WINDOW')
 
-        return {'FINISHED'} if cancel else {'CANCELLED'}
+        return {'FINISHED'} if self._cancel else {'CANCELLED'}
 
     def append_handle(self, context):
         # icon

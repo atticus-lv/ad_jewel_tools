@@ -1,5 +1,5 @@
 import bpy
-from .utils import copy_obj
+from .utils import copy_obj, draw_nurbs_curve
 from .op_utils import ADJT_OT_ModalTemplate
 
 
@@ -30,6 +30,8 @@ class ADJT_OT_ExtractEdgeAsCurve(ADJT_OT_ModalTemplate):
         new_obj = copy_obj(ori_obj)
         new_obj.name = ori_name
 
+        self.tips.clear()
+        self.tips.append('')
         self.tips.append(f'"{ori_obj.name}" has been extract')
 
         # print("NEW", new_obj)
@@ -52,6 +54,8 @@ class ADJT_OT_ExtractEdgeAsCurve(ADJT_OT_ModalTemplate):
 
         curve = context.active_object
         curve.data.splines[0].use_endpoint_u = True
+
+        self.draw_curves.append(curve)
 
         self._finish = True
 

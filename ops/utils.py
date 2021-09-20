@@ -170,22 +170,22 @@ def draw_post():
     bgl.glDisable(bgl.GL_LINE_SMOOTH)
 
 
-def draw_tri_fan(shader, vertices, colour):
+def draw_tri_fan(shader, vertices, color):
     batch = batch_for_shader(shader, 'TRI_FAN', {"pos": vertices})
     shader.bind()
-    shader.uniform_float("color", colour)
+    shader.uniform_float("color", color)
     batch.draw(shader)
 
 
-def draw_line(x1, y1, x2, y2, size, colour=(1.0, 1.0, 1.0, 0.7)):
+def draw_line(x1, y1, x2, y2, size, color=(1.0, 1.0, 1.0, 0.7)):
     shader = gpu.shader.from_builtin('2D_SMOOTH_COLOR')
 
     vertices = ((x1, y1), (x2, y2))
-    vertex_colors = ((colour[0] + (1.0 - colour[0]) / 4,
-                      colour[1] + (1.0 - colour[1]) / 4,
-                      colour[2] + (1.0 - colour[2]) / 4,
-                      colour[3] + (1.0 - colour[3]) / 4),
-                     colour)
+    vertex_colors = ((color[0] + (1.0 - color[0]) / 4,
+                      color[1] + (1.0 - color[1]) / 4,
+                      color[2] + (1.0 - color[2]) / 4,
+                      color[3] + (1.0 - color[3]) / 4),
+                     color)
 
     batch = batch_for_shader(shader, 'LINE_STRIP', {"pos": vertices, "color": vertex_colors})
     bgl.glLineWidth(size * dpifac())
@@ -194,7 +194,22 @@ def draw_line(x1, y1, x2, y2, size, colour=(1.0, 1.0, 1.0, 0.7)):
     batch.draw(shader)
 
 
-def draw_circle_2d_filled(shader, mx, my, radius, colour=(1.0, 1.0, 1.0, 0.7)):
+def draw_line_3d(start_pos, end_pos, color=(1.0, 1.0, 1.0, 0.7)):
+    shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
+    batch = batch_for_shader(shader, 'LINES', {"pos": [start_pos, end_pos]})
+    shader.bind()
+    shader.uniform_float("color", color)
+    batch.draw(shader)
+
+
+def draw_nurbs_curve(obj, color=(1.0, 1.0, 1.0, 0.7)):
+    for spline in obj.data.splines:
+        for i, point in enumerate(spline.points):
+            if i == 0: continue
+            draw_line_3d(point.co[:-1], spline.points[i - 1].co[:-1], color)
+
+
+def draw_circle_2d_filled(shader, mx, my, radius, color=(1.0, 1.0, 1.0, 0.7)):
     radius = radius * dpifac()
     sides = 12
     vertices = [(radius * cos(i * 2 * pi / sides) + mx,
@@ -203,18 +218,18 @@ def draw_circle_2d_filled(shader, mx, my, radius, colour=(1.0, 1.0, 1.0, 0.7)):
 
     batch = batch_for_shader(shader, 'TRI_FAN', {"pos": vertices})
     shader.bind()
-    shader.uniform_float("color", colour)
+    shader.uniform_float("color", color)
     batch.draw(shader)
 
 
-def draw_round_rectangle(shader, points, radius=8, colour=(1.0, 1.0, 1.0, 0.7)):
+def draw_round_rectangle(shader, points, radius=8, color=(1.0, 1.0, 1.0, 0.7)):
     """points index top_right  top_left bottom_left bottom_right """
 
     sides = 16
     radius = 16
 
     # fill
-    draw_tri_fan(shader, points, colour)
+    draw_tri_fan(shader, points, color)
 
     top_left = points[1]
     top_right = points[0]
@@ -225,25 +240,25 @@ def draw_round_rectangle(shader, points, radius=8, colour=(1.0, 1.0, 1.0, 0.7)):
     top_left_top = (top_left[0], top_left[1] + radius)
     top_right_top = (top_right[0], top_right[1] + radius)
     vertices = [top_right_top, top_left_top, top_left, top_right]
-    draw_tri_fan(shader, vertices, colour)
+    draw_tri_fan(shader, vertices, color)
 
     # Left edge
     top_left_left = (top_left[0] - radius, top_left[1])
     bottom_left_left = (bottom_left[0] - radius, bottom_left[1])
     vertices = [top_left, top_left_left, bottom_left_left, bottom_left]
-    draw_tri_fan(shader, vertices, colour)
+    draw_tri_fan(shader, vertices, color)
 
     # Bottom edge
     bottom_left_bottom = (bottom_left[0], bottom_left[1] - radius)
     bottom_right_bottom = (bottom_right[0], bottom_right[1] - radius)
     vertices = [bottom_right, bottom_left, bottom_left_bottom, bottom_right_bottom]
-    draw_tri_fan(shader, vertices, colour)
+    draw_tri_fan(shader, vertices, color)
 
     # right edge
     top_right_right = (top_right[0] + radius, top_right[1])
     bottom_right_right = (bottom_right[0] + radius, bottom_right[1])
     vertices = [top_right_right, top_right, bottom_right, bottom_right_right]
-    draw_tri_fan(shader, vertices, colour)
+    draw_tri_fan(shader, vertices, color)
 
     # Top right corner
     vertices = [top_right]
@@ -255,7 +270,7 @@ def draw_round_rectangle(shader, points, radius=8, colour=(1.0, 1.0, 1.0, 0.7)):
             sine = radius * sin(i * 2 * pi / sides) + my
             vertices.append((cosine, sine))
 
-    draw_tri_fan(shader, vertices, colour)
+    draw_tri_fan(shader, vertices, color)
 
     # Top left corner
     vertices = [top_left]
@@ -267,7 +282,7 @@ def draw_round_rectangle(shader, points, radius=8, colour=(1.0, 1.0, 1.0, 0.7)):
             sine = radius * sin(i * 2 * pi / sides) + my
             vertices.append((cosine, sine))
 
-    draw_tri_fan(shader, vertices, colour)
+    draw_tri_fan(shader, vertices, color)
 
     # Bottom left corner
     vertices = [bottom_left]
@@ -279,7 +294,7 @@ def draw_round_rectangle(shader, points, radius=8, colour=(1.0, 1.0, 1.0, 0.7)):
             sine = radius * sin(i * 2 * pi / sides) + my
             vertices.append((cosine, sine))
 
-    draw_tri_fan(shader, vertices, colour)
+    draw_tri_fan(shader, vertices, color)
 
     # Bottom right corner
     vertices = [bottom_right]
@@ -291,7 +306,7 @@ def draw_round_rectangle(shader, points, radius=8, colour=(1.0, 1.0, 1.0, 0.7)):
             sine = radius * sin(i * 2 * pi / sides) + my
             vertices.append((cosine, sine))
 
-    draw_tri_fan(shader, vertices, colour)
+    draw_tri_fan(shader, vertices, color)
 
 
 class DrawMsgHelper():
@@ -310,7 +325,7 @@ class DrawMsgHelper():
     def get_text_length(self, text):
         return blf.dimensions(self.font_id, text)[0]
 
-    def get_text_height(self,text):
+    def get_text_height(self, text):
         return blf.dimensions(self.font_id, text)[1]
 
     def draw_title(self, size=50, x=0, y=0, text="test title", align_center_x=True):
@@ -338,3 +353,21 @@ class DrawMsgHelper():
         width = bpy.context.region.width
         height = bpy.context.region.height
         return width * muti_x, height * muti_y
+
+class DrawHandle:
+    def __init__(self, context,operator,View3D=False):
+        self.operator = operator
+        if View3D:
+            self.handle = bpy.types.SpaceView3D.draw_handler_add(
+                   self.draw_callback,(self.operator,context),
+                   'WINDOW', 'POST_VIEW')
+        else:
+            self.handle = bpy.types.SpaceView3D.draw_handler_add(
+                       self.draw_callback,(self.operator,context),
+                       'WINDOW', 'POST_PIXEL')
+    def draw_callback(self, context):
+        # custom method overwrite
+        pass
+
+    def remove_handle(self):
+         bpy.types.SpaceView3D.draw_handler_remove(self.handle, 'WINDOW')
