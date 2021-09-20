@@ -16,7 +16,6 @@ def draw_template_callback_px(self, context):
     x_align, y_align = msg.get_region_size(0.5, 0.03)  # middle start_pos point
     y_align = y_align + 150  # top start_pos point
 
-    step = 20
 
     text = self.bl_label if self.title == '' else self.title
     title_width = msg.get_text_length(text)
@@ -47,18 +46,15 @@ def draw_template_callback_px(self, context):
 
     # draw text
     msg.draw_title(x=x_align - title_width * 1.15,
-                   y=y_align + (len(self.tips) - 1) * step - title_height / 2,  # len-1 for separator ''
+                   y=y_align + background_height / 2 - title_height*2,
                    text=text, size=30)
 
     for i, t in enumerate(self.tips):
-        offset = 0.5 * msg.get_text_length(self.tips[i])
-        msg.draw_info(x=x_align - offset, y=y_align - step * (i + 1), text=self.tips[i], size=18)
+        text = self.tips[i]
+        offset = 0.5 * msg.get_text_length(text)
+        height = msg.get_text_height(text)
+        msg.draw_info(x=x_align - offset, y=y_align - height * (len(self.tips)-i), text=text, size=18)
 
-    # if len(self.draw_curves) > 0:
-    #     for obj in self.draw_curves:
-    #         draw_nurbs_curve(obj, color=(1, 0, 0, self.alpha))
-
-    # restore
     draw_post()
 
 

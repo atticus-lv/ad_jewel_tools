@@ -26,27 +26,61 @@ def draw_move_object_callback_px(self, context):
     msg = DrawMsgHelper(0, self.color, self.alpha)
 
     x_align, y_align = msg.get_region_size(0.5, 0.03)
+    y_align += 150
 
-    top = 150
-    step = 20
-
+    length = 1
     if self.mod_array:
         length = 1
         for l in self.mod_array.relative_offset_displace:
             if l != 0:
                 length = l
                 break
-        self.array_count = int(self.curve_len / length)
 
     array = 'Array: ' + str(self.array_direction)
     curve = 'Curve: ' + str(deform_axis_dict[self.deform_axis_list[self.deform_axis_index]])
-    text = array + ' | ' + curve + ' ' + 'Num: ' + str(self.array_count)
+    text = array + ' | ' + curve
+    text_2 = 'Offset: ' + str(round(length, 3))
 
-    msg.draw_title(x=x_align - msg.get_text_length(text) * 1.15, y=y_align + top, text=text, size=30)
+    title_width = msg.get_text_length(text)
+    title_height = msg.get_text_height(text)
+
+    background_width = 400
+    background_height = background_width * 0.382
+
+    shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')
+
+    # draw background
+    vertices = (
+        (x_align + background_width / 2, y_align + background_height / 2),  # right top
+        (x_align - background_width / 2, y_align + background_height / 2),  # left top
+        (x_align - background_width / 2, y_align - background_height / 2),  # left bottom
+        (x_align + background_width / 2, y_align - background_height / 2),  # right bottom
+    )
+    inner = 3
+    shadow_vertices = (
+        (x_align + background_width / 2 - inner, y_align + background_height / 2 - inner),  # right top
+        (x_align - background_width / 2 + inner, y_align + background_height / 2 - inner),  # left top
+        (x_align - background_width / 2 + inner, y_align - background_height / 2 + inner),  # left bottom
+        (x_align + background_width / 2 - inner, y_align - background_height / 2 + inner),  # right bottom
+    )
+
+    draw_round_rectangle(shader, vertices, color=(0.1, 0.1, 0.1, self.alpha * 0.5), radius=20)
+    draw_round_rectangle(shader, shadow_vertices, color=(0, 0, 0, self.alpha * 0.5), radius=20)
+
+    # draw text
+    msg.draw_title(x=x_align - title_width * 1.15,
+                   y=y_align + background_height / 2 - title_height * 2,  # len-1 for separator ''
+                   text=text, size=30)
+
+    msg.draw_title(x=x_align - title_width * 1.15,
+                   y=y_align + background_height / 2 - title_height * 4,  # len-1 for separator ''
+                   text=text_2, size=25)
 
     for i, t in enumerate(self.tips):
-        offset = 0.5 * msg.get_text_length(self.tips[i])
-        msg.draw_info(x=x_align - offset, y=y_align + top - step * (i + 1), text=self.tips[i], size=15)
+        text = self.tips[i]
+        offset = 0.5 * msg.get_text_length(text)
+        height = msg.get_text_height(text)
+        msg.draw_info(x=x_align - offset, y=y_align - height * (len(self.tips) - i), text=text, size=18)
 
     draw_post()
 
@@ -88,7 +122,7 @@ class ADJT_OT_FlowMeshAlongCurve(bpy.types.Operator):
 
     # UI
     tips = [
-        '',
+        ''
         'A to toggle Array, X/Y/Z to switch direction',
         'Wheel UP/Down to Curve deform axis',
         'Left to Confirm / Right to Cancel',
@@ -186,10 +220,6 @@ class ADJT_OT_FlowMeshAlongCurve(bpy.types.Operator):
 
         # array axis
         elif event.type in {'X', 'Y', 'Z'} and not (self._cancel or self._finish):
-            # save to cache
-            self.tmp_array_offset[0] = self.mod_array.relative_offset_displace[0]
-            self.tmp_array_offset[1] = self.mod_array.relative_offset_displace[1]
-            self.tmp_array_offset[2] = self.mod_array.relative_offset_displace[2]
 
             if event.type == 'X' and event.value == "PRESS":
                 self.mod_array.relative_offset_displace[1] = 0
