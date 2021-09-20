@@ -83,7 +83,7 @@ class ADJT_OT_ModalTemplate(bpy.types.Operator):
     cursor_set = False
 
     # UI
-    ui_delay = 0.2
+    ui_delay = 0.4
 
     title = ''
     tips = [
@@ -138,7 +138,7 @@ class ADJT_OT_ModalTemplate(bpy.types.Operator):
                     self.ui_delay -= 0.01
                 else:
                     if self.alpha > 0:
-                        self.alpha -= 0.015  # fade
+                        self.alpha -= 0.02  # fade
                     else:
                         return self.remove_handle(context)
 
