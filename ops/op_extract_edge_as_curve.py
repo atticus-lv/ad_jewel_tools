@@ -47,8 +47,11 @@ class ADJT_OT_ExtractEdgeAsCurve(ADJT_OT_ModalTemplate):
         ori_obj = context.active_object
         ori_name = ori_obj.name
         ori_obj.name = 'Curve from ' + ori_obj.name
+
         new_obj = copy_obj(ori_obj)
         new_obj.name = ori_name
+        for mod in ori_obj.modifiers:
+            ori_obj.modifiers.remove(mod)
 
         self.tips.clear()
         self.tips.append('')
