@@ -63,7 +63,7 @@ class ADJT_OT_ViewAlign(ADJT_OT_ModalTemplate):
             self.mouseDX = self.mouseDX - event.mouse_x
             self.mouseDY = self.mouseDY - event.mouse_y
 
-            speed = 0.1 / 5 if event.shift else 0.1
+            speed = 0.05 / 10 if event.shift else 0.05
             # multi offset
             offset = self.mouseDX
             self.separate.default_value -= offset * speed
