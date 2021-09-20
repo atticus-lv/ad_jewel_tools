@@ -1,42 +1,23 @@
 import bpy
 import os
-from bpy.props import EnumProperty, StringProperty, BoolProperty, CollectionProperty, IntProperty, FloatProperty, \
-    PointerProperty
+from bpy.props import (EnumProperty,
+                       StringProperty,
+                       BoolProperty,
+                       CollectionProperty,
+                       IntProperty,
+                       FloatProperty,
+                       PointerProperty)
 from bpy.types import PropertyGroup
 
 import webbrowser
 
-
 from .ui.t3dn_bip import previews
+from . import __folder_name__
 
 
 def get_pref():
     """get preferences of this plugin"""
     return bpy.context.preferences.addons.get(__folder_name__).preferences
-# Sound items
-####################
-
-def update_path_name(self, context):
-    if self.bind_name_to_path:
-        self.name = os.path.basename(self.path) if os.path.isfile(self.path) else '文件不存在'
-
-
-class SoundListItemProperty(PropertyGroup):
-    # base
-    name: StringProperty(name='起一个好听的名字', default='新的语音')
-    path: StringProperty(name='音频路径', description='音频路径，也可以用带有音频的MP4代替', subtype='FILE_PATH', update=update_path_name)
-    enable: BoolProperty(name='启用音频', default=True)
-    # event
-    alt: BoolProperty(name='Alt', default=False)
-    ctrl: BoolProperty(name='Ctrl', default=False)
-    shift: BoolProperty(name='Shift', default=False)
-    key: StringProperty(default='NONE')
-    # state
-    bind_name_to_path: BoolProperty(name='关联名字到路径', default=True)
-    error: BoolProperty(name='文件错误')
-
-    ### TODO 组属性以满足嘉心糖出轨需求
-    ### TODO 错误提示
 
 
 # Image items
@@ -44,7 +25,7 @@ class SoundListItemProperty(PropertyGroup):
 
 __tempPreview__ = {}  # store in global, delete in unregister
 
-image_extensions = ('.png', '.jpg', '.jpeg', '.exr', '.hdr')
+image_extensions = ('.png', '.jpg', '.jpeg')
 
 
 def check_extension(input_string: str, extensions: set) -> bool:
@@ -64,13 +45,13 @@ def enum_thumbnails_from_dir_items(self, context):
     if context is None: return enum_items
 
     try:
-        item = pref.image_dir_list[pref.image_dir_list_index]
+        item = pref.view_align_preset_list[pref.view_align_preset_list_index]
         directory = item.path
     except(Exception):
         directory = ""
 
     # store
-    image_preview = __tempPreview__["sd_thumbnails"]
+    image_preview = __tempPreview__["adjt_thumbnails"]
 
     if directory == image_preview.img_dir:
         return image_preview.img
@@ -121,7 +102,8 @@ def update_image(self, context):
 
     # get image
     pref = get_pref()
-    item = pref.image_dir_list[pref.image_dir_list_index] if len(pref.image_dir_list) != 0 else None
+    item = pref.view_align_preset_list[pref.view_align_preset_list_index] if len(
+        pref.view_align_preset_list) != 0 else None
 
     if not item: return None
 
@@ -140,11 +122,6 @@ class ImageDirListItemProperty(PropertyGroup):
     thumbnails: EnumProperty(name='子文件夹', items=enum_thumbnails_from_dir_items, update=update_image)
 
 
-class UrlListItemProperty(PropertyGroup):
-    name: StringProperty(name='名字', default='新的链接')
-    url: StringProperty(name='链接', default='https://space.bilibili.com/672328094')
-
-
 from .ui.t3dn_bip.ops import InstallPillow
 
 
@@ -155,102 +132,43 @@ class T3DN_OT_bip_showcase_install_pillow(bpy.types.Operator, InstallPillow):
 # Preference
 ####################
 
-preset_link = {
-    '关注嘉然': 'https://space.bilibili.com/672328094',
-    '猫中毒': 'https://www.bilibili.com/video/BV1FX4y1g7u8',
-    '超级敏感': 'https://www.bilibili.com/video/BV1vQ4y1Z7C2',
-}
 
-
-class SD_Preference(bpy.types.AddonPreferences):
+class ADJT_Preference(bpy.types.AddonPreferences):
     bl_idname = __package__
 
-    # UI
-    title: StringProperty(name='标题', default='关注嘉心糖，顿顿破大防')
-
-    # sound
-    #####################
-    sound_list: CollectionProperty(type=SoundListItemProperty)
-    sound_list_index: IntProperty(default=0, min=0)
-
-    # image
-    #####################
-    use_image_name: BoolProperty(name='显示名字', default=False)
-    rand_image: BoolProperty(name='随机下一张', default=False)
-
-    image_dir_list: CollectionProperty(type=ImageDirListItemProperty)
-    image_dir_list_index: IntProperty(default=0, min=0, name='激活项')
-
-    # UR:
-    ##################
-    url_list: CollectionProperty(type=UrlListItemProperty)
-    url_edit: BoolProperty(name='编辑链接', default=False)
+    view_align_preset_list: CollectionProperty(type=ImageDirListItemProperty)
+    view_align_preset_list_index: IntProperty(default=0, min=0, name='激活项')
 
     def draw(self, context):
         layout = self.layout
-        layout.operator('t3dn.bip_showcase_install_pillow',text= '安装Pillow（加快预览加载）')
-        col = layout.box().column(align=1)
+        layout.operator('t3dn.bip_showcase_install_pillow', text='安装Pillow（加快预览加载）')
 
-        row = col.split(factor=0.6)
-        row.separator()
-        row = row.row(align=1)
-        row.prop(self, 'url_edit', icon='EDITMODE_HLT')
-        row.operator('sd.url_list_action', icon='ADD', text='添加链接').action = 'ADD'
-
-        col.separator(factor=0.5)
-
-        for i, item in enumerate(self.url_list):
-            row = col.box().row()
-            if not self.url_edit:
-                row.operator('sd.url_link', text=item.name, icon='URL').url = item.url
-            else:
-                sub = row.row(align=0)
-                sub.prop(item, 'name', text='')
-                sub.prop(item, 'url', text='')
-                remove = sub.operator('sd.url_list_action', icon='X', text='')
-                remove.index = i
-                remove.action = 'REMOVE'
-
-
-def bind_image_props():
-    bpy.types.Scene.sd_link_image_to_data_path = BoolProperty(default=False)
-    bpy.types.Scene.sd_link_image_type = EnumProperty(name='契约类型', items=[('WORLD', '世界', '', 'WORLD', 0),
-                                                                          ('MAT', '材质', '', 'MATERIAL', 1)])
-    bpy.types.Scene.sd_link_world = PointerProperty(name='世界', type=bpy.types.World)
-    bpy.types.Scene.sd_link_material = PointerProperty(name='材质', type=bpy.types.Material)
-    bpy.types.Scene.sd_link_image_node = StringProperty(name='节点')
-
-
-def del_bind_image_props():
-    del bpy.types.Scene.sd_link_image_to_data_path
-    del bpy.types.Scene.sd_link_image_type
-    del bpy.types.Scene.sd_link_world
-    del bpy.types.Scene.sd_link_material
-    del bpy.types.Scene.sd_link_image_node
-
+def init_thumb():
+    pref = get_pref()
+    thumb_dir = os.path.join(bpy.utils.user_resource('SCRIPTS'), 'addons', __folder_name__, 'preset',
+                             'node_groups',
+                             'thumb') + '/'
+    if 'node_groups' not in pref.view_align_preset_list:
+        item = pref.view_align_preset_list.add()
+        pref.view_align_preset_list_index = len(pref.view_align_preset_list) - 1
+        item.name = 'node_groups'
+        item.path = thumb_dir
 
 def register():
     img_preview = previews.new()
     img_preview.img_dir = ""
     img_preview.img = ()
-    __tempPreview__["sd_thumbnails"] = img_preview
+    __tempPreview__["adjt_thumbnails"] = img_preview
 
-    bind_image_props()
-
-    bpy.utils.register_class(SoundListItemProperty)
     bpy.utils.register_class(ImageDirListItemProperty)
-    bpy.utils.register_class(UrlListItemProperty)
     bpy.utils.register_class(T3DN_OT_bip_showcase_install_pillow)
-    bpy.utils.register_class(SD_Preference)
+    bpy.utils.register_class(ADJT_Preference)
 
+    init_thumb()
 
 def unregister():
-    bpy.utils.unregister_class(SoundListItemProperty)
     bpy.utils.unregister_class(ImageDirListItemProperty)
-    bpy.utils.unregister_class(UrlListItemProperty)
     bpy.utils.unregister_class(T3DN_OT_bip_showcase_install_pillow)
-    bpy.utils.unregister_class(SD_Preference)
+    bpy.utils.unregister_class(ADJT_Preference)
 
     clear_preview_cache()
-
-    del_bind_image_props()

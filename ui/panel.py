@@ -1,6 +1,14 @@
 import bpy
 from .utils import check_unit
 
+from .. import __folder_name__
+
+
+def get_pref():
+    """get preferences of this plugin"""
+    return bpy.context.preferences.addons.get(__folder_name__).preferences
+
+
 preset = {'四视图_横向排布', '三视图_横向排布'}
 
 
@@ -33,11 +41,17 @@ class ADJT_PT_SidePanel(SidebarSetup, bpy.types.Panel):
         box.operator('adjt.split_curve_and_flow_mesh', icon='GP_MULTIFRAME_EDITING')
 
         box = layout.box()
-        box.label(text='Align', icon='ALIGN_CENTER')
-        for p in preset:
-            box.operator('adjt.view_align', icon='MOD_ARRAY', text=p).node_group_name = p
+        box.label(text='Align', icon='MOD_ARRAY')
 
-        if context.active_object and context.active_object.name.startswith('ADJT_Render'):
+        # select the instance will not show the preset thumbnails
+        if not(context.active_object and context.active_object.name.startswith('ADJT_Render')):
+            pref = get_pref()
+            item = pref.view_align_preset_list[pref.view_align_preset_list_index]
+            if item:
+                box.template_icon_view(item, "thumbnails", scale=8, show_labels=True)
+                p = item.thumbnails[:-4]
+                box.operator('adjt.view_align', icon='IMPORT', text='Align').node_group_name = p
+        else:
             mod = None
             for m in context.active_object.modifiers:
                 if m.type == 'NODES':
@@ -51,7 +65,8 @@ class ADJT_PT_SidePanel(SidebarSetup, bpy.types.Panel):
                     row = box2.row()
                     row.label(text='Instance Settings', icon='OBJECT_DATA')
                     obj = node.inputs['Object'].default_value
-                    row.operator('adjt.set_active_object', icon='RESTRICT_SELECT_OFF',text='Select Mesh').obj_name = obj.name
+                    row.operator('adjt.set_active_object', icon='RESTRICT_SELECT_OFF',
+                                 text='Select Mesh').obj_name = obj.name
 
                     for input in node.inputs:
                         box2.prop(input, 'default_value', text=input.name)
