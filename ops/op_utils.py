@@ -4,7 +4,7 @@ from bpy.props import BoolProperty
 import bgl, blf, gpu
 from gpu_extras.batch import batch_for_shader
 
-from .utils import DrawMsgHelper,DrawHandle
+from .utils import DrawMsgHelper, DrawHandle
 from .utils import draw_pre, draw_post, draw_round_rectangle, draw_nurbs_curve
 
 
@@ -112,6 +112,9 @@ class ADJT_OT_ModalTemplate(bpy.types.Operator):
                                                               'POST_PIXEL')
         context.window_manager.modal_handler_add(self)
 
+    def pre(self, context, event):
+        pass
+
     def main(self, context):
         self._finish = True
 
@@ -135,13 +138,14 @@ class ADJT_OT_ModalTemplate(bpy.types.Operator):
                     self.ui_delay -= 0.01
                 else:
                     if self.alpha > 0:
-                        self.alpha -= 0.01  # fade
+                        self.alpha -= 0.015  # fade
                     else:
-                        return self.remove_handle(context, cancel=self._cancel)
+                        return self.remove_handle(context)
 
         return {'PASS_THROUGH'}
 
     def invoke(self, context, event):
+        self.pre(context, event)
         # modal
         self._finish = False
         self._cancel = False

@@ -36,7 +36,7 @@ class ADJT_OT_ViewAlign(ADJT_OT_ModalTemplate):
     def modal(self, context, event):
         context.area.tag_redraw()
 
-        if event.type == "MIDDLEMOUSE" or (
+        if event.type in {"MIDDLEMOUSE",'WHEELUPMOUSE','WHEELDOWNMOUSE'} or (
                 (event.alt or event.shift or event.ctrl) and event.type == "MIDDLEMOUSE"):
             return {'PASS_THROUGH'}
 

@@ -13,17 +13,17 @@ class ADJT_OT_OffsetCurvByLength(ADJT_OT_ModalTemplate):
     bl_label = 'Offset Curve by Length'
     bl_options = {"REGISTER", "UNDO"}
 
-    direction = 'X'
-    offset_len = 0.5
-
-    curve = None
-    curve_len = 0
-    origin_loc = [0, 0, 0]
-    cur_ori_loc = [0, 0, 0]
+    offset_list = [
+        Vector((0.5, 0, 0)),
+        Vector((0, 0.5, 0)),
+        Vector((-0.5, 0, 0)),
+        Vector((0, -0.5, 0)),
+    ]
+    offset_list_index = 0
 
     tips = [
         '',
-        'X/Y to toggle direction',
+        'Wheel UP/DOWN to change origin direction',
         'Left Confirm, Right to cancel'
     ]
 
@@ -43,10 +43,8 @@ class ADJT_OT_OffsetCurvByLength(ADJT_OT_ModalTemplate):
             # fade drawing
             if self._cancel or self._finish:
                 self.finish(context)
-
                 if self.ui_delay > 0:
                     self.ui_delay -= 0.01
-                    self.finish(context)
                 else:
                     if self.alpha > 0:
                         self.alpha -= 0.02  # fade
@@ -59,40 +57,53 @@ class ADJT_OT_OffsetCurvByLength(ADJT_OT_ModalTemplate):
         if event.type in {'RIGHTMOUSE', 'ESC'}:
             self._cancel = True
 
-        if event.type == "X" and event.value == 'PRESS':
-            self.direction = 'X'
-            self.offset_len = '-0.5' if self.offset_len != '-0.5' else '0.5'
-            self.offset_curve(context)
+        elif event.type == "WHEELUPMOUSE" and not (self._cancel or self._finish):
+            self.offset_list_index -= 1
+            if self.offset_list_index < 0: self.offset_list_index = 3
+            context.scene.cursor.location = self.offset_list[self.offset_list_index]
+            bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
+            context.scene.cursor.location = self.cur_ori_loc
+            self.draw_title()
+
+        elif event.type == "WHEELDOWNMOUSE" and not (self._cancel or self._finish):
+            self.offset_list_index += 1
+            if self.offset_list_index > 3: self.offset_list_index = 0
+            context.scene.cursor.location = self.offset_list[self.offset_list_index]
+            bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
+            context.scene.cursor.location = self.cur_ori_loc
+            self.draw_title()
+
         return {"RUNNING_MODAL"}
 
+    def draw_title(self):
+        ori_loc = list(self.offset_list[self.offset_list_index])
+        f = [round(d, 3) for d in ori_loc]
+        self.title = 'Origin: '+ str(f)[1:-1]
+
     def finish(self, context):
-        if self.origin_loc != self.curve.location:
-            context.scene.cursor.location = Vector(tuple(self.origin_loc))
+        if self._cancel:
+            context.scene.cursor.location = self.origin_loc
             bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
             context.scene.cursor.location = self.cur_ori_loc
 
-    def offset_curve(self, context):
+    def pre(self, context, event):
+        self.curve = context.active_object
+        self.curve_len = est_curve_length(self.curve)
+        self.origin_loc = tuple(self.curve.location)  # use tuple to prevent overwrite
+
         x = self.origin_loc[0]
         y = self.origin_loc[1]
-        z = self.origin_loc[2]
 
-        if self.direction == 'X':
-            x += self.curve_len
-        elif self.direction == 'Y':
-            y += self.curve_len
+        self.offset_list = [
+            Vector((0.5 * self.curve_len + x, y, 0)),
+            Vector((x, 0.5 * self.curve_len + y, 0)),
+            Vector((-0.5 * self.curve_len + x, y, 0)),
+            Vector((x, -0.5 * self.curve_len + y, 0)),
+        ]
 
-        context.scene.cursor.location = Vector((x, y, z))
-
-        bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
-        context.scene.cursor.location = self.cur_ori_loc
+        self.cur_ori_loc = tuple(context.scene.cursor.location)  # use tuple to prevent overwrite
 
     def main(self, context):
-        self.curve = context.active_object
-        self.curve_len = est_curve_length(self.curve) * float(self.offset_len)
-        self.origin_loc = self.curve.location
-
-        self.cur_ori_loc = context.scene.cursor.location
-
         return {"RUNNING_MODAL"}
 
 
