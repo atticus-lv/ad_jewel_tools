@@ -98,7 +98,7 @@ class ADJT_OT_ModalTemplate(bpy.types.Operator):
         context.window_manager.event_timer_remove(self._timer)
         bpy.types.SpaceView3D.draw_handler_remove(self._handle, 'WINDOW')
 
-        return {'FINISHED'} if self._cancel else {'CANCELLED'}
+        return {'CANCELLED'} if self._cancel else {'FINISHED'}
 
     def append_handle(self, context):
         # icon
