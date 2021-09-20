@@ -1,6 +1,16 @@
 import bpy
 from .utils import copy_obj, draw_nurbs_curve
 from .op_utils import ADJT_OT_ModalTemplate
+from .utils import draw_pre, draw_post, draw_round_rectangle, draw_nurbs_curve
+
+
+def draw_move_object_callback_px(self, context):
+    draw_pre(width=2)
+
+    for curve in self.draw_curves:
+        draw_nurbs_curve(curve, color=(1, 0, 0, self.alpha))
+
+    draw_post()
 
 
 class ADJT_OT_ExtractEdgeAsCurve(ADJT_OT_ModalTemplate):
@@ -18,6 +28,16 @@ class ADJT_OT_ExtractEdgeAsCurve(ADJT_OT_ModalTemplate):
     def poll(self, context):
         if context.active_object is not None and len(context.selected_objects) == 1:
             return context.active_object.mode == 'EDIT' and context.active_object.type == 'MESH'
+
+    def append_handle(self, context):
+        args = (self, context)
+        self._handle_curve = bpy.types.SpaceView3D.draw_handler_add(draw_move_object_callback_px, args, 'WINDOW',
+                                                                    'POST_VIEW')
+        super().append_handle(context)
+
+    def remove_handle(self, context):
+        bpy.types.SpaceView3D.draw_handler_remove(self._handle_curve, 'WINDOW')
+        return super().remove_handle(context)
 
     def main(self, context):
         # update bmesh
@@ -55,6 +75,7 @@ class ADJT_OT_ExtractEdgeAsCurve(ADJT_OT_ModalTemplate):
         curve = context.active_object
         curve.data.splines[0].use_endpoint_u = True
 
+        self.draw_curves.clear()
         self.draw_curves.append(curve)
 
         self._finish = True
