@@ -47,7 +47,7 @@ class ADJT_PT_SidePanel(SidebarSetup, bpy.types.Panel):
                 nt = mod.node_group
                 node = nt.nodes.get('Group')
                 box2 = box.box()
-                if node is not None and 'Separate Factor' in node.inputs:
+                if node is not None and 'Separate' in node.inputs:
                     row = box2.row()
                     row.label(text='Instance Settings', icon='OBJECT_DATA')
                     obj = node.inputs['Object'].default_value

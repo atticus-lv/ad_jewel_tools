@@ -1,5 +1,5 @@
 import bpy
-import blf, bgl, gpu
+import bmesh
 
 
 def copy_obj(obj, link_data=False):
@@ -141,7 +141,160 @@ class ObjectHelper():
             obj.matrix_world.translation[2]
 
 
-class DrawHelper():
+# Draw Tools
+import blf
+import gpu
+import bgl
+
+from math import cos, sin, pi, hypot
+
+from gpu_extras.batch import batch_for_shader
+from mathutils import Vector
+
+
+def dpifac():
+    prefs = bpy.context.preferences.system
+    return prefs.dpi * prefs.pixel_size / 72
+
+
+def draw_pre():
+    bgl.glLineWidth(1)
+    bgl.glEnable(bgl.GL_BLEND)
+    bgl.glEnable(bgl.GL_LINE_SMOOTH)
+    bgl.glHint(bgl.GL_LINE_SMOOTH_HINT, bgl.GL_NICEST)
+
+
+def draw_post():
+    # restore
+    bgl.glDisable(bgl.GL_BLEND)
+    bgl.glDisable(bgl.GL_LINE_SMOOTH)
+
+
+def draw_tri_fan(shader, vertices, colour):
+    batch = batch_for_shader(shader, 'TRI_FAN', {"pos": vertices})
+    shader.bind()
+    shader.uniform_float("color", colour)
+    batch.draw(shader)
+
+
+def draw_line(x1, y1, x2, y2, size, colour=(1.0, 1.0, 1.0, 0.7)):
+    shader = gpu.shader.from_builtin('2D_SMOOTH_COLOR')
+
+    vertices = ((x1, y1), (x2, y2))
+    vertex_colors = ((colour[0] + (1.0 - colour[0]) / 4,
+                      colour[1] + (1.0 - colour[1]) / 4,
+                      colour[2] + (1.0 - colour[2]) / 4,
+                      colour[3] + (1.0 - colour[3]) / 4),
+                     colour)
+
+    batch = batch_for_shader(shader, 'LINE_STRIP', {"pos": vertices, "color": vertex_colors})
+    bgl.glLineWidth(size * dpifac())
+
+    shader.bind()
+    batch.draw(shader)
+
+
+def draw_circle_2d_filled(shader, mx, my, radius, colour=(1.0, 1.0, 1.0, 0.7)):
+    radius = radius * dpifac()
+    sides = 12
+    vertices = [(radius * cos(i * 2 * pi / sides) + mx,
+                 radius * sin(i * 2 * pi / sides) + my)
+                for i in range(sides + 1)]
+
+    batch = batch_for_shader(shader, 'TRI_FAN', {"pos": vertices})
+    shader.bind()
+    shader.uniform_float("color", colour)
+    batch.draw(shader)
+
+
+def draw_round_rectangle(shader, points, radius=8, colour=(1.0, 1.0, 1.0, 0.7)):
+    """points index top_right  top_left bottom_left bottom_right """
+
+    sides = 16
+    radius = 16
+
+    # fill
+    draw_tri_fan(shader, points, colour)
+
+    top_left = points[1]
+    top_right = points[0]
+    bottom_left = points[2]
+    bottom_right = points[3]
+
+    # Top edge
+    top_left_top = (top_left[0], top_left[1] + radius)
+    top_right_top = (top_right[0], top_right[1] + radius)
+    vertices = [top_right_top, top_left_top, top_left, top_right]
+    draw_tri_fan(shader, vertices, colour)
+
+    # Left edge
+    top_left_left = (top_left[0] - radius, top_left[1])
+    bottom_left_left = (bottom_left[0] - radius, bottom_left[1])
+    vertices = [top_left, top_left_left, bottom_left_left, bottom_left]
+    draw_tri_fan(shader, vertices, colour)
+
+    # Bottom edge
+    bottom_left_bottom = (bottom_left[0], bottom_left[1] - radius)
+    bottom_right_bottom = (bottom_right[0], bottom_right[1] - radius)
+    vertices = [bottom_right, bottom_left, bottom_left_bottom, bottom_right_bottom]
+    draw_tri_fan(shader, vertices, colour)
+
+    # right edge
+    top_right_right = (top_right[0] + radius, top_right[1])
+    bottom_right_right = (bottom_right[0] + radius, bottom_right[1])
+    vertices = [top_right_right, top_right, bottom_right, bottom_right_right]
+    draw_tri_fan(shader, vertices, colour)
+
+    # Top right corner
+    vertices = [top_right]
+    mx = top_right[0]
+    my = top_right[1]
+    for i in range(sides + 1):
+        if 0 <= i <= 4:
+            cosine = radius * cos(i * 2 * pi / sides) + mx
+            sine = radius * sin(i * 2 * pi / sides) + my
+            vertices.append((cosine, sine))
+
+    draw_tri_fan(shader, vertices, colour)
+
+    # Top left corner
+    vertices = [top_left]
+    mx = top_left[0]
+    my = top_left[1]
+    for i in range(sides + 1):
+        if 4 <= i <= 8:
+            cosine = radius * cos(i * 2 * pi / sides) + mx
+            sine = radius * sin(i * 2 * pi / sides) + my
+            vertices.append((cosine, sine))
+
+    draw_tri_fan(shader, vertices, colour)
+
+    # Bottom left corner
+    vertices = [bottom_left]
+    mx = bottom_left[0]
+    my = bottom_left[1]
+    for i in range(sides + 1):
+        if 8 <= i <= 12:
+            cosine = radius * cos(i * 2 * pi / sides) + mx
+            sine = radius * sin(i * 2 * pi / sides) + my
+            vertices.append((cosine, sine))
+
+    draw_tri_fan(shader, vertices, colour)
+
+    # Bottom right corner
+    vertices = [bottom_right]
+    mx = bottom_right[0]
+    my = bottom_right[1]
+    for i in range(sides + 1):
+        if 12 <= i <= 16:
+            cosine = radius * cos(i * 2 * pi / sides) + mx
+            sine = radius * sin(i * 2 * pi / sides) + my
+            vertices.append((cosine, sine))
+
+    draw_tri_fan(shader, vertices, colour)
+
+
+class DrawMsgHelper():
     def __init__(self, font_id, color3, alpha):
         self.font_id = font_id
         self.color = color3
@@ -154,8 +307,11 @@ class DrawHelper():
         self.alpha = alpha
         blf.color = (self.font_id, self.color[0], self.color[1], self.color[2], self.alpha)
 
-    def get_text_length(self, text, height=False):
-        return blf.dimensions(self.font_id, text)[0] if not height else blf.dimensions(self.font_id, text)[1]
+    def get_text_length(self, text):
+        return blf.dimensions(self.font_id, text)[0]
+
+    def get_text_height(self,text):
+        return blf.dimensions(self.font_id, text)[1]
 
     def draw_title(self, size=50, x=0, y=0, text="test title", align_center_x=True):
         # if align_center_x:

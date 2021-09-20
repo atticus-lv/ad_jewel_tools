@@ -14,7 +14,7 @@ class ADJT_OT_ViewAlign(ADJT_OT_ModalTemplate):
     bl_options = {"REGISTER", "UNDO"}
 
     object = None
-    node_group_name: StringProperty(name='Node Group Name', default='四视图_横向排布')
+    node_group_name: StringProperty(name='Node Group Name', default='Horizontal 4 View')
 
     @classmethod
     def poll(self, context):
