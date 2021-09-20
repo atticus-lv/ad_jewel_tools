@@ -14,7 +14,8 @@ class ADJT_OT_CamFrame(ADJT_OT_ModalTemplate):
     bl_options = {"REGISTER", "UNDO"}
 
     tips = [
-        ''
+        '',
+        'Ready for Render'
     ]
 
     safe_pixel: IntProperty(name='Safe area pixel', description="Empty area for the selection and camera frame",
@@ -23,7 +24,7 @@ class ADJT_OT_CamFrame(ADJT_OT_ModalTemplate):
 
     @classmethod
     def poll(self, context):
-        return context.active_object and context.active_object.mode == 'OBJECT'
+        return context.active_object and context.active_object.mode == 'OBJECT' and context.active_object.type == 'MESH'
 
     def main(self, context):
         if context.scene.render.resolution_x < context.scene.render.resolution_y:
@@ -46,14 +47,15 @@ class ADJT_OT_CamFrame(ADJT_OT_ModalTemplate):
             mod.node_group = self.get_preset(node_group_name='adjt_bound')
 
         # add cam and correct viewport
-        bpy.ops.object.camera_add()
-        cam = context.object
+        camera_data = bpy.data.cameras.new(name='Camera')
+        cam = bpy.data.objects.new('Camera', camera_data)
+        context.scene.collection.objects.link(cam)
         context.scene.camera = cam
 
         cam.data.type = 'ORTHO'
         cam.data.show_name = True
 
-        context.area.spaces[0].region_3d.view_perspective = 'ORTHO'
+        context.area.spaces[0].region_3d.view_perspective = 'PERSP'
         override = {'area': context.area,
                     'region': [region for region in context.area.regions if region.type == "WINDOW"][0]}
         bpy.ops.view3d.camera_to_view(override)
@@ -73,7 +75,8 @@ class ADJT_OT_CamFrame(ADJT_OT_ModalTemplate):
         # remove modifiers
         if mod:
             ori_select.modifiers.remove(mod)
-            self.use_bound = True # prevent crash
+            self.use_bound = False # prevent crash
+
         self._finish = True
 
     def get_preset(sellf, node_group_name):
