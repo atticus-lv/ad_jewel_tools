@@ -4,6 +4,7 @@ from bpy.props import BoolProperty
 from .utils import copy_obj
 from .op_utils import ADJT_OT_ModalTemplate
 
+
 class ADJT_OT_SplitCurveAndFlowMesh(ADJT_OT_ModalTemplate):
     """First select mesh then add select curve(shift to use instance)
 先选网格物体再加选曲线(shift 使用实例)"""
@@ -16,6 +17,10 @@ class ADJT_OT_SplitCurveAndFlowMesh(ADJT_OT_ModalTemplate):
     @classmethod
     def poll(self, context):
         return context.active_object and context.active_object.type == 'CURVE' and len(context.selected_objects) == 2
+
+    def pre(self, context, event):
+        if event.shift:
+            self.link_data = True
 
     def main(self, context):
         ori_curve = context.active_object
