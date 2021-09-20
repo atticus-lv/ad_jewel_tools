@@ -157,7 +157,7 @@ def dpifac():
     return prefs.dpi * prefs.pixel_size / 72
 
 
-def draw_pre(width = 1):
+def draw_pre(width=1):
     bgl.glLineWidth(width)
     bgl.glEnable(bgl.GL_BLEND)
     bgl.glEnable(bgl.GL_LINE_SMOOTH)
@@ -204,6 +204,9 @@ def draw_line_3d(start_pos, end_pos, color=(1.0, 1.0, 1.0, 0.7)):
 
 def draw_nurbs_curve(obj, color=(1.0, 1.0, 1.0, 0.7)):
     for spline in obj.data.splines:
+        if spline.use_cyclic_u:
+            draw_line_3d(spline.points[0].co[:-1], spline.points[-1].co[:-1], color)
+
         for i, point in enumerate(spline.points):
             if i == 0: continue
             draw_line_3d(point.co[:-1], spline.points[i - 1].co[:-1], color)
@@ -354,20 +357,22 @@ class DrawMsgHelper():
         height = bpy.context.region.height
         return width * muti_x, height * muti_y
 
+
 class DrawHandle:
-    def __init__(self, context,operator,View3D=False):
+    def __init__(self, context, operator, View3D=False):
         self.operator = operator
         if View3D:
             self.handle = bpy.types.SpaceView3D.draw_handler_add(
-                   self.draw_callback,(self.operator,context),
-                   'WINDOW', 'POST_VIEW')
+                self.draw_callback, (self.operator, context),
+                'WINDOW', 'POST_VIEW')
         else:
             self.handle = bpy.types.SpaceView3D.draw_handler_add(
-                       self.draw_callback,(self.operator,context),
-                       'WINDOW', 'POST_PIXEL')
+                self.draw_callback, (self.operator, context),
+                'WINDOW', 'POST_PIXEL')
+
     def draw_callback(self, context):
         # custom method overwrite
         pass
 
     def remove_handle(self):
-         bpy.types.SpaceView3D.draw_handler_remove(self.handle, 'WINDOW')
+        bpy.types.SpaceView3D.draw_handler_remove(self.handle, 'WINDOW')
