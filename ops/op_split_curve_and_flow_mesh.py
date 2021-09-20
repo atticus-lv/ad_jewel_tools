@@ -4,6 +4,17 @@ from bpy.props import BoolProperty
 from .utils import copy_obj
 from .op_utils import ADJT_OT_ModalTemplate
 
+from .utils import draw_pre, draw_post, draw_nurbs_curve
+
+
+def draw_move_object_callback_px(self, context):
+    draw_pre(width=2)
+
+    for curve in self.draw_curves:
+        draw_nurbs_curve(curve, color=(1, 0, 0, self.alpha))
+
+    draw_post()
+
 
 class ADJT_OT_SplitCurveAndFlowMesh(ADJT_OT_ModalTemplate):
     """First select mesh then add select curve(shift to use instance)
@@ -18,9 +29,23 @@ class ADJT_OT_SplitCurveAndFlowMesh(ADJT_OT_ModalTemplate):
     def poll(self, context):
         return context.active_object and context.active_object.type == 'CURVE' and len(context.selected_objects) == 2
 
+    def append_handle(self, context):
+        args = (self, context)
+        self._handle_curve = bpy.types.SpaceView3D.draw_handler_add(draw_move_object_callback_px, args, 'WINDOW',
+                                                                    'POST_VIEW')
+        super().append_handle(context)
+
+    def remove_handle(self, context):
+        bpy.types.SpaceView3D.draw_handler_remove(self._handle_curve, 'WINDOW')
+        return super().remove_handle(context)
+
     def pre(self, context, event):
         if event.shift:
             self.link_data = True
+        self.tips = [
+            '',
+            f'Use instance: {self.link_data}'
+        ]
 
     def main(self, context):
         ori_curve = context.active_object
@@ -47,6 +72,10 @@ class ADJT_OT_SplitCurveAndFlowMesh(ADJT_OT_ModalTemplate):
 
         # copy and replace
         splits_curves = [obj for obj in context.selected_objects if obj != ori_curve]
+
+        self.draw_curves = splits_curves
+        self.draw_curves.append(ori_curve)
+
         for new_curve in splits_curves:
             new_mesh = copy_obj(ori_mesh, link_data=self.link_data)
             self.replace_modifier_curve(new_mesh, ori_curve, new_curve)
