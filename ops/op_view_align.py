@@ -42,6 +42,11 @@ class ADJT_OT_ViewAlign(ADJT_OT_ModalTemplate):
         context.collection.objects.unlink(ob)
         dep_coll_dir.objects.link(ob)
 
+        # tips
+        self.tips.clear()
+        self.tips.append(f'')
+        self.tips.append(f'Apply "{self.node_group_name}" preset')
+
         # set obj
         nt = mod.node_group
         node = nt.nodes.get('Group')

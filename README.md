@@ -2,7 +2,7 @@
 
 > AD的珠宝小工具，开发中~
 
-### 0.3 Feature
+### 0.4 Feature
 
 <img src="res/img.png"  />
 
@@ -22,7 +22,7 @@
 
 #### Flow
 
-+ Flow grid to curve
++ Flow grid to curve (support modal)
 
   + Select the object and curve (the curve is the active item), and click to flow the grid to the curve (array is available)
 
