@@ -69,7 +69,7 @@ class ADJT_OT_CamFrame(ADJT_OT_ModalTemplate):
 
         bpy.ops.view3d.camera_to_view_selected()  # center the objects
         # if cam on x axis then measure the x axis dimension
-        size = ori_select.dimensions[1] if cam.location[1] > cam.location[0] else ori_select.dimensions[0]
+        size = max(ori_select.dimensions)
         cam.data.ortho_scale = (1 + safe_scale) * size
 
         # remove modifiers

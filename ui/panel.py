@@ -27,7 +27,8 @@ class ADJT_PT_SidePanel(SidebarSetup, bpy.types.Panel):
         set = check_unit(context)
         if set:
             box = layout.box()
-            box.label(text='场景不是最佳建模单位', icon='ERROR')
+            box.alert = True
+            box.label(text='Scene scale is not optimal', icon='ERROR')
             box.operator('adjt.set_units', icon='DRIVER_DISTANCE')
 
         box = layout.box()
@@ -44,7 +45,7 @@ class ADJT_PT_SidePanel(SidebarSetup, bpy.types.Panel):
         box.label(text='Align', icon='MOD_ARRAY')
 
         # select the instance will not show the preset thumbnails
-        if not(context.active_object and context.active_object.name.startswith('ADJT_Render')):
+        if not (context.active_object and context.active_object.name.startswith('ADJT_Render')):
             pref = get_pref()
             item = pref.view_align_preset_list[pref.view_align_preset_list_index]
             if item:
@@ -62,11 +63,10 @@ class ADJT_PT_SidePanel(SidebarSetup, bpy.types.Panel):
                 node = nt.nodes.get('Group')
                 box2 = box.box()
                 if node is not None and 'Separate' in node.inputs:
-                    row = box2.row()
-                    row.label(text='Instance Settings', icon='OBJECT_DATA')
+                    box2.label(text='Instance Settings', icon='OBJECT_DATA')
                     obj = node.inputs['Object'].default_value
-                    row.operator('adjt.set_active_object', icon='RESTRICT_SELECT_OFF',
-                                 text='Select Mesh').obj_name = obj.name
+                    box2.operator('adjt.set_active_object', icon='RESTRICT_SELECT_OFF',
+                                  text='Select Source').obj_name = obj.name
 
                     for input in node.inputs:
                         box2.prop(input, 'default_value', text=input.name)

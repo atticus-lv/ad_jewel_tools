@@ -13,7 +13,7 @@ class ImagePreviewCollection:
     '''Dictionary-like class of previews.'''
 
     def __init__(self, max_size: tuple = (128, 128), lazy_load: bool = True):
-        '''Create collection and start internal timer.'''
+        '''Create collection and start_pos internal timer.'''
         if settings.WARNINGS:
             if not support_pillow():
                 print('Pillow is not installed, therefore:')

@@ -236,7 +236,7 @@ class ADJT_OT_FlowMeshAlongCurve(bpy.types.Operator):
             self.ori_mesh.modifiers.remove(self.mod_array)
             self.mod_array = None
 
-        if self._cancel:
+        if self._cancel and not self._finish:
             if self.mod_array:
                 self.ori_mesh.modifiers.remove(self.mod_array)
                 self.mod_array = None
