@@ -157,8 +157,8 @@ def dpifac():
     return prefs.dpi * prefs.pixel_size / 72
 
 
-def draw_pre():
-    bgl.glLineWidth(1)
+def draw_pre(width = 1):
+    bgl.glLineWidth(width)
     bgl.glEnable(bgl.GL_BLEND)
     bgl.glEnable(bgl.GL_LINE_SMOOTH)
     bgl.glHint(bgl.GL_LINE_SMOOTH_HINT, bgl.GL_NICEST)
