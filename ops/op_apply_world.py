@@ -143,6 +143,18 @@ def init_world_nodes(context):
 import bpy
 from .op_utils import ADJT_OT_ModalTemplate
 
+class ADJT_OT_InitShading(ADJT_OT_ModalTemplate):
+    bl_label = "Init Shading"
+    bl_idname = "adjt.init_shading"
+    bl_options = {"REGISTER", "UNDO", "INTERNAL"}
+
+    def main(self, context):
+        view = context.space_data
+        shading = view.shading if view.type == 'VIEW_3D' else context.scene.display.shading
+        shading.use_scene_world_render = False
+        shading.type = 'RENDERED'
+        self._finish = True
+
 
 class ADJT_OT_ApplyWorld(ADJT_OT_ModalTemplate):
     '''Apply View Setting to World
@@ -195,6 +207,7 @@ def update_world_mode(self, context):
 
 def register():
     bpy.utils.register_class(ADJT_OT_ApplyWorld)
+    bpy.utils.register_class(ADJT_OT_InitShading)
     bpy.types.Scene.adjt_world_mode = EnumProperty(name='World Mode', items=[
         ('PREVIEW', 'Preview', ''),
         ('RENDER', 'Render', '')],
@@ -203,3 +216,4 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(ADJT_OT_ApplyWorld)
+    bpy.utils.unregister_class(ADJT_OT_InitShading)
