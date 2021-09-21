@@ -141,7 +141,7 @@ class ADJT_Preference(bpy.types.AddonPreferences):
 
     def draw(self, context):
         layout = self.layout
-        layout.operator('t3dn.bip_showcase_install_pillow', text='安装Pillow（加快预览加载）')
+        # layout.operator('t3dn.bip_showcase_install_pillow', text='安装Pillow（加快预览加载）')
 
 def init_thumb():
     pref = get_pref()

@@ -107,7 +107,7 @@ class ADJT_PT_SidePanel(SidebarSetup, bpy.types.Panel):
                 col.template_icon_view(shading, "studio_light", scale_popup=3, scale=5)
                 col.prop(shading, "studiolight_rotate_z", text="Rotation")
                 col.prop(shading, "studiolight_intensity")
-                col.operator("adjt.apply_world")
+                col.operator("adjt.apply_world", icon='IMPORT')
             else:
                 if not context.scene.world:
                     col.label(text='No context world!')
