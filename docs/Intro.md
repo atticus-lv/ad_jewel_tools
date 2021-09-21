@@ -3,14 +3,44 @@ A tool set created by atticus for jewel design
 ## What can RSN do
 
 > [!NOTE]
-> **The core of RSN is to modify the data in the scene before rendering, which makes it more flexible** <br>
+> **NOTE** <br>
 
-+ Render **multiple shots** in the scene, and take the name of the camera as the name of the output image   [👉Link](Example1.md)
-+ In each shot, objects' **placement, material and data** can be different   [👉Link](Example2.md)
-+ Add **animation** to one of the shots, and render with another rendering engine (such as workbench)
-+ If you are not sure how long a shot will be rendered, you can send a report email to the specified email after
-  rendering
-+ Just press the button, you can **queue render** all the above needed shots without waiting in front of the computer
++ Set the scene unit to mm
+
++ Edge to curve
+
+    + Select the edge in edit mode and click to convert it into a separate curve object
+
++ Offset curve by length (support modal)
+
+    + Calculate the curve length and offset the curve origin by the curve length (optional direction)
+
+
++ Flow grid to curve (support modal)
+
+    + Select the object and curve (the curve is the active item), and click to flow the grid to the curve (array is
+      available)
+
++ Separate curves and flow mesh
+
+    + Select the object and curve (the curve is the active item), separate the curve to the new curve object according
+      to the loose block, and copy and flow the current object to each new curve
+    
+
++ View placement (support modal)
+
+    + Using geometry nodes to generate specific three views, you can control the perspective rotation (to be changed to
+      the preset mode)
+    
+
++ Generate framed camera (support modal)
+
+    + Generate a frame camera for the selected object, and customize the safe pixel area
+    
+
++ Apply World
+
+    + apply view shading world
 
 <!-- panels:start -->
 
