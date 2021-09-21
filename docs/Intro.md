@@ -1,18 +1,17 @@
-A tool set created by atticus for jewel design
+> A tool set created by atticus for jewel design
 
 ## Features
 
 
-
-
 > [!NOTE]
-> **NOTE** <br>
+> **There are main part of ADJT** <br>
+
 
 + Unit set
 
 + Curve operate
 
-+ Flow mesh
++ Flow mesh （on curve）
 
 + Align 
 
@@ -21,9 +20,6 @@ A tool set created by atticus for jewel design
 + Lighting (HDRI)
 
 
-
-
-    
 <!-- panels:start -->
 
 <!-- div:title-panel -->
@@ -31,11 +27,12 @@ A tool set created by atticus for jewel design
 ## Download
 
 <!-- div:left-panel -->
+
 **Stable** *Ready for work*
 
 **Develop** *New features*
 
-
+https://github.com/atticus-lv/ad_jewel_tools/archive/refs/heads/master.zip
 
 <!-- div:right-panel -->
 
@@ -43,7 +40,6 @@ A tool set created by atticus for jewel design
 > If you are familiar with git<br>`cd C:\Users\{YourUserName}\AppData\Roaming\Blender Foundation\Blender\2.93\scripts\addons`(Windows for example)<br>`git clone https://github.com/atticus-lv/ad_jewel_tools.git`
 
 <!-- panels:end -->
-
 
 
 
