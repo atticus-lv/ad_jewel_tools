@@ -84,42 +84,10 @@ def update_path_name2(self, context):
     self.name = full_dir_name.replace('\\', '/').split('/')[-1]
 
 
-def update_image(self, context):
-    # update or not
-    if not context.scene.sd_link_image_to_data_path: return None
-
-    # find node
-    if context.scene.sd_link_image_type == 'WORLD':
-        if context.scene.sd_link_world is None: return None
-        nt = context.scene.sd_link_world.node_tree
-    else:
-        if context.scene.sd_link_material is None or context.scene.sd_link_material.is_grease_pencil: return None
-        nt = context.scene.sd_link_material.node_tree
-
-    node = nt.nodes.get(context.scene.sd_link_image_node)
-    if not node: return None
-    if not hasattr(node, 'image'): return None
-
-    # get image
-    pref = get_pref()
-    item = pref.view_align_preset_list[pref.view_align_preset_list_index] if len(
-        pref.view_align_preset_list) != 0 else None
-
-    if not item: return None
-
-    name = item.thumbnails
-    dir_path = item.path
-    image = bpy.data.images.get(name)
-
-    if not image: image = bpy.data.images.load(os.path.join(dir_path, name))
-    # set image
-    node.image = image
-
-
 class ImageDirListItemProperty(PropertyGroup):
-    name: StringProperty(name='分类名字')
-    path: StringProperty(name='图片路径', description='图片文件夹路径', subtype='DIR_PATH', update=update_path_name2)
-    thumbnails: EnumProperty(name='子文件夹', items=enum_thumbnails_from_dir_items, update=update_image)
+    name: StringProperty(name='name')
+    path: StringProperty(name='dir', description='folder dir', subtype='DIR_PATH', update=update_path_name2)
+    thumbnails: EnumProperty(name='thumb', items=enum_thumbnails_from_dir_items)
 
 
 from .ui.t3dn_bip.ops import InstallPillow
@@ -143,6 +111,7 @@ class ADJT_Preference(bpy.types.AddonPreferences):
         layout = self.layout
         # layout.operator('t3dn.bip_showcase_install_pillow', text='安装Pillow（加快预览加载）')
 
+
 def init_thumb():
     pref = get_pref()
     thumb_dir = os.path.join(bpy.utils.user_resource('SCRIPTS'), 'addons', __folder_name__, 'preset',
@@ -153,6 +122,7 @@ def init_thumb():
         pref.view_align_preset_list_index = len(pref.view_align_preset_list) - 1
         item.name = 'node_groups'
         item.path = thumb_dir
+
 
 def register():
     img_preview = previews.new()
@@ -165,6 +135,7 @@ def register():
     bpy.utils.register_class(ADJT_Preference)
 
     init_thumb()
+
 
 def unregister():
     bpy.utils.unregister_class(ImageDirListItemProperty)
