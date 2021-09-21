@@ -17,25 +17,37 @@ class SidebarSetup:
     bl_category = "ADJT"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
+    bl_options = {'DRAW_BOX'}
 
 
-class ADJT_PT_SidePanel(SidebarSetup, bpy.types.Panel):
-    bl_label = 'AD Jewel Tools'
+class ADJT_PT_UnitPanel(SidebarSetup, bpy.types.Panel):
+    bl_label = ''
+
+    bl_options = {'DRAW_BOX','HEADER_LAYOUT_EXPAND'}
+
+    @classmethod
+    def poll(self,context):
+        return check_unit(context)
+
+    def draw_header(self, context):
+        layout = self.layout
+        layout.alert = True
+        layout.label(text='Scene scale is not optimal', icon='ERROR')
 
     def draw(self, context):
         layout = self.layout
+        layout.alert = True
 
-        set = check_unit(context)
-        if set:
-            box = layout.box()
-            box.alert = True
-            box.label(text='Scene scale is not optimal', icon='ERROR')
-            col = box.column()
-            col.scale_y = 1.5
-            row = col.row(align=1)
-            row.separator(factor=5)
-            row.operator('adjt.set_units', icon='DRIVER_DISTANCE')
-            row.separator(factor=5)
+        layout.scale_y = 1.25
+        row = layout.row(align=1)
+        row.operator('adjt.set_units', icon='DRIVER_DISTANCE')
+
+
+class ADJT_PT_CurvePanel(SidebarSetup, bpy.types.Panel):
+    bl_label = 'Curve and Flow'
+
+    def draw(self, context):
+        layout = self.layout
 
         box = layout.box()
         box.label(text='Curve', icon='OUTLINER_OB_CURVE')
@@ -47,6 +59,12 @@ class ADJT_PT_SidePanel(SidebarSetup, bpy.types.Panel):
         box.operator('adjt.flow_mesh_along_curve', icon='FORCE_CURVE')
         box.operator('adjt.split_curve_and_flow_mesh', icon='GP_MULTIFRAME_EDITING')
 
+
+class ADJT_PT_AlignPanel(SidebarSetup, bpy.types.Panel):
+    bl_label = 'Align'
+
+    def draw(self, context):
+        layout = self.layout
         box = layout.box()
         box.label(text='Align', icon='MOD_ARRAY')
 
@@ -77,6 +95,15 @@ class ADJT_PT_SidePanel(SidebarSetup, bpy.types.Panel):
                     for input in node.inputs:
                         box2.prop(input, 'default_value', text=input.name)
 
+
+class ADJT_PT_RenderPanel(SidebarSetup, bpy.types.Panel):
+    bl_label = 'Render'
+    bl_options = {'DRAW_BOX','DEFAULT_CLOSED'}
+
+
+    def draw(self, context):
+        layout = self.layout
+
         box = layout.box()
         box.label(text='Camera', icon='SCENE')
         box.operator('adjt.cam_frame', icon='IMAGE_PLANE')
@@ -98,7 +125,7 @@ class ADJT_PT_SidePanel(SidebarSetup, bpy.types.Panel):
         shading = view.shading if view.type == 'VIEW_3D' else context.scene.display.shading
 
         if shading.type != 'RENDERED':
-            box.label(text='Switch Shading Type to Render')
+            box.operator('adjt.init_shading')
         else:
             col = box.column()
             row = col.row(align=True)
@@ -152,8 +179,14 @@ class ADJT_PT_SidePanel(SidebarSetup, bpy.types.Panel):
 
 
 def register():
-    bpy.utils.register_class(ADJT_PT_SidePanel)
+    bpy.utils.register_class(ADJT_PT_UnitPanel)
+    bpy.utils.register_class(ADJT_PT_CurvePanel)
+    bpy.utils.register_class(ADJT_PT_AlignPanel)
+    bpy.utils.register_class(ADJT_PT_RenderPanel)
 
 
 def unregister():
-    bpy.utils.unregister_class(ADJT_PT_SidePanel)
+    bpy.utils.unregister_class(ADJT_PT_UnitPanel)
+    bpy.utils.unregister_class(ADJT_PT_CurvePanel)
+    bpy.utils.unregister_class(ADJT_PT_AlignPanel)
+    bpy.utils.unregister_class(ADJT_PT_RenderPanel)
