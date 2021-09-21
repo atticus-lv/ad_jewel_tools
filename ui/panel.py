@@ -121,6 +121,10 @@ class ADJT_PT_SidePanel(SidebarSetup, bpy.types.Panel):
 
                     col = col.box().column()
 
+                    col.separator(factor=0.5)
+
+                    col.prop(context.scene.render, 'film_transparent', toggle=1)
+
                     if node_background:
                         input = node_background.inputs[1]
                         col.prop(input, 'default_value', text=input.name)
