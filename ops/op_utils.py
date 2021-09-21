@@ -52,7 +52,7 @@ def draw_template_callback_px(self, context):
         text = self.tips[i]
         offset = 0.5 * msg.get_text_length(text)
         height = msg.get_text_height(text)
-        msg.draw_info(x=x_align - offset, y=y_align - height * (len(self.tips) - i), text=text, size=18)
+        msg.draw_info(x=x_align - offset, y=y_align - height * 1.5 * (len(self.tips) - i), text=text, size=18)
 
     draw_post()
 
@@ -107,7 +107,7 @@ class ADJT_OT_ModalTemplate(bpy.types.Operator):
                                                               'POST_PIXEL')
         context.window_manager.modal_handler_add(self)
 
-    def restore_cursor(self,context):
+    def restore_cursor(self, context):
         if self.cursor_set:
             self.cursor_set = False
             context.window.cursor_modal_restore()

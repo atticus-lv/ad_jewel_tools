@@ -80,7 +80,7 @@ def draw_move_object_callback_px(self, context):
         text = self.tips[i]
         offset = 0.5 * msg.get_text_length(text)
         height = msg.get_text_height(text)
-        msg.draw_info(x=x_align - offset, y=y_align - height * (len(self.tips) - i), text=text, size=18)
+        msg.draw_info(x=x_align - offset, y=y_align - height * 1.5 * (len(self.tips) - i), text=text, size=18)
 
     draw_post()
 
@@ -122,10 +122,9 @@ class ADJT_OT_FlowMeshAlongCurve(bpy.types.Operator):
 
     # UI
     tips = [
-        ''
-        'A to toggle Array, X/Y/Z to switch direction',
-        'Wheel UP/Down to Curve deform axis',
-        'Left to Confirm / Right to Cancel',
+        '',
+        'A toggle Array, X/Y/Z switch direction',
+        'Wheel UP/Down to Change Curve deform axis',
     ]
 
     @classmethod
@@ -174,7 +173,6 @@ class ADJT_OT_FlowMeshAlongCurve(bpy.types.Operator):
                     return self.remove_handle(context)
 
         if self._finish or self._cancel: return {'PASS_THROUGH'}
-
 
         if event.type == "MIDDLEMOUSE" or (
                 (event.alt or event.shift or event.ctrl) and event.type == "MIDDLEMOUSE"):
@@ -227,16 +225,20 @@ class ADJT_OT_FlowMeshAlongCurve(bpy.types.Operator):
             if event.type == 'X' and event.value == "PRESS":
                 self.mod_array.relative_offset_displace[1] = 0
                 self.mod_array.relative_offset_displace[2] = 0
+                self.mod_array.relative_offset_displace[0] = 1
 
             elif event.type == 'Y' and event.value == "PRESS":
                 self.mod_array.relative_offset_displace[0] = 0
                 self.mod_array.relative_offset_displace[2] = 0
+                self.mod_array.relative_offset_displace[1] = 1
 
             elif event.type == 'Z' and event.value == "PRESS":
                 self.mod_array.relative_offset_displace[0] = 0
                 self.mod_array.relative_offset_displace[1] = 0
+                self.mod_array.relative_offset_displace[2] = 1
             # set direction
             self.array_direction = event.type
+
 
         return {'RUNNING_MODAL'}
 
