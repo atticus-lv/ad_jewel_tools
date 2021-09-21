@@ -141,6 +141,34 @@ class ObjectHelper():
             obj.matrix_world.translation[2]
 
 
+# node tools
+
+class ADJT_NodeTree:
+    def __init__(self, node_tree, cache_links=None):
+        self.nt = node_tree
+        self.nodes = self.nt.nodes
+        self.cache_links = cache_links
+
+    def get_node(self, name):
+        return self.nodes.get(name)
+
+    def add_node(self, type, name):
+        node = self.nodes.new(type)
+        if name:
+            node.name = name
+        return node
+
+    def remove_node(self, name):
+        node = self.get_node(name)
+        if node: self.nodes.remove(node)
+
+    def link_node(self, output, input):
+        if input.is_linked is False:
+            return self.nt.links.new(output, input)
+        else:
+            return self.nt.links.new(output, input) if input.links[0].to_socket != output else input.links[0]
+
+
 # Draw Tools
 import blf
 import gpu

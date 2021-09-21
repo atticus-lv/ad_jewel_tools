@@ -21,17 +21,17 @@ __folder_name__ = __name__
 __dict__ = {}
 addon_dir = os.path.dirname(__file__)
 
-# get all .py file path
+# get all .py file dir
 py_paths = [os.path.join(root, f) for root, dirs, files in os.walk(addon_dir) for f in files if
             f.endswith('.py') and f != '__init__.py']
 
 for path in py_paths:
     name = os.path.basename(path)[:-3]
     correct_path = path.replace('\\', '/')
-    # split path with folder name
+    # split dir with folder name
     dir_list = [list(g) for k, g in groupby(correct_path.split('/'), lambda x: x == __folder_name__) if
                 not k]
-    # combine path and make dict like this: 'name:folder.name'
+    # combine dir and make dict like this: 'name:folder.name'
     if 'preset' not in dir_list[-1]:
         r_name_raw = __folder_name__ + '.' + '.'.join(dir_list[-1])
         __dict__[name] = r_name_raw[:-3]

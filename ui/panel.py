@@ -2,6 +2,7 @@ import bpy
 from .utils import check_unit
 
 from .. import __folder_name__
+from ..ops.utils import ADJT_NodeTree
 
 
 def get_pref():
@@ -29,7 +30,12 @@ class ADJT_PT_SidePanel(SidebarSetup, bpy.types.Panel):
             box = layout.box()
             box.alert = True
             box.label(text='Scene scale is not optimal', icon='ERROR')
-            box.operator('adjt.set_units', icon='DRIVER_DISTANCE')
+            col = box.column()
+            col.scale_y = 1.5
+            row = col.row(align=1)
+            row.separator(factor=5)
+            row.operator('adjt.set_units', icon='DRIVER_DISTANCE')
+            row.separator(factor=5)
 
         box = layout.box()
         box.label(text='Curve', icon='OUTLINER_OB_CURVE')
@@ -49,7 +55,7 @@ class ADJT_PT_SidePanel(SidebarSetup, bpy.types.Panel):
             pref = get_pref()
             item = pref.view_align_preset_list[pref.view_align_preset_list_index]
             if item:
-                box.template_icon_view(item, "thumbnails", scale=8, show_labels=True)
+                box.template_icon_view(item, "thumbnails", scale=5, scale_popup=8, show_labels=False)
                 p = item.thumbnails[:-4]
                 box.operator('adjt.view_align', icon='IMPORT', text='Align').node_group_name = p
         else:
@@ -72,7 +78,7 @@ class ADJT_PT_SidePanel(SidebarSetup, bpy.types.Panel):
                         box2.prop(input, 'default_value', text=input.name)
 
         box = layout.box()
-        box.label(text='Render', icon='SCENE')
+        box.label(text='Camera', icon='SCENE')
         box.operator('adjt.cam_frame', icon='IMAGE_PLANE')
 
         if context.active_object and context.active_object.type == 'CAMERA':
@@ -81,6 +87,64 @@ class ADJT_PT_SidePanel(SidebarSetup, bpy.types.Panel):
                 box3 = box.box()
                 box3.label(text='Camera', icon='CAMERA_DATA')
                 box3.prop(cam.data, 'ortho_scale')
+
+        #####################
+        box = layout.box()
+        row = box.row(align=True)
+        row.label(text='Lighting', icon='WORLD')
+        row.operator("preferences.studiolight_show", text="", icon="PREFERENCES")
+
+        view = context.space_data
+        shading = view.shading if view.type == 'VIEW_3D' else context.scene.display.shading
+
+        if shading.type != 'RENDERED':
+            box.label(text='Switch Shading Type to Render')
+        else:
+            col = box.column()
+            row = col.row(align=True)
+            row.prop(context.scene, 'adjt_world_mode', expand=True)
+            if context.scene.adjt_world_mode == 'PREVIEW':
+                col.template_icon_view(shading, "studio_light", scale_popup=3, scale=5)
+                col.prop(shading, "studiolight_rotate_z", text="Rotation")
+                col.prop(shading, "studiolight_intensity")
+                col.operator("adjt.apply_world")
+            else:
+                if not context.scene.world:
+                    col.label(text='No context world!')
+                else:
+                    world_nt = ADJT_NodeTree(context.scene.world.node_tree)
+                    node_background = world_nt.get_node("SSM_BG")
+                    node_hsv = world_nt.get_node("SSM_HSV")
+                    node_rotate_x = world_nt.get_node("SSM_Rv_x")
+                    node_rotate_y = world_nt.get_node("SSM_Rv_y")
+                    node_rotate_z = world_nt.get_node("SSM_Rv")
+
+                    col = col.box().column()
+
+                    if node_background:
+                        input = node_background.inputs[1]
+                        col.prop(input, 'default_value', text=input.name)
+
+                    col.separator(factor=0.5)
+
+                    if node_rotate_x:
+                        input = node_rotate_x.outputs[0]
+                        col.prop(input, 'default_value', text='X')
+
+                    if node_rotate_y:
+                        input = node_rotate_y.outputs[0]
+                        col.prop(input, 'default_value', text='Y')
+
+                    if node_rotate_z:
+                        input = node_rotate_z.outputs[0]
+                        col.prop(input, 'default_value', text='Z')
+
+                    col.separator(factor=0.5)
+
+                    if node_hsv:
+                        for input in node_hsv.inputs:
+                            if input.is_linked: continue
+                            col.prop(input, 'default_value', text=input.name)
 
 
 def register():
