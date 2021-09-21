@@ -4,6 +4,8 @@ import bpy
 from bpy.props import EnumProperty, BoolProperty, StringProperty, FloatProperty, FloatVectorProperty
 from .utils import ADJT_NodeTree
 import os
+import math
+
 
 def get_hdr_list() -> tuple[list[str], list[str], str, str]:
     # build-in
@@ -160,7 +162,7 @@ class ADJT_OT_ApplyWorld(ADJT_OT_ModalTemplate):
         bl_img_list, user_img_list, bl_dir, user_dir = get_hdr_list()
         node_hdr_image, node_background, node_rotate_z = init_world_nodes(context)
 
-        node_rotate_z.outputs[0].default_value = shading.studiolight_rotate_z
+        node_rotate_z.outputs[0].default_value = math.degrees(shading.studiolight_rotate_z)
         node_background.inputs[1].default_value = shading.studiolight_intensity
 
         if cur_hdr in bl_img_list:
