@@ -11,7 +11,7 @@ class ADJT_OT_CamFrame(ADJT_OT_ModalTemplate):
 选择你想要添加的框选相机的物体'''
     bl_label = "Frame Camera"
     bl_idname = "adjt.cam_frame"
-    bl_options = {'REGISTER', 'GRAB_CURSOR', 'BLOCKING', 'UNDO'}
+    bl_options = {'REGISTER', 'UNDO'}
 
     tips = [
         '',

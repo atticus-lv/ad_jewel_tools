@@ -11,7 +11,7 @@ class ADJT_OT_ViewAlign(ADJT_OT_ModalTemplate):
 选择并复制当前物体为三视图'''
     bl_label = "View Align"
     bl_idname = "adjt.view_align"
-    bl_options = {'REGISTER', 'GRAB_CURSOR', 'BLOCKING', 'UNDO'}
+    bl_options = {'REGISTER', 'UNDO'}
 
     object = None
     display_ob = None
