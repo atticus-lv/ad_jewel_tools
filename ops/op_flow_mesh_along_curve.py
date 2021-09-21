@@ -173,6 +173,9 @@ class ADJT_OT_FlowMeshAlongCurve(bpy.types.Operator):
                 else:
                     return self.remove_handle(context)
 
+        if self._finish or self._cancel: return {'PASS_THROUGH'}
+
+
         if event.type == "MIDDLEMOUSE" or (
                 (event.alt or event.shift or event.ctrl) and event.type == "MIDDLEMOUSE"):
             return {'PASS_THROUGH'}

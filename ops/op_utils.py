@@ -16,7 +16,6 @@ def draw_template_callback_px(self, context):
     x_align, y_align = msg.get_region_size(0.5, 0.03)  # middle start_pos point
     y_align = y_align + 150  # top start_pos point
 
-
     text = self.bl_label if self.title == '' else self.title
     title_width = msg.get_text_length(text)
     title_height = msg.get_text_height(text)
@@ -46,14 +45,14 @@ def draw_template_callback_px(self, context):
 
     # draw text
     msg.draw_title(x=x_align - title_width * 1.15,
-                   y=y_align + background_height / 2 - title_height*2,
+                   y=y_align + background_height / 2 - title_height * 2,
                    text=text, size=30)
 
     for i, t in enumerate(self.tips):
         text = self.tips[i]
         offset = 0.5 * msg.get_text_length(text)
         height = msg.get_text_height(text)
-        msg.draw_info(x=x_align - offset, y=y_align - height * (len(self.tips)-i), text=text, size=18)
+        msg.draw_info(x=x_align - offset, y=y_align - height * (len(self.tips) - i), text=text, size=18)
 
     draw_post()
 
@@ -98,8 +97,8 @@ class ADJT_OT_ModalTemplate(bpy.types.Operator):
 
     def append_handle(self, context):
         # icon
-        # self.cursor_set = True
-        # context.window.cursor_modal_set('MOVE_X')
+        if self.cursor_set == True:
+            context.window.cursor_modal_set('MOVE_X')
 
         # append handle
         self._timer = context.window_manager.event_timer_add(0.01, window=context.window)
@@ -107,6 +106,11 @@ class ADJT_OT_ModalTemplate(bpy.types.Operator):
         self._handle = bpy.types.SpaceView3D.draw_handler_add(draw_template_callback_px, args, 'WINDOW',
                                                               'POST_PIXEL')
         context.window_manager.modal_handler_add(self)
+
+    def restore_cursor(self,context):
+        if self.cursor_set:
+            self.cursor_set = False
+            context.window.cursor_modal_restore()
 
     def pre(self, context, event):
         pass

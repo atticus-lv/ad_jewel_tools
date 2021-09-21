@@ -5,7 +5,7 @@ from bpy.props import IntProperty, EnumProperty, BoolProperty
 from .op_utils import ADJT_OT_ModalTemplate
 from .. import __folder_name__
 
-# TODO add cursor icon
+
 class ADJT_OT_CamFrame(ADJT_OT_ModalTemplate):
     '''Select the object you want to add frame camera
 选择你想要添加的框选相机的物体'''
@@ -33,12 +33,10 @@ class ADJT_OT_CamFrame(ADJT_OT_ModalTemplate):
             bpy.data.objects.remove(self.cam)
             self.cam = None
 
+        self.restore_cursor(context)
+
     def modal(self, context, event):
         context.area.tag_redraw()
-
-        if event.type in {"MIDDLEMOUSE", 'WHEELUPMOUSE', 'WHEELDOWNMOUSE'} or (
-                (event.alt or event.shift or event.ctrl) and event.type == "MIDDLEMOUSE"):
-            return {'PASS_THROUGH'}
 
         if event.type == 'TIMER':
             # fade drawing
@@ -53,13 +51,19 @@ class ADJT_OT_CamFrame(ADJT_OT_ModalTemplate):
                     else:
                         return self.remove_handle(context)
 
-        if event.type == 'LEFTMOUSE':
+        if self._finish or self._cancel: return {'PASS_THROUGH'}
+
+        if event.type in {"MIDDLEMOUSE", 'WHEELUPMOUSE', 'WHEELDOWNMOUSE'} or (
+                (event.alt or event.shift or event.ctrl) and event.type == "MIDDLEMOUSE"):
+            return {'PASS_THROUGH'}
+
+        elif event.type == 'LEFTMOUSE':
             self._finish = True
 
-        if event.type in {'RIGHTMOUSE', 'ESC'}:
+        elif event.type in {'RIGHTMOUSE', 'ESC'}:
             self._cancel = True
 
-        if event.type == 'MOUSEMOVE' and not (self._cancel or self._finish):
+        elif event.type == 'MOUSEMOVE':
             self.mouseDX = self.mouseDX - event.mouse_x
             self.mouseDY = self.mouseDY - event.mouse_y
 
@@ -77,9 +81,13 @@ class ADJT_OT_CamFrame(ADJT_OT_ModalTemplate):
         pass
 
     def pre(self, context, event):
+        # cancel
         if context.scene.render.resolution_x < context.scene.render.resolution_y:
             self.tips.append("ERROR: 'Only work when resolution X > resolution Y'")
             self._cancel = True
+
+        # set cursor icon
+        self.cursor_set = True
 
         # use bound geo nodes to measure instances
         self.use_bound = False

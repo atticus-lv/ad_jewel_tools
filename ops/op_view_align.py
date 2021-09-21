@@ -5,7 +5,7 @@ from .. import __folder_name__
 
 from .op_utils import ADJT_OT_ModalTemplate
 
-# TODO add cursor icon
+
 class ADJT_OT_ViewAlign(ADJT_OT_ModalTemplate):
     '''Copy the select obj to align view
 选择并复制当前物体为三视图'''
@@ -34,12 +34,10 @@ class ADJT_OT_ViewAlign(ADJT_OT_ModalTemplate):
                 self.object.hide_render = 0
                 self.object.hide_set(False)
 
+        self.restore_cursor(context)
+
     def modal(self, context, event):
         context.area.tag_redraw()
-
-        if event.type in {"MIDDLEMOUSE",'WHEELUPMOUSE','WHEELDOWNMOUSE'} or (
-                (event.alt or event.shift or event.ctrl) and event.type == "MIDDLEMOUSE"):
-            return {'PASS_THROUGH'}
 
         if event.type == 'TIMER':
             # fade drawing
@@ -54,13 +52,20 @@ class ADJT_OT_ViewAlign(ADJT_OT_ModalTemplate):
                     else:
                         return self.remove_handle(context)
 
-        if event.type == 'LEFTMOUSE':
+        if self._finish or self._cancel:
+            return {'PASS_THROUGH'}
+
+        elif event.type in {"MIDDLEMOUSE", 'WHEELUPMOUSE', 'WHEELDOWNMOUSE'} or (
+                (event.alt or event.shift or event.ctrl) and event.type == "MIDDLEMOUSE"):
+            return {'PASS_THROUGH'}
+
+        elif event.type == 'LEFTMOUSE':
             self._finish = True
 
-        if event.type in {'RIGHTMOUSE', 'ESC'}:
+        elif event.type in {'RIGHTMOUSE', 'ESC'}:
             self._cancel = True
 
-        if event.type == 'MOUSEMOVE' and not (self._cancel or self._finish):
+        elif event.type == 'MOUSEMOVE':
             self.mouseDX = self.mouseDX - event.mouse_x
             self.mouseDY = self.mouseDY - event.mouse_y
 
@@ -73,6 +78,9 @@ class ADJT_OT_ViewAlign(ADJT_OT_ModalTemplate):
             self.mouseDY = event.mouse_y
 
         return {"RUNNING_MODAL"}
+
+    def pre(self, context, event):
+        self.cursor_set = True
 
     def main(self, context):
         # set and hide origin obj
@@ -133,6 +141,7 @@ class ADJT_OT_ViewAlign(ADJT_OT_ModalTemplate):
         bpy.context.collection.objects.link(obj)
 
         return obj
+
 
 def register():
     bpy.utils.register_class(ADJT_OT_ViewAlign)
