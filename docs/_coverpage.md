@@ -9,7 +9,7 @@
 [GitHub](https://github.com/atticus-lv/ad_jewel_tools)
 [Get Started](/Intro.md)
 
-[comment]: <> (![title2]&#40;media/img/title2.png&#41;)
+![title2](media/img/cover.png)
 
 
 
