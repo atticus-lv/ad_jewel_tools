@@ -67,6 +67,7 @@ class ADJT_PT_AlignPanel(SidebarSetup, bpy.types.Panel):
         layout = self.layout
         box = layout.box()
         box.label(text='Align', icon='MOD_ARRAY')
+        box.operator("adjt.join_geo")
 
         # select the instance will not show the preset thumbnails
         if not (context.active_object and context.active_object.name.startswith('ADJT_Render')):

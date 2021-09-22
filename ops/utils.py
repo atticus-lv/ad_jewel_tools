@@ -152,7 +152,7 @@ class ADJT_NodeTree:
     def get_node(self, name):
         return self.nodes.get(name)
 
-    def add_node(self, type, name):
+    def add_node(self, type, name = None):
         node = self.nodes.new(type)
         if name:
             node.name = name
