@@ -23,10 +23,10 @@ class SidebarSetup:
 class ADJT_PT_UnitPanel(SidebarSetup, bpy.types.Panel):
     bl_label = ''
 
-    bl_options = {'DRAW_BOX','HEADER_LAYOUT_EXPAND'}
+    bl_options = {'DRAW_BOX', 'HEADER_LAYOUT_EXPAND'}
 
     @classmethod
-    def poll(self,context):
+    def poll(self, context):
         return check_unit(context)
 
     def draw_header(self, context):
@@ -65,9 +65,13 @@ class ADJT_PT_AlignPanel(SidebarSetup, bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
+
+        box = layout.box()
+        box.label(text='Instance', icon='LIGHTPROBE_GRID')
+        box.operator("adjt.join_geo")
+
         box = layout.box()
         box.label(text='Align', icon='MOD_ARRAY')
-        box.operator("adjt.join_geo")
 
         # select the instance will not show the preset thumbnails
         if not (context.active_object and context.active_object.name.startswith('ADJT_Render')):
@@ -99,8 +103,7 @@ class ADJT_PT_AlignPanel(SidebarSetup, bpy.types.Panel):
 
 class ADJT_PT_RenderPanel(SidebarSetup, bpy.types.Panel):
     bl_label = 'Render'
-    bl_options = {'DRAW_BOX','DEFAULT_CLOSED'}
-
+    bl_options = {'DRAW_BOX', 'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout

@@ -82,7 +82,7 @@ class Shader():
         self.tips = draw_tips
         self.width = width
         self.context = context
-        self.fade_time = 0.3
+        self.fade_time = 3
         self.color = 1,1,1
         self.alpha = 0.8
 
@@ -179,7 +179,7 @@ class ADJT_OT_DrawUI(bpy.types.Operator):
 
     def finished(self, context):
         '''Remove the timer, shader, and reset Data'''
-
+        print('finished drawing')
         if self.timer is not None:
             context.window_manager.event_timer_remove(self.timer)
 
