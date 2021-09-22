@@ -141,19 +141,21 @@ def init_world_nodes(context):
 
 
 import bpy
-from .op_utils import ADJT_OT_ModalTemplate
+from .op_utils import ADJT_OT_ModalTemplate,ADJT_OT_NormalTemplate
 
 class ADJT_OT_InitShading(ADJT_OT_ModalTemplate):
     bl_label = "Init Shading"
     bl_idname = "adjt.init_shading"
     bl_options = {"REGISTER", "UNDO", "INTERNAL"}
 
+    # def execute(self, context):
     def main(self, context):
         view = context.space_data
         shading = view.shading if view.type == 'VIEW_3D' else context.scene.display.shading
         shading.use_scene_world_render = False
         shading.type = 'RENDERED'
         self._finish = True
+        # self.draw_ui(context,title=self.bl_label,tips=[])
 
 
 class ADJT_OT_ApplyWorld(ADJT_OT_ModalTemplate):
