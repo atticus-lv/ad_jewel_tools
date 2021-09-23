@@ -8,6 +8,14 @@ def copy_obj(obj, link_data=False):
     bpy.context.collection.objects.link(new_obj)
     return new_obj
 
+def get_dep_coll(name, context):
+    if name not in context.scene.collection.children:
+        dep_coll_dir = bpy.data.collections.new(name)
+        context.scene.collection.children.link(dep_coll_dir)
+    else:
+        dep_coll_dir = context.scene.collection.children[name]
+
+    return dep_coll_dir
 
 def est_curve_length(ob) -> float:
     # some code from jewelcraft

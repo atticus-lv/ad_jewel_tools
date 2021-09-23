@@ -1,16 +1,14 @@
 import bpy
-import os
 from bpy.props import StringProperty
-from .. import __folder_name__
 
-from .op_utils import ADJT_OT_ModalTemplate
-from .utils import ADJT_NodeTree
+from ..ops_utils.op_template import ADJT_OT_ModalTemplate
+from ..utils import ADJT_NodeTree
 
 
 class ADJT_OT_JoinGeo(ADJT_OT_ModalTemplate):
-    '''Copy the select obj to align view
-选择并复制当前物体为三视图'''
-    bl_label = "Join With Geo Nodes"
+    '''Join geo data with geo node
+使用几何节点合并几何数据'''
+    bl_label = "Join Geometry"
     bl_idname = "adjt.join_geo"
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -43,6 +41,7 @@ class ADJT_OT_JoinGeo(ADJT_OT_ModalTemplate):
         context.collection.objects.unlink(self.display_ob)
         dep_coll_dir.objects.link(self.display_ob)
         context.view_layer.objects.active = self.display_ob
+        self.display_ob.select_set(True)
 
         # tips
         self.tips.clear()
@@ -72,7 +71,7 @@ class ADJT_OT_JoinGeo(ADJT_OT_ModalTemplate):
             node_obj.label = obj.name
 
             node_obj.location = ((mesh_count % line_count + 1) * -250,
-                                 -200 * (line_count - mesh_count // line_count - 1))
+                                 200 * (mesh_count // line_count - 1))
 
             node_obj.inputs[0].default_value = obj
             nt.link_node(node_obj.outputs[-1], node_join.inputs[0])

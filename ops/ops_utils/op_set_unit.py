@@ -1,5 +1,5 @@
 import bpy
-from .op_utils import ADJT_OT_ModalTemplate
+from ..ops_utils.op_template import ADJT_OT_ModalTemplate
 
 # some code from jewelcraft
 # https://github.com/mrachinskiy/jewelcraft

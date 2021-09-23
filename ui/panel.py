@@ -61,7 +61,7 @@ class ADJT_PT_CurvePanel(SidebarSetup, bpy.types.Panel):
 
 
 class ADJT_PT_AlignPanel(SidebarSetup, bpy.types.Panel):
-    bl_label = 'Align'
+    bl_label = 'Geo Tools'
 
     def draw(self, context):
         layout = self.layout

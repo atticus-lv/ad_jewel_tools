@@ -6,8 +6,8 @@ from bpy.props import BoolProperty
 import bgl, blf, gpu
 from gpu_extras.batch import batch_for_shader
 
-from .utils import DrawMsgHelper, DrawHandle
-from .utils import draw_pre, draw_post, draw_round_rectangle, draw_nurbs_curve
+from ..utils import DrawMsgHelper, DrawHandle
+from ..utils import draw_pre, draw_post, draw_round_rectangle, draw_nurbs_curve
 
 
 def draw_template_callback_px(self, context):
@@ -71,9 +71,9 @@ def end(self, context):
 
 
 # TODO replace current modal template with normal and add new draw ui template after executing current
-from .runtime import draw_handle
-from .runtime import reset_draw, start_time, start_fade
-from .runtime import draw_tips, draw_title
+from ..runtime import draw_handle
+from ..runtime import reset_draw, start_time, start_fade
+from ..runtime import draw_tips, draw_title
 
 
 class Shader():

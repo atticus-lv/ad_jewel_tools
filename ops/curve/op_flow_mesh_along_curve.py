@@ -1,11 +1,10 @@
 import bpy
-import bgl, blf, gpu
+import gpu
 
-from .op_utils import ADJT_OT_ModalTemplate
-from .utils import DrawMsgHelper, est_curve_length
-from .utils import draw_pre, draw_post, draw_round_rectangle, draw_nurbs_curve
+from ..utils import DrawMsgHelper, est_curve_length
+from ..utils import draw_pre, draw_post, draw_round_rectangle
 
-from bpy.props import BoolProperty, EnumProperty
+from bpy.props import BoolProperty
 
 # base info
 

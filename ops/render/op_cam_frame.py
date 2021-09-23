@@ -1,9 +1,9 @@
 import bpy
 import os
-from bpy.props import IntProperty, EnumProperty, BoolProperty
+from bpy.props import IntProperty, BoolProperty
 
-from .op_utils import ADJT_OT_ModalTemplate
-from .. import __folder_name__
+from ..ops_utils.op_template import ADJT_OT_ModalTemplate
+from ... import __folder_name__
 
 
 class ADJT_OT_CamFrame(ADJT_OT_ModalTemplate):

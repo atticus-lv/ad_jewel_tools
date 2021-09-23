@@ -1,8 +1,7 @@
 import os.path
 
-import bpy
-from bpy.props import EnumProperty, BoolProperty, StringProperty, FloatProperty, FloatVectorProperty
-from .utils import ADJT_NodeTree
+from bpy.props import EnumProperty
+from ..utils import ADJT_NodeTree
 import os
 import math
 
@@ -141,7 +140,7 @@ def init_world_nodes(context):
 
 
 import bpy
-from .op_utils import ADJT_OT_ModalTemplate, ADJT_OT_NormalTemplate
+from ..ops_utils.op_template import ADJT_OT_ModalTemplate
 
 
 class ADJT_OT_InitShading(ADJT_OT_ModalTemplate):
