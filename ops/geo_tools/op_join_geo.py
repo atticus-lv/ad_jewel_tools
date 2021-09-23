@@ -63,7 +63,14 @@ class ADJT_OT_JoinGeo(ADJT_OT_ModalTemplate):
         line_count = 10
 
         for obj in selected_objects:
-            if obj.type != 'MESH': continue
+            if obj.type not in {'CURVE', 'MESH'}: continue
+
+            if obj.type == 'CURVE':
+                if obj.data.dimensions != '3D': continue
+                if obj.data.extrude == 0 or (
+                        obj.data.bevel_depth == 0 and obj.data.bevel_mode in {'ROUND', 'PROFILE'}) or (
+                        obj.data.bevel_mode == 'OBJECT' and obj.data.bevel_object is None): continue
+
             mesh_count += 1
 
             node_obj = nt.add_node('GeometryNodeObjectInfo', name=obj.name)
