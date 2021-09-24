@@ -78,8 +78,11 @@ class ADJT_PT_AlignPanel(SidebarSetup, bpy.types.Panel):
             pref = get_pref()
             item = pref.view_align_preset_list[pref.view_align_preset_list_index]
             if item:
-                box.template_icon_view(item, "thumbnails", scale=5, scale_popup=8, show_labels=False)
+                col = box.column(align=1)
+                col.template_icon_view(item, "thumbnails", scale=5, scale_popup=8, show_labels=False)
                 p = item.thumbnails[:-4]
+
+                col.label(text=p)
                 box.operator('adjt.view_align', icon='IMPORT', text='Align').node_group_name = p
         else:
             mod = None
@@ -99,6 +102,28 @@ class ADJT_PT_AlignPanel(SidebarSetup, bpy.types.Panel):
 
                     for input in node.inputs:
                         box2.prop(input, 'default_value', text=input.name)
+
+
+class ADJT_PT_MeasurePanel(SidebarSetup, bpy.types.Panel):
+    bl_label = 'Measure'
+
+    def draw(self, context):
+        layout = self.layout
+        box = layout.box()
+        box.label(text='Measure', icon='CON_DISTLIMIT')
+
+        if not (hasattr(context.active_object, 'adjt_measure') and context.active_object.type == 'FONT'):
+            box.operator('adjt.measure_bind', icon='OUTLINER_OB_FONT').update_object = ''
+
+        else:
+            box2 = box.box().column()
+            box2.label(text='Font Settings', icon='OUTLINER_OB_FONT')
+            box2.operator('adjt.measure_bind', text='Update Font',
+                          icon='FILE_REFRESH').update_object = context.active_object.name
+            box2.prop(context.active_object.data, 'space_character', text='Space')
+
+            box2.prop(context.active_object.data, 'offset_x')
+            box2.prop(context.active_object.data, 'offset_y')
 
 
 class ADJT_PT_RenderPanel(SidebarSetup, bpy.types.Panel):
@@ -186,6 +211,7 @@ def register():
     bpy.utils.register_class(ADJT_PT_UnitPanel)
     bpy.utils.register_class(ADJT_PT_CurvePanel)
     bpy.utils.register_class(ADJT_PT_AlignPanel)
+    bpy.utils.register_class(ADJT_PT_MeasurePanel)
     bpy.utils.register_class(ADJT_PT_RenderPanel)
 
 
@@ -193,4 +219,5 @@ def unregister():
     bpy.utils.unregister_class(ADJT_PT_UnitPanel)
     bpy.utils.unregister_class(ADJT_PT_CurvePanel)
     bpy.utils.unregister_class(ADJT_PT_AlignPanel)
+    bpy.utils.unregister_class(ADJT_PT_MeasurePanel)
     bpy.utils.unregister_class(ADJT_PT_RenderPanel)
