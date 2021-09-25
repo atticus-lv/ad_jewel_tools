@@ -126,6 +126,46 @@ class ADJT_PT_MeasurePanel(SidebarSetup, bpy.types.Panel):
             box2.prop(context.active_object.data, 'offset_y')
 
 
+class ADJT_PT_AnimatePanel(SidebarSetup, bpy.types.Panel):
+    bl_label = 'Animate'
+
+    def draw(self, context):
+        layout = self.layout
+
+        box = layout.box()
+        box.label(text='Animate', icon='MOD_ARRAY')
+
+        # select the instance will not show the preset thumbnails
+        if not (context.active_object and context.active_object.name.startswith('ADJT_Animate')):
+            pref = get_pref()
+            item = pref.anim_preset_list[pref.anim_preset_list_index]
+            if item:
+                col = box.column(align=1)
+                col.template_icon_view(item, "thumbnails", scale=5, scale_popup=8, show_labels=False)
+                p = item.thumbnails[:-4]
+
+                col.label(text=p)
+                box.operator('adjt.view_align', icon='IMPORT', text='Animate').node_group_name = p
+        else:
+            mod = None
+            for m in context.active_object.modifiers:
+                if m.type == 'NODES':
+                    mod = m
+                    break
+            if mod:
+                nt = mod.node_group
+                node = nt.nodes.get('Group')
+                box2 = box.box()
+                if node is not None and 'Object' in node.inputs:
+                    box2.label(text='Settings', icon='OBJECT_DATA')
+                    obj = node.inputs['Object'].default_value
+                    box2.operator('adjt.set_active_object', icon='RESTRICT_SELECT_OFF',
+                                  text='Select Source').obj_name = obj.name
+
+                    for input in node.inputs:
+                        box2.prop(input, 'default_value', text=input.name)
+
+
 class ADJT_PT_RenderPanel(SidebarSetup, bpy.types.Panel):
     bl_label = 'Render'
     bl_options = {'DRAW_BOX', 'DEFAULT_CLOSED'}
@@ -211,7 +251,8 @@ def register():
     bpy.utils.register_class(ADJT_PT_UnitPanel)
     bpy.utils.register_class(ADJT_PT_CurvePanel)
     bpy.utils.register_class(ADJT_PT_AlignPanel)
-    bpy.utils.register_class(ADJT_PT_MeasurePanel)
+    # bpy.utils.register_class(ADJT_PT_MeasurePanel)
+    # bpy.utils.register_class(ADJT_PT_AnimatePanel)
     bpy.utils.register_class(ADJT_PT_RenderPanel)
 
 
@@ -219,5 +260,6 @@ def unregister():
     bpy.utils.unregister_class(ADJT_PT_UnitPanel)
     bpy.utils.unregister_class(ADJT_PT_CurvePanel)
     bpy.utils.unregister_class(ADJT_PT_AlignPanel)
-    bpy.utils.unregister_class(ADJT_PT_MeasurePanel)
+    # bpy.utils.unregister_class(ADJT_PT_MeasurePanel)
+    # bpy.utils.unregister_class(ADJT_PT_AnimatePanel)
     bpy.utils.unregister_class(ADJT_PT_RenderPanel)

@@ -105,7 +105,11 @@ class ADJT_Preference(bpy.types.AddonPreferences):
     bl_idname = __package__
 
     view_align_preset_list: CollectionProperty(type=ImageDirListItemProperty)
-    view_align_preset_list_index: IntProperty(default=0, min=0, name='激活项')
+    view_align_preset_list_index: IntProperty(default=0, min=0, name='Active')
+
+    anim_preset_list:CollectionProperty(type=ImageDirListItemProperty)
+    anim_preset_list_index: IntProperty(default=0, min=0, name='Active')
+
 
     def draw(self, context):
         layout = self.layout
@@ -139,6 +143,7 @@ def register():
     bpy.utils.register_class(ADJT_Preference)
 
     init_thumb('view_align_preset_list','view_align_preset_list_index','view align')
+    init_thumb('anim_preset_list','anim_preset_list_index','animate')
 
 
 def unregister():
