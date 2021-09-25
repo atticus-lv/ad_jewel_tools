@@ -8,6 +8,7 @@ def copy_obj(obj, link_data=False):
     bpy.context.collection.objects.link(new_obj)
     return new_obj
 
+
 def get_dep_coll(name, context):
     if name not in context.scene.collection.children:
         dep_coll_dir = bpy.data.collections.new(name)
@@ -16,6 +17,7 @@ def get_dep_coll(name, context):
         dep_coll_dir = context.scene.collection.children[name]
 
     return dep_coll_dir
+
 
 def est_curve_length(ob) -> float:
     # some code from jewelcraft
@@ -160,7 +162,7 @@ class ADJT_NodeTree:
     def get_node(self, name):
         return self.nodes.get(name)
 
-    def add_node(self, type, name = None):
+    def add_node(self, type, name=None):
         node = self.nodes.new(type)
         if name:
             node.name = name
@@ -230,6 +232,10 @@ def draw_line(x1, y1, x2, y2, size, color=(1.0, 1.0, 1.0, 0.7)):
     batch.draw(shader)
 
 
+def get_real_location(obj, pos: Vector):
+    return obj.matrix_world @ Vector(pos)
+
+
 def draw_line_3d(start_pos, end_pos, color=(1.0, 1.0, 1.0, 0.7)):
     shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
     batch = batch_for_shader(shader, 'LINES', {"pos": [start_pos, end_pos]})
@@ -241,11 +247,13 @@ def draw_line_3d(start_pos, end_pos, color=(1.0, 1.0, 1.0, 0.7)):
 def draw_nurbs_curve(obj, color=(1.0, 1.0, 1.0, 0.7)):
     for spline in obj.data.splines:
         if spline.use_cyclic_u:
-            draw_line_3d(spline.points[0].co[:-1], spline.points[-1].co[:-1], color)
+            draw_line_3d(get_real_location(obj, spline.points[0].co[:-1]),
+                         get_real_location(obj, spline.points[-1].co[:-1]), color)
 
         for i, point in enumerate(spline.points):
             if i == 0: continue
-            draw_line_3d(point.co[:-1], spline.points[i - 1].co[:-1], color)
+            draw_line_3d(get_real_location(obj, point.co[:-1]),
+                         get_real_location(obj, spline.points[i - 1].co[:-1]), color)
 
 
 def draw_circle_2d_filled(shader, mx, my, radius, color=(1.0, 1.0, 1.0, 0.7)):
