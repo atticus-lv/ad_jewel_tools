@@ -112,14 +112,18 @@ class ADJT_Preference(bpy.types.AddonPreferences):
         # layout.operator('t3dn.bip_showcase_install_pillow', text='安装Pillow（加快预览加载）')
 
 
-def init_thumb():
+def init_thumb(prop, prop_index, sub_dir):
     pref = get_pref()
+
+    img_list = getattr(pref, prop)
+    img_list_id = getattr(pref, prop_index)
+
     thumb_dir = os.path.join(bpy.utils.user_resource('SCRIPTS'), 'addons', __folder_name__, 'preset',
                              'node_groups',
-                             'thumb') + '/'
-    if 'node_groups' not in pref.view_align_preset_list:
-        item = pref.view_align_preset_list.add()
-        pref.view_align_preset_list_index = len(pref.view_align_preset_list) - 1
+                             'thumb', sub_dir) + '/'
+    if 'node_groups' not in img_list:
+        item = img_list.add()
+        setattr(pref, prop_index, len(img_list) - 1)
         item.name = 'node_groups'
         item.path = thumb_dir
 
@@ -134,7 +138,7 @@ def register():
     bpy.utils.register_class(T3DN_OT_bip_showcase_install_pillow)
     bpy.utils.register_class(ADJT_Preference)
 
-    init_thumb()
+    init_thumb('view_align_preset_list','view_align_preset_list_index','view align')
 
 
 def unregister():
