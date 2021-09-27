@@ -58,6 +58,7 @@ class ADJT_PT_CurvePanel(SidebarSetup, bpy.types.Panel):
         box.label(text='Flow', icon='CURVE_DATA')
         box.operator('adjt.flow_mesh_along_curve', icon='FORCE_CURVE')
         box.operator('adjt.split_curve_and_flow_mesh', icon='GP_MULTIFRAME_EDITING')
+        box.operator('adjt.batch_rename', icon='FONT_DATA')
 
 
 class ADJT_PT_AlignPanel(SidebarSetup, bpy.types.Panel):
@@ -211,7 +212,7 @@ def register():
     bpy.utils.register_class(ADJT_PT_UnitPanel)
     bpy.utils.register_class(ADJT_PT_CurvePanel)
     bpy.utils.register_class(ADJT_PT_AlignPanel)
-    bpy.utils.register_class(ADJT_PT_MeasurePanel)
+    # bpy.utils.register_class(ADJT_PT_MeasurePanel)
     bpy.utils.register_class(ADJT_PT_RenderPanel)
 
 
@@ -219,5 +220,5 @@ def unregister():
     bpy.utils.unregister_class(ADJT_PT_UnitPanel)
     bpy.utils.unregister_class(ADJT_PT_CurvePanel)
     bpy.utils.unregister_class(ADJT_PT_AlignPanel)
-    bpy.utils.unregister_class(ADJT_PT_MeasurePanel)
+    # bpy.utils.unregister_class(ADJT_PT_MeasurePanel)
     bpy.utils.unregister_class(ADJT_PT_RenderPanel)
