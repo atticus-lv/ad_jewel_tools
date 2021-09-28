@@ -40,7 +40,7 @@ class ADJT_PT_UnitPanel(SidebarSetup, bpy.types.Panel):
 
         layout.scale_y = 1.25
         row = layout.row(align=1)
-        row.operator('adjt.set_units', icon='DRIVER_DISTANCE')
+        row.operator('wm.adjt_set_units', icon='DRIVER_DISTANCE')
 
 
 class ADJT_PT_CurvePanel(SidebarSetup, bpy.types.Panel):
@@ -68,7 +68,7 @@ class ADJT_PT_AlignPanel(SidebarSetup, bpy.types.Panel):
 
         box = layout.box()
         box.label(text='Instance', icon='LIGHTPROBE_GRID')
-        box.operator("adjt.join_geo")
+        box.operator("node.adjt_join_geo")
 
         box = layout.box()
         box.label(text='Align', icon='MOD_ARRAY')
@@ -83,7 +83,7 @@ class ADJT_PT_AlignPanel(SidebarSetup, bpy.types.Panel):
                 p = item.thumbnails[:-4]
 
                 col.label(text=p)
-                box.operator('adjt.view_align', icon='IMPORT', text='Align').node_group_name = p
+                box.operator('node.adjt_view_align', icon='IMPORT', text='Align').node_group_name = p
         else:
             mod = None
             for m in context.active_object.modifiers:
@@ -111,14 +111,15 @@ class ADJT_PT_UtilityPanel(SidebarSetup, bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         box = layout.box()
-        box.operator('adjt.batch_rename',icon = 'FONT_DATA')
+        box.operator('wm.adjt_batch_rename',icon = 'FONT_DATA')
+        box.operator('adjt.init_thumb')
         row = box.row(align=True)
         row.label(text='Load Files', icon='FILEBROWSER')
         pref = get_pref()
         row.prop(pref,'load_ui',toggle = True)
         row = box.row(align=True)
-        row.operator('adjt.load_file', icon='BACK', text='Previous').action = '-1'
-        row.operator('adjt.load_file', icon='FORWARD', text='Next').action = '+1'
+        row.operator('wm.adjt_load_file', icon='BACK', text='Previous').action = '-1'
+        row.operator('wm.adjt_load_file', icon='FORWARD', text='Next').action = '+1'
         # box.label(text='Measure', icon='CON_DISTLIMIT')
         #
         # if not (hasattr(context.active_object, 'adjt_measure') and context.active_object.type == 'FONT'):
@@ -154,7 +155,7 @@ class ADJT_PT_AnimatePanel(SidebarSetup, bpy.types.Panel):
                 p = item.thumbnails[:-4]
 
                 col.label(text=p)
-                box.operator('adjt.view_align', icon='IMPORT', text='Animate').node_group_name = p
+                box.operator('node.adjt_view_align', icon='IMPORT', text='Animate').node_group_name = p
         else:
             mod = None
             for m in context.active_object.modifiers:
@@ -184,7 +185,7 @@ class ADJT_PT_RenderPanel(SidebarSetup, bpy.types.Panel):
 
         box = layout.box()
         box.label(text='Camera', icon='SCENE')
-        box.operator('adjt.cam_frame', icon='IMAGE_PLANE')
+        box.operator('render.adjt_cam_frame', icon='IMAGE_PLANE')
 
         if context.active_object and context.active_object.type == 'CAMERA':
             cam = context.active_object
@@ -203,7 +204,7 @@ class ADJT_PT_RenderPanel(SidebarSetup, bpy.types.Panel):
         shading = view.shading if view.type == 'VIEW_3D' else context.scene.display.shading
 
         if shading.type != 'RENDERED':
-            box.operator('adjt.init_shading')
+            box.operator('render.adjt_init_shading')
         else:
             col = box.column()
             row = col.row(align=True)

@@ -10,7 +10,7 @@ class ADJT_OT_CamFrame(ADJT_OT_ModalTemplate):
     '''Select the object you want to add frame camera
 选择你想要添加的框选相机的物体'''
     bl_label = "Frame Camera"
-    bl_idname = "adjt.cam_frame"
+    bl_idname = "render.adjt_cam_frame"
     bl_options = {'REGISTER', 'UNDO'}
 
     tips = [

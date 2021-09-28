@@ -9,7 +9,7 @@ class ADJT_OT_JoinGeo(ADJT_OT_ModalTemplate):
     '''Join geo data with geo node
 使用几何节点合并几何数据'''
     bl_label = "Join Geometry"
-    bl_idname = "adjt.join_geo"
+    bl_idname = "node.adjt_join_geo"
     bl_options = {'REGISTER', 'UNDO'}
 
     object = None

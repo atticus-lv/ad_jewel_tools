@@ -7,7 +7,7 @@ class ADJT_OT_SetUnits(ADJT_OT_ModalTemplate):
     '''Set Units
 设置场景单位为厘米'''
     bl_label = "Set Units (mm)"
-    bl_idname = "adjt.set_units"
+    bl_idname = "wm.adjt_set_units"
     bl_options = {"REGISTER", "UNDO", "INTERNAL"}
 
     tips = ['',

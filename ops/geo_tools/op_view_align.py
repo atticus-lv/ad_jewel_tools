@@ -10,7 +10,7 @@ class ADJT_OT_ViewAlign(ADJT_OT_ModalTemplate):
     '''Copy the select obj to align view
 选择并复制当前物体为三视图'''
     bl_label = "View Align"
-    bl_idname = "adjt.view_align"
+    bl_idname = "node.adjt_view_align"
     bl_options = {'REGISTER', 'UNDO'}
 
     object = None

@@ -145,7 +145,7 @@ from ..ops_utils.op_template import ADJT_OT_ModalTemplate
 
 class ADJT_OT_InitShading(ADJT_OT_ModalTemplate):
     bl_label = "Init Shading"
-    bl_idname = "adjt.init_shading"
+    bl_idname = "render.adjt_init_shading"
     bl_options = {"REGISTER", "UNDO", "INTERNAL"}
 
     def main(self, context):
@@ -158,7 +158,7 @@ class ADJT_OT_InitShading(ADJT_OT_ModalTemplate):
 
 # class ADJT_OT_InitShading(ADJT_OT_NormalTemplate):
 #     bl_label = "Init Shading"
-#     bl_idname = "adjt.init_shading"
+#     bl_idname = "render.adjt_init_shading"
 #     bl_options = {"REGISTER", "UNDO", "INTERNAL"}
 #
 #     def execute(self, context):

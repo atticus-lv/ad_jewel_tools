@@ -4,7 +4,7 @@ from bpy.props import StringProperty, EnumProperty
 
 class ADJT_OT_BatchRename(bpy.types.Operator):
     bl_label = "Batch Rename"
-    bl_idname = "adjt.batch_rename"
+    bl_idname = "wm.adjt_batch_rename"
     bl_options = {"REGISTER", "UNDO"}
 
     type: EnumProperty(name='Type', items=[

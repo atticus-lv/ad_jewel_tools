@@ -19,7 +19,7 @@ def add_path_to_recent_files(path):
 
 class ADJT_OT_LoadFile(bpy.types.Operator):
     """Load Files in current directory"""
-    bl_idname = "adjt.load_file"
+    bl_idname = "wm.adjt_load_file"
     bl_label = "Load File"
     bl_options = {'REGISTER'}
 
