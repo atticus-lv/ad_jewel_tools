@@ -106,7 +106,7 @@ class ADJT_PT_AlignPanel(SidebarSetup, bpy.types.Panel):
 
 class ADJT_PT_UtilityPanel(SidebarSetup, bpy.types.Panel):
     bl_label = 'Utility'
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = {'DRAW_BOX','DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -177,7 +177,7 @@ class ADJT_PT_AnimatePanel(SidebarSetup, bpy.types.Panel):
 
 class ADJT_PT_RenderPanel(SidebarSetup, bpy.types.Panel):
     bl_label = 'Render'
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = {'DRAW_BOX','DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
