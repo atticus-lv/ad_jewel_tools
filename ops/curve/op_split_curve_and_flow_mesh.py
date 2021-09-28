@@ -19,7 +19,7 @@ def draw_move_object_callback_px(self, context):
 class ADJT_OT_SplitCurveAndFlowMesh(ADJT_OT_ModalTemplate):
     """First select mesh then add select curve(shift to use instance)
 先选网格物体再加选曲线(shift 使用实例)"""
-    bl_idname = "adjt.split_curve_and_flow_mesh"
+    bl_idname = "curve.adjt_split_curve_and_flow_mesh"
     bl_label = "Split curve and flow mesh"
     bl_options = {'REGISTER', 'UNDO'}
 

@@ -8,7 +8,7 @@ from ..ops_utils.op_template import ADJT_OT_ModalTemplate
 class ADJT_OT_OffsetCurvByLength(ADJT_OT_ModalTemplate):
     """Offset Curve Origin by its length
 按长度偏移曲线原点"""
-    bl_idname = 'adjt.offset_curve_by_length'
+    bl_idname = 'curve.adjt_offset_curve_by_length'
     bl_label = 'Offset Curve by Length'
     bl_options = {"REGISTER", "UNDO"}
 

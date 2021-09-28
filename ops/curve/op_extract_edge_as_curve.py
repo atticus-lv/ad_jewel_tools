@@ -16,7 +16,7 @@ def draw_move_object_callback_px(self, context):
 class ADJT_OT_ExtractEdgeAsCurve(ADJT_OT_ModalTemplate):
     """Select one obj in object mode and edges in edge mode
 物体模式选择一个物体，并且在编辑模式选择边"""
-    bl_idname = 'adjt.extract_edge_as_curve'
+    bl_idname = 'curve.adjt_extract_edge_as_curve'
     bl_label = 'Extract edge as curve'
     bl_options = {"REGISTER", "UNDO"}
 

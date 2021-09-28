@@ -87,7 +87,7 @@ def draw_move_object_callback_px(self, context):
 class ADJT_OT_FlowMeshAlongCurve(bpy.types.Operator):
     """First select mesh then add select curve
 先选网格物体再加选曲线"""
-    bl_idname = "adjt.flow_mesh_along_curve"
+    bl_idname = "curve.adjt_flow_mesh_along_curve"
     bl_label = "Flow mesh along curve"
     bl_options = {'REGISTER', 'GRAB_CURSOR', 'BLOCKING', 'UNDO'}
 
