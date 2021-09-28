@@ -104,6 +104,8 @@ class T3DN_OT_bip_showcase_install_pillow(bpy.types.Operator, InstallPillow):
 class ADJT_Preference(bpy.types.AddonPreferences):
     bl_idname = __package__
 
+    load_ui:BoolProperty(name = 'Load UI')
+
     view_align_preset_list: CollectionProperty(type=ImageDirListItemProperty)
     view_align_preset_list_index: IntProperty(default=0, min=0, name='Active')
 

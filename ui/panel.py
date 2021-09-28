@@ -106,11 +106,19 @@ class ADJT_PT_AlignPanel(SidebarSetup, bpy.types.Panel):
 
 class ADJT_PT_UtilityPanel(SidebarSetup, bpy.types.Panel):
     bl_label = 'Utility'
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
         box = layout.box()
-        box.operator('adjt.batch_rename')
+        box.operator('adjt.batch_rename',icon = 'FONT_DATA')
+        row = box.row(align=True)
+        row.label(text='Load Files', icon='FILEBROWSER')
+        pref = get_pref()
+        row.prop(pref,'load_ui',toggle = True)
+        row = box.row(align=True)
+        row.operator('adjt.load_file', icon='BACK', text='Previous').action = '-1'
+        row.operator('adjt.load_file', icon='FORWARD', text='Next').action = '+1'
         # box.label(text='Measure', icon='CON_DISTLIMIT')
         #
         # if not (hasattr(context.active_object, 'adjt_measure') and context.active_object.type == 'FONT'):
@@ -169,7 +177,7 @@ class ADJT_PT_AnimatePanel(SidebarSetup, bpy.types.Panel):
 
 class ADJT_PT_RenderPanel(SidebarSetup, bpy.types.Panel):
     bl_label = 'Render'
-    bl_options = {'DRAW_BOX', 'DEFAULT_CLOSED'}
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
