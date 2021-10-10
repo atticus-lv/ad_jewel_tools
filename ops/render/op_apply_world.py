@@ -21,7 +21,7 @@ def get_hdr_list() -> tuple[list[str], list[str], str, str]:
 def load_image(image_node, dir, image_name):
     # load img
     image = bpy.data.images.get(image_name)
-    if not image:
+    if not image or not image.has_data:
         image = bpy.data.images.load(filepath=os.path.join(dir, image_name))
     try:
         image_node.image = image
