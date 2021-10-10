@@ -30,9 +30,9 @@ class ADJT_OT_ViewAlign(ADJT_OT_ModalTemplate):
             if self.display_ob:
                 bpy.data.objects.remove(self.display_ob)
                 self.display_ob = None
-            if self.object.hide_render == 1:
-                self.object.hide_render = 0
-                self.object.hide_set(False)
+            # if self.object.hide_render == 1:
+            #     self.object.hide_render = 0
+            #     self.object.hide_set(False)
 
         self.restore_cursor(context)
 
@@ -85,8 +85,8 @@ class ADJT_OT_ViewAlign(ADJT_OT_ModalTemplate):
     def main(self, context):
         # set and hide origin obj
         self.object = context.active_object
-        self.object.hide_render = 1
-        self.object.hide_set(True)
+        # self.object.hide_render = 1
+        # self.object.hide_set(True)
 
         # extra ob for display
         self.display_ob = self.create_obj()
