@@ -35,14 +35,6 @@ class ADJT_OT_JoinGeo(ADJT_OT_ModalTemplate):
         mod = self.display_ob.modifiers.new(name='Join Geo', type='NODES')
         mod.node_group = nt
 
-        if 'Join Geo Dep' not in context.scene.collection.children:
-            dep_coll_dir = bpy.data.collections.new("Join Geo Dep")
-            context.scene.collection.children.link(dep_coll_dir)
-        else:
-            dep_coll_dir = context.scene.collection.children['Join Geo Dep']
-
-        context.collection.objects.unlink(self.display_ob)
-        dep_coll_dir.objects.link(self.display_ob)
         context.view_layer.objects.active = self.display_ob
         self.display_ob.select_set(True)
 
