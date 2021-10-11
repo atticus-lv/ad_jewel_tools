@@ -13,7 +13,7 @@ class ADJT_OT_JoinGeo(ADJT_OT_ModalTemplate):
 使用几何节点合并几何数据'''
     bl_label = "Join Geometry"
     bl_idname = "node.adjt_join_geo"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {'UNDO_GROUPED'}
 
     object = None
     display_ob = None
@@ -62,7 +62,7 @@ class ADJT_OT_JoinGeo(ADJT_OT_ModalTemplate):
             if obj.type == 'CURVE':
                 if obj.data.dimensions != '3D': continue
                 if obj.data.extrude == 0 or (
-                        obj.data.bevel_depth == 0 and obj.data.bevel_mode in {'ROUND', 'PROFILE'}) or (
+                        obj.data.bevel_mode in {'ROUND', 'PROFILE'} and obj.data.bevel_depth == 0) or (
                         obj.data.bevel_mode == 'OBJECT' and obj.data.bevel_object is None): continue
 
             if obj.users_collection[0].name not in coll_dict:
