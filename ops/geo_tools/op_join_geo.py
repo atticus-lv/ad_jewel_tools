@@ -48,11 +48,40 @@ class ADJT_OT_JoinGeo(ADJT_OT_ModalTemplate):
     def create_join_geo_nodetree(self, node_tree, selected_objects):
         nt = ADJT_NodeTree(node_tree)
         node_join_all = nt.add_node('GeometryNodeJoinGeometry')
-        node_join_all.location = (250, 0)
+        node_join_all.location = (350, 0)
+
+        node_set_position = nt.add_node('GeometryNodeSetPosition')
+        node_set_position.location = (550, 0)
+
+        node_vector_math = nt.add_node('ShaderNodeVectorMath')
+        node_vector_math.operation = 'MULTIPLY'
+        node_vector_math.location = (350, -200)
+
+        node_position = nt.add_node('GeometryNodeInputPosition')
+        node_position.location = (150, -200)
+        node_value = nt.add_node('ShaderNodeValue')
+        node_value.outputs[0].default_value = 1
+        node_value.location = (150, -350)
+
+        nt.link_node(node_join_all.outputs[0], node_set_position.inputs[0])
+        nt.link_node(node_vector_math.outputs[0], node_set_position.inputs[1])
+
+        nt.link_node(node_position.outputs[0], node_vector_math.inputs[0])
+        nt.link_node(node_value.outputs[0], node_vector_math.inputs[1])
+
+        node_mesh_line = nt.add_node('GeometryNodeMeshLine')
+        node_mesh_line.inputs[0].default_value = 1  # set only one point
+        node_mesh_line.location = (350, 320)
+
+        node_instance_on_points = nt.add_node('GeometryNodeInstanceOnPoints')
+        node_instance_on_points.location = (750, 50)
+
+        nt.link_node(node_mesh_line.outputs[0], node_instance_on_points.inputs[0])
+        nt.link_node(node_set_position.outputs[0], node_instance_on_points.inputs[1])
 
         node_output = nt.add_node('NodeGroupOutput')
-        node_output.location = (500, 0)
-        nt.link_node(node_join_all.outputs[0], node_output.inputs[-1])
+        node_output.location = (950, 0)
+        nt.link_node(node_instance_on_points.outputs[0], node_output.inputs[-1])
 
         coll_dict = {}
 
