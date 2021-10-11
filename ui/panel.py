@@ -47,7 +47,7 @@ class ADJT_PT_CurvePanel(SidebarSetup, bpy.types.Panel):
     bl_label = 'Curve and Flow'
 
     def draw(self, context):
-        layout = self.layout
+        layout = self.layout.column(align=True)
 
         box = layout.box()
         box.label(text='Curve', icon='OUTLINER_OB_CURVE')
@@ -64,7 +64,7 @@ class ADJT_PT_AlignPanel(SidebarSetup, bpy.types.Panel):
     bl_label = 'Geo Tools'
 
     def draw(self, context):
-        layout = self.layout
+        layout = self.layout.column(align=True)
 
         box = layout.box()
         box.label(text='Instance', icon='LIGHTPROBE_GRID')
@@ -74,7 +74,7 @@ class ADJT_PT_AlignPanel(SidebarSetup, bpy.types.Panel):
         box.label(text='Measure', icon='ARROW_LEFTRIGHT')
 
         if not (context.active_object and context.active_object.name.startswith('ADJT_Measure')):
-            box.operator('adjt.measure_bind',icon='IMPORT')
+            box.operator('adjt.measure_bind', icon='IMPORT')
         else:
             mod = None
             for m in context.active_object.modifiers:
@@ -125,17 +125,20 @@ class ADJT_PT_AlignPanel(SidebarSetup, bpy.types.Panel):
 
 class ADJT_PT_UtilityPanel(SidebarSetup, bpy.types.Panel):
     bl_label = 'Utility'
-    bl_options = {'DRAW_BOX','DEFAULT_CLOSED'}
+    bl_options = {'DRAW_BOX', 'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
         box = layout.box()
-        box.operator('wm.adjt_batch_rename',icon = 'FONT_DATA')
-        box.operator('adjt.init_thumb')
+        box.operator('mesh.adjt_check_weight', icon='MESH_ICOSPHERE')
+        box.operator('wm.adjt_batch_rename', icon='FONT_DATA')
+        box.operator('adjt.init_thumb', icon='BLENDER')
+
+        box = box.box()
         row = box.row(align=True)
         row.label(text='Load Files', icon='FILEBROWSER')
         pref = get_pref()
-        row.prop(pref,'load_ui',toggle = True)
+        row.prop(pref, 'load_ui', toggle=True)
         row = box.row(align=True)
         row.operator('wm.adjt_load_file', icon='BACK', text='Previous').action = '-1'
         row.operator('wm.adjt_load_file', icon='FORWARD', text='Next').action = '+1'
@@ -197,7 +200,7 @@ class ADJT_PT_AnimatePanel(SidebarSetup, bpy.types.Panel):
 
 class ADJT_PT_RenderPanel(SidebarSetup, bpy.types.Panel):
     bl_label = 'Render'
-    bl_options = {'DRAW_BOX','DEFAULT_CLOSED'}
+    bl_options = {'DRAW_BOX', 'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -229,10 +232,19 @@ class ADJT_PT_RenderPanel(SidebarSetup, bpy.types.Panel):
             row = col.row(align=True)
             row.prop(context.scene, 'adjt_world_mode', expand=True)
             if context.scene.adjt_world_mode == 'PREVIEW':
-                col.template_icon_view(shading, "studio_light", scale_popup=3, scale=5)
-                col.prop(shading, "studiolight_rotate_z", text="Rotation")
-                col.prop(shading, "studiolight_intensity")
+                col.separator(factor=0.5)
+
+                row = col.split(factor=0.5)
+                row.template_icon_view(shading, "studio_light", scale_popup=3, scale=5)
+                sub_col = row.column()
+                sub_col.separator(factor=2)
+                sub_col.prop(context.scene.render, 'film_transparent', toggle=1)
+                sub_col.prop(shading, "studiolight_rotate_z", text="Rotation")
+                sub_col.prop(shading, "studiolight_intensity")
+
+                col.separator(factor=0.5)
                 col.operator("adjt.apply_world", icon='IMPORT')
+
             else:
                 if not context.scene.world:
                     col.label(text='No context world!')
