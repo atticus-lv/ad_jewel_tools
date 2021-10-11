@@ -57,6 +57,8 @@ class ADJT_OT_MeasureBind(ADJT_OT_ModalTemplate):
         mod = self.display_ob.modifiers.new(name='Measure', type='NODES')
         mod.node_group = self.get_preset(node_group_name=self.node_group_name)
 
+        bpy.ops.transform.translate('INVOKE_DEFAULT')
+
         # tips
         self.tips.clear()
         self.tips.append(f'')
@@ -75,6 +77,11 @@ class ADJT_OT_MeasureBind(ADJT_OT_ModalTemplate):
         else:
             bpy.ops.wm.append(filename=node_group_name, directory=node_group_dir)
             preset_node = bpy.data.node_groups[node_group_name]
+
+        # with bpy.data.libraries.load(base_dir, link=False) as (data_from, data_to):
+        #     data_to.node_groups = [name for name in data_from.node_groups if name == node_group_name]
+        #
+        # preset_node = data_to.node_groups[0]
 
         return preset_node
 
