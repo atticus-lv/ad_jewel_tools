@@ -5,8 +5,8 @@ from bpy.props import StringProperty, PointerProperty, BoolProperty, CollectionP
 from bpy.types import PropertyGroup
 
 from ..ops_utils.op_template import ADJT_OT_ModalTemplate
-from ..utils import get_dep_coll
-from mathutils import Vector
+from ... import __folder_name__
+import os
 
 
 # some code from Measurelt tools
@@ -45,70 +45,48 @@ class ADJT_OT_MeasureBind(ADJT_OT_ModalTemplate):
 从选中点生成测量字体'''
     bl_label = "Create Measure Font"
     bl_idname = "adjt.measure_bind"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {'UNDO'}
 
-    update_object: StringProperty()
-
-    @classmethod
-    def poll(self, context):
-        o = context.active_object
-        if o is None:
-            return False
-        else:
-            if o.type == "MESH":
-                if context.mode == 'EDIT_MESH':
-                    return True
-                else:
-                    return False
-
-            elif o.type == 'FONT' and self.update_object != '':
-                return True
-            else:
-                return False
+    object = None
+    display_ob = None
+    node_group_name: StringProperty(name='Node Group Name', default='Measure')
 
     def main(self, context):
-        if self.update_object != '':
-            obj = bpy.data.objects.get(self.update_object)
-            update_bind_target(obj.adjt_measure, context)
-            self.title = f'Update {self.update_object}'
-        else:
-            index, pos = get_smart_selected(context.active_object, context)
+        self.display_ob = self.create_obj()
+        self.display_ob.name = 'ADJT_Measure'
+        mod = self.display_ob.modifiers.new(name='Measure', type='NODES')
+        mod.node_group = self.get_preset(node_group_name=self.node_group_name)
 
-            if len(pos) > 1:
-                dep_coll = get_dep_coll('Measure Dep', context)
-
-                target1 = self.create_empty_obj(pos[0], link_coll=dep_coll)
-                target2 = self.create_empty_obj(pos[1], link_coll=dep_coll)
-
-                font = self.create_obj(link_coll=dep_coll)
-                font.adjt_measure.use = True
-
-                font.adjt_measure.target1 = target1
-                font.adjt_measure.target2 = target2
-
+        # tips
+        self.tips.clear()
+        self.tips.append(f'')
+        self.tips.append(f'Apply "{self.node_group_name}" preset')
         self._finish = True
 
-    def create_empty_obj(self, point: Vector, link_coll=None):
-        obj = bpy.data.objects.new("Empty", None)
-        obj.location = point
-        if not link_coll:
-            bpy.context.collection.objects.link(obj)
+    def get_preset(sellf, node_group_name):
+        base_dir = os.path.join(bpy.utils.user_resource('SCRIPTS'), 'addons', __folder_name__, 'preset',
+                                'node_groups',
+                                'measure_preset.blend')
+
+        node_group_dir = os.path.join(base_dir, 'NodeTree') + '/'
+
+        if node_group_name in bpy.data.node_groups:
+            preset_node = bpy.data.node_groups[node_group_name]
         else:
-            link_coll.objects.link(obj)
+            bpy.ops.wm.append(filename=node_group_name, directory=node_group_dir)
+            preset_node = bpy.data.node_groups[node_group_name]
+
+        return preset_node
+
+    def create_obj(self):
+        vertices = edges = faces = []
+        new_mesh = bpy.data.meshes.new('adjt_empty_mesh')
+        new_mesh.from_pydata(vertices, edges, faces)
+        new_mesh.update()
+        obj = bpy.data.objects.new('new_object', new_mesh)
+        bpy.context.collection.objects.link(obj)
 
         return obj
-
-    def create_obj(self, link_coll=None):
-        font_curve = bpy.data.curves.new(type="FONT", name="Font Curve")
-        font_curve.body = "ADJT Example"
-        font_obj = bpy.data.objects.new(name="Font Object", object_data=font_curve)
-
-        if not link_coll:
-            bpy.context.collection.objects.link(font_obj)
-        else:
-            link_coll.objects.link(font_obj)
-
-        return font_obj
 
 
 metric_dict = {
@@ -120,68 +98,9 @@ metric_dict = {
 }
 
 
-def update_bind_target(self, context):
-    object = self.id_data
-    if not self.use: return
-    if 'target1' in object.constraints:
-        cons = object.constraints.get('target1')
-    else:
-        cons = object.constraints.new(type='COPY_LOCATION')
-        cons.name = 'target1'
-
-    cons.influence = 1
-    if self.target1:
-        cons.target = self.target1
-        self.target1.empty_display_type = 'SPHERE'
-
-    if 'target2' in object.constraints:
-        cons2 = object.constraints.get('target2')
-    else:
-        cons2 = object.constraints.new(type='COPY_LOCATION')
-        cons2.name = 'target2'
-
-    cons2.influence = 0.5
-    if self.target2:
-        cons2.target = self.target2
-        self.target2.empty_display_type = 'SPHERE'
-
-    # move to top
-    while object.constraints[0] != cons:
-        bpy.ops.constraint.move_up(constraint=cons.name, owner=self)
-
-    if self.target1 and self.target2:
-        len = (self.target1.location - self.target2.location).length
-        object.data.body = str(round(len, 3))
-        object.location = (self.target1.location + self.target2.location) / 2
-        if bpy.context.scene.unit_settings.system == 'METRIC':
-            unit = bpy.context.scene.unit_settings.length_unit
-            postfix = metric_dict[unit]
-            object.data.body += postfix
-
-        object.data.align_x = 'CENTER'
-        object.data.align_y = 'CENTER'
-        object.data.size = len * 0.1
-        self.target1.empty_display_size = len * 0.05
-        self.target2.empty_display_size = len * 0.05
-
-
-class TextMeasureBindProperty(PropertyGroup):
-    use: BoolProperty(default=False)
-    target1: PointerProperty(type=bpy.types.Object, update=update_bind_target)
-    target2: PointerProperty(type=bpy.types.Object, update=update_bind_target)
-
-
-def poll_font(self, object):
-    return object.type == 'FONT'
-
-
 def register():
-    bpy.utils.register_class(TextMeasureBindProperty)
-    bpy.types.Object.adjt_measure = PointerProperty(type=TextMeasureBindProperty, poll=poll_font)
     bpy.utils.register_class(ADJT_OT_MeasureBind)
 
 
 def unregister():
-    bpy.utils.unregister_class(TextMeasureBindProperty)
-    del bpy.types.Text.adjt_measure
     bpy.utils.unregister_class(ADJT_OT_MeasureBind)

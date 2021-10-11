@@ -71,6 +71,25 @@ class ADJT_PT_AlignPanel(SidebarSetup, bpy.types.Panel):
         box.operator("node.adjt_join_geo")
 
         box = layout.box()
+        box.label(text='Measure', icon='ARROW_LEFTRIGHT')
+
+        if not (context.active_object and context.active_object.name.startswith('ADJT_Measure')):
+            box.operator('adjt.measure_bind',icon='IMPORT')
+        else:
+            mod = None
+            for m in context.active_object.modifiers:
+                if m.type == 'NODES':
+                    mod = m
+                    break
+            if mod:
+                nt = mod.node_group
+                node = nt.nodes.get('Group')
+                box2 = box.box()
+                if node is not None and 'Object 1' in node.inputs:
+                    for input in node.inputs:
+                        box2.prop(input, 'default_value', text=input.name)
+
+        box = layout.box()
         box.label(text='Align', icon='MOD_ARRAY')
 
         # select the instance will not show the preset thumbnails
