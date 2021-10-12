@@ -120,7 +120,7 @@ def load_file(filepath: str, max_size: tuple) -> dict:
     '''Load image preview data from file.
 
     Args:
-        filepath: The input file dir.
+        filepath: The input file path.
         max_size: Scale images above this size down.
 
     Returns:

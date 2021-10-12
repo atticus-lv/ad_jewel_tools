@@ -13,18 +13,10 @@ class ImagePreviewCollection:
     '''Dictionary-like class of previews.'''
 
     def __init__(self, max_size: tuple = (128, 128), lazy_load: bool = True):
-        '''Create collection and start_pos internal timer.'''
+        '''Create collection and start internal timer.'''
         if settings.WARNINGS:
             if not support_pillow():
-                print('Pillow is not installed, therefore:')
-                print('- BIP images load without scaling.')
-
-                if lazy_load:
-                    print('- Other images load slowly (Blender standard).')
-                if lazy_load and max_size != (128, 128):
-                    print('- Other images load in 128x128 (Blender standard).')
-                elif not lazy_load and max_size != (256, 256):
-                    print('- Other images load in 256x256 (Blender standard).')
+                pass
 
             else:
                 unsupported = unsupported_formats()

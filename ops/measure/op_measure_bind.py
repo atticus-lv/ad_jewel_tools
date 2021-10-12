@@ -40,7 +40,7 @@ def get_smart_selected(obj, context):
     return index_list, loc_list
 
 
-class ADJT_OT_MeasureBind(ADJT_OT_ModalTemplate):
+class ADJT_OT_MeasureBind(bpy.types.Operator):
     '''Generate Measure text from selected points
 从选中点生成测量字体'''
     bl_label = "Create Measure Font"
@@ -51,24 +51,33 @@ class ADJT_OT_MeasureBind(ADJT_OT_ModalTemplate):
     display_ob = None
     node_group_name: StringProperty(name='Node Group Name', default='Measure')
 
-    def main(self, context):
+    def execute(self, context):
         self.display_ob = self.create_obj(name='ADJT_Measure')
         mod = self.display_ob.modifiers.new(name='Measure', type='NODES')
         mod.node_group = self.get_preset(node_group_name=self.node_group_name)
 
         # parent object for moving
-        obj1 = mod.node_group.nodes['Group'].inputs[0].default_value
-        obj2 = mod.node_group.nodes['Group'].inputs[1].default_value
-        obj1.parent = obj2.parent = self.display_ob
+        obj1 = self.create_empty(name='Pos1')
+        obj2 = self.create_empty(name='Pos2')
+        mod.node_group.nodes['Group'].inputs[0].default_value = obj1
+        mod.node_group.nodes['Group'].inputs[1].default_value = obj2
+        obj1.parent = self.display_ob
+        obj2.parent = self.display_ob
+
+        obj1.location = (5, 0, 0)
+        obj2.location = (-5, 0, 0)
+
+        obj1.lock_scale[0] = obj2.lock_scale[0] = True
+        obj1.lock_scale[1] = obj2.lock_scale[1] = True
+        obj1.lock_scale[2] = obj2.lock_scale[2] = True
+
         obj1.show_in_front = obj2.show_in_front = True
 
-        bpy.ops.transform.translate('INVOKE_DEFAULT')
+        self.display_ob.select_set(False)
+        obj1.select_set(True)
+        obj2.select_set(True)
 
-        # tips
-        self.tips.clear()
-        self.tips.append(f'')
-        self.tips.append(f'Apply "{self.node_group_name}" preset')
-        self._finish = True
+        return {"FINISHED"}
 
     def get_preset(sellf, node_group_name):
         base_dir = os.path.join(bpy.utils.user_resource('SCRIPTS'), 'addons', __folder_name__, 'preset',
@@ -90,7 +99,12 @@ class ADJT_OT_MeasureBind(ADJT_OT_ModalTemplate):
 
         return preset_node
 
-    def create_obj(self,name = 'new_object'):
+    def create_empty(self, name=''):
+        obj = bpy.data.objects.new(name, None)
+        bpy.context.collection.objects.link(obj)
+        return obj
+
+    def create_obj(self, name='new_object'):
         vertices = edges = faces = []
         new_mesh = bpy.data.meshes.new('adjt_empty_mesh')
         new_mesh.from_pydata(vertices, edges, faces)

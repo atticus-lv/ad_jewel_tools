@@ -162,14 +162,14 @@ class ADJT_OT_CheckWeight(bpy.types.Operator):
             volume_fmt = f"{volume_str} {symbol}"
 
         mat_list = self.mat_list
-
+        precision = self.precision
         def draw_ans(self, context):
             layout = self.layout
 
             layout.operator('adjt.clip_board', text=f"{volume_fmt}³").data = str(volume_fmt)
             layout.separator()
             for mat in mat_list:
-                data = str(round(mat[0] * eval(volume_str) / 1000, self.precision))
+                data = str(round(mat[0] * eval(volume_str) / 1000, precision))
                 layout.operator('adjt.clip_board', text=f'{mat[1]}: {data}g').data = data
 
         context.window_manager.popup_menu(draw_func=draw_ans, title='Result', icon='INFO')

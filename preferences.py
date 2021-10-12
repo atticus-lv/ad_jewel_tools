@@ -100,21 +100,23 @@ class T3DN_OT_bip_showcase_install_pillow(bpy.types.Operator, InstallPillow):
 # Preference
 ####################
 
-
 class ADJT_Preference(bpy.types.AddonPreferences):
     bl_idname = __package__
 
-    load_ui:BoolProperty(name = 'Load UI')
+    load_ui: BoolProperty(name='Load UI')
 
     view_align_preset_list: CollectionProperty(type=ImageDirListItemProperty)
     view_align_preset_list_index: IntProperty(default=0, min=0, name='Active')
 
-    anim_preset_list:CollectionProperty(type=ImageDirListItemProperty)
+    anim_preset_list: CollectionProperty(type=ImageDirListItemProperty)
     anim_preset_list_index: IntProperty(default=0, min=0, name='Active')
 
+    # ui
+    use_workflow_panel: BoolProperty(name='Use Workflow Panel', default=True)
 
     def draw(self, context):
         layout = self.layout
+        layout.prop(self, 'use_workflow_panel')
         # layout.operator('t3dn.bip_showcase_install_pillow', text='安装Pillow（加快预览加载）')
 
 
@@ -135,7 +137,7 @@ def init_thumb(prop, prop_index, sub_dir):
 
 
 def register():
-    img_preview = previews.new()
+    img_preview = previews.new(max_size=(512,512))
     img_preview.img_dir = ""
     img_preview.img = ()
     __tempPreview__["adjt_thumbnails"] = img_preview
@@ -144,8 +146,8 @@ def register():
     bpy.utils.register_class(T3DN_OT_bip_showcase_install_pillow)
     bpy.utils.register_class(ADJT_Preference)
 
-    init_thumb('view_align_preset_list','view_align_preset_list_index','view align')
-    init_thumb('anim_preset_list','anim_preset_list_index','animate')
+    init_thumb('view_align_preset_list', 'view_align_preset_list_index', 'view align')
+    init_thumb('anim_preset_list', 'anim_preset_list_index', 'animate')
 
 
 def unregister():
