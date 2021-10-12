@@ -1,8 +1,8 @@
 import bpy
 import gpu
 
-from ops.utils import DrawMsgHelper, est_curve_length
-from ops.utils import draw_pre, draw_post, draw_round_rectangle
+from ...ops.utils import DrawMsgHelper, est_curve_length
+from ...ops.utils import draw_pre, draw_post, draw_round_rectangle
 
 from bpy.props import BoolProperty
 

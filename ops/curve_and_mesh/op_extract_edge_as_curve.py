@@ -1,7 +1,7 @@
 import bpy
-from ops.utils import copy_obj
-from ops.ops_utils.op_template import ADJT_OT_ModalTemplate
-from ops.utils import draw_pre, draw_post, draw_nurbs_curve
+from ...ops.utils import copy_obj
+from ...ops.ops_utils.op_template import ADJT_OT_ModalTemplate
+from ...ops.utils import draw_pre, draw_post, draw_nurbs_curve
 
 
 def draw_move_object_callback_px(self, context):
