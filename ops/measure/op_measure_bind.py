@@ -52,10 +52,15 @@ class ADJT_OT_MeasureBind(ADJT_OT_ModalTemplate):
     node_group_name: StringProperty(name='Node Group Name', default='Measure')
 
     def main(self, context):
-        self.display_ob = self.create_obj()
-        self.display_ob.name = 'ADJT_Measure'
+        self.display_ob = self.create_obj(name='ADJT_Measure')
         mod = self.display_ob.modifiers.new(name='Measure', type='NODES')
         mod.node_group = self.get_preset(node_group_name=self.node_group_name)
+
+        # parent object for moving
+        obj1 = mod.node_group.nodes['Group'].inputs[0].default_value
+        obj2 = mod.node_group.nodes['Group'].inputs[1].default_value
+        obj1.parent = obj2.parent = self.display_ob
+        obj1.show_in_front = obj2.show_in_front = True
 
         bpy.ops.transform.translate('INVOKE_DEFAULT')
 
@@ -85,12 +90,12 @@ class ADJT_OT_MeasureBind(ADJT_OT_ModalTemplate):
 
         return preset_node
 
-    def create_obj(self):
+    def create_obj(self,name = 'new_object'):
         vertices = edges = faces = []
         new_mesh = bpy.data.meshes.new('adjt_empty_mesh')
         new_mesh.from_pydata(vertices, edges, faces)
         new_mesh.update()
-        obj = bpy.data.objects.new('new_object', new_mesh)
+        obj = bpy.data.objects.new(name, new_mesh)
         bpy.context.collection.objects.link(obj)
 
         return obj
