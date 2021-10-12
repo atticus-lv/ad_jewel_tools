@@ -108,16 +108,18 @@ class ADJT_OT_CheckWeight(bpy.types.Operator):
     # data
     obj = None
 
-    check_type: EnumProperty(name='Check Type', items=[
-        ('VOLUME', 'Volume', ''),
-        ('AREA', 'Area', ''),
+    check_type: EnumProperty(name='Type', items=[
+        ('VOLUME', 'Volume', 'Volume * Density'),
+        ('AREA', 'Area', 'Area * Thickness * Density'),
     ])
 
     area_thickness: FloatProperty(name='Thickness', default=0.13)
 
+    precision: IntProperty(name='Precision', default=2, min=0, max=5)
+
     mat_list = [(19.32, 'Yellow Gold 24K', 'Au 99.9%'),
                 (10.36, 'Silver Sterling', 'Ag 92.5%, Cu 7.5%'),
-                (0.9, 'Wax', ''), ]
+                (1, 'Wax', ''), ]
 
     @classmethod
     def poll(cls, context):
@@ -126,7 +128,8 @@ class ADJT_OT_CheckWeight(bpy.types.Operator):
     def draw(self, context):
         layout = self.layout
         layout.use_property_split = True
-        layout.prop(self, 'check_type')
+        row = layout.row(align=True)
+        row.prop(self, 'check_type', expand=True)
         if self.check_type == 'AREA':
             layout.prop(self, 'area_thickness')
 
@@ -166,7 +169,7 @@ class ADJT_OT_CheckWeight(bpy.types.Operator):
             layout.operator('adjt.clip_board', text=f"{volume_fmt}³").data = str(volume_fmt)
             layout.separator()
             for mat in mat_list:
-                data = str(round(mat[0] * eval(volume_str) / 1000, 2))
+                data = str(round(mat[0] * eval(volume_str) / 1000, self.precision))
                 layout.operator('adjt.clip_board', text=f'{mat[1]}: {data}g').data = data
 
         context.window_manager.popup_menu(draw_func=draw_ans, title='Result', icon='INFO')
