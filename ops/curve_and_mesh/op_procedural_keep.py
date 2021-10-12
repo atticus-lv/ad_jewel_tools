@@ -1,7 +1,7 @@
 import bpy
 import bmesh
 
-from ..utils import ADJT_NodeTree
+from ...ops.utils import ADJT_NodeTree
 
 
 class ADJT_OT_ProceduralKeep(bpy.types.Operator):
@@ -32,6 +32,7 @@ class ADJT_OT_ProceduralKeep(bpy.types.Operator):
 
         mod = ob.modifiers.new(name='Procedural Keep', type='NODES')
         mod.node_group = nt
+        mod.show_on_cage = True
 
         bpy.ops.object.select_all(action='DESELECT')
         ob.select_set(True)

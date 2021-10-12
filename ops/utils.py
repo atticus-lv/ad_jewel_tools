@@ -24,7 +24,7 @@ def est_curve_length(ob) -> float:
     # https://github.com/mrachinskiy/jewelcraft
     if ob.modifiers:
 
-        # Reset curve
+        # Reset curve_and_mesh
         # ---------------------------
 
         settings = {
@@ -58,7 +58,7 @@ def est_curve_length(ob) -> float:
 
         bm.free()
 
-        # Restore curve
+        # Restore curve_and_mesh
         # ---------------------------
 
         for k, v in settings.items():
