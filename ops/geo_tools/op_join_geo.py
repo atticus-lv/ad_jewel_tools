@@ -25,18 +25,20 @@ class ADJT_OT_JoinGeo(ADJT_OT_ModalTemplate):
             return len(context.selected_objects) > 0 and context.active_object.type == 'MESH'
 
     def main(self, context):
-        nt = bpy.data.node_groups.new(name='Join Geo', type='GeometryNodeTree')
-        mesh_count = self.create_join_geo_nodetree(nt, context.selected_objects)
-
         # extra ob for display
         self.display_ob = self.create_obj()
-
         self.display_ob.name = 'Join Geo'
+
+        # mode modifier
+        nt = bpy.data.node_groups.new(name='Join Geo', type='GeometryNodeTree')
+        mesh_count = self.create_join_geo_nodetree(nt, context.selected_objects, join_object=self.display_ob)
+
         mod = self.display_ob.modifiers.new(name='Join Geo', type='NODES')
         mod.node_group = nt
 
-        context.view_layer.objects.active = self.display_ob
+        bpy.ops.object.select_all(action='DESELECT')
         self.display_ob.select_set(True)
+        context.view_layer.objects.active = self.display_ob
 
         # tips
         self.tips.clear()
@@ -45,11 +47,13 @@ class ADJT_OT_JoinGeo(ADJT_OT_ModalTemplate):
 
         self._finish = True
 
-    def create_join_geo_nodetree(self, node_tree, selected_objects):
+    def create_join_geo_nodetree(self, node_tree, selected_objects, join_object):
         nt = ADJT_NodeTree(node_tree)
         node_join_all = nt.add_node('GeometryNodeJoinGeometry')
         node_join_all.location = (350, 0)
 
+        # expose view
+        ########
         node_set_position = nt.add_node('GeometryNodeSetPosition')
         node_set_position.location = (550, 0)
 
@@ -68,14 +72,20 @@ class ADJT_OT_JoinGeo(ADJT_OT_ModalTemplate):
 
         nt.link_node(node_position.outputs[0], node_vector_math.inputs[0])
         nt.link_node(node_value.outputs[0], node_vector_math.inputs[1])
+        ########
+
+        node_origin = nt.add_node('GeometryNodeObjectInfo', name='JOIN ORIGIN')
+        node_origin.inputs[0].default_value = join_object  # origin to self, allow to move
+        node_origin.location = (350, 320)
 
         node_mesh_line = nt.add_node('GeometryNodeMeshLine')
         node_mesh_line.inputs[0].default_value = 1  # set only one point
-        node_mesh_line.location = (350, 320)
+        node_mesh_line.location = (550, 320)
 
         node_instance_on_points = nt.add_node('GeometryNodeInstanceOnPoints')
         node_instance_on_points.location = (750, 50)
 
+        nt.link_node(node_origin.outputs[0], node_mesh_line.inputs[2])
         nt.link_node(node_mesh_line.outputs[0], node_instance_on_points.inputs[0])
         nt.link_node(node_set_position.outputs[0], node_instance_on_points.inputs[1])
 
