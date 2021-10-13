@@ -1,7 +1,7 @@
 bl_info = {
     "name": "AD Jewel Tools (ADJT)",
     "author": "Atticus",
-    "version": (0, 89),
+    "version": (0, 9),
     "blender": (3, 0, 0),
     "location": "3D View > Side Panel",
     "description": "AD's tool set for jewel",
