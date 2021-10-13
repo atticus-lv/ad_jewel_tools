@@ -105,7 +105,7 @@ class ADJT_UL_WeightList(bpy.types.UIList):
 
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
         row = layout.row(align=1)
-        row.prop(item, 'thumbnails', text='', emboss=False)
+        row.prop(item, 'thumbnails', text='',icon_only=True,emboss=False)
         row.prop(item, 'name', text='', emboss=False)
         row.prop(item, 'density', text='', emboss=False)
         row.prop(item, 'use', text='')
@@ -272,7 +272,7 @@ class ADJT_OT_CheckWeight(bpy.types.Operator):
             for mat in mat_list:
                 if not mat.use: continue
                 data = str(round(mat.density * eval(volume_str) / 1000, precision))
-                layout.operator('adjt.clip_board', text=f'{mat.name}: {data}g').data = data
+                layout.operator('adjt.clip_board', text=f'{mat.name}: {data}g').data = f'{mat.name}: {data}g'
 
         context.window_manager.popup_menu(draw_func=draw_ans, title='Result', icon='INFO')
 

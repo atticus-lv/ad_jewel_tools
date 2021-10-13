@@ -112,16 +112,15 @@ class AnimateThumProperty(PropertyGroup):
     thumbnails: EnumProperty(name='thumb', items=enum_animate_preset)
 
 
-from .ui.panel import bat_preview
-# bat_preview.register()
-
 class WeightProperty(PropertyGroup):
-    thumbnails: EnumProperty(name='thumb', items=[
-        ('1', '', '', bat_preview.get_icon('jewel1'), 1),
-        ('2', '', '', bat_preview.get_icon('jewel2'), 2),
-        ('3', '', '', bat_preview.get_icon('jewel3'), 3),
-        ('4', '', '', bat_preview.get_icon('jewel4'), 4),
-    ])
+    thumbnails: EnumProperty(name='thumb', items=[('SEQUENCE_COLOR_01', '01', '', 'SEQUENCE_COLOR_01', 1),
+                                                  ('SEQUENCE_COLOR_02', '02', '', 'SEQUENCE_COLOR_02', 2),
+                                                  ('SEQUENCE_COLOR_03', '03', '', 'SEQUENCE_COLOR_03', 3),
+                                                  ('SEQUENCE_COLOR_04', '04', '', 'SEQUENCE_COLOR_04', 4),
+                                                  ('SEQUENCE_COLOR_05', '05', '', 'SEQUENCE_COLOR_05', 5),
+                                                  ('SEQUENCE_COLOR_06', '06', '', 'SEQUENCE_COLOR_06', 6),
+                                                  ('SEQUENCE_COLOR_07', '07', '', 'SEQUENCE_COLOR_07', 7),
+                                                  ('SEQUENCE_COLOR_08', '08', '', 'SEQUENCE_COLOR_08', 8)])
 
     name: StringProperty(name='Name')
     path: StringProperty(name='dir', description='folder dir', subtype='DIR_PATH', update=update_path_name2)
@@ -182,8 +181,6 @@ def init_thumb(prop, prop_index, sub_dir):
 
 
 def register():
-    bat_preview.register()
-
     img_preview = previews.new(max_size=(512, 512))
     img_preview.img_dir = ""
     img_preview.img = ()
@@ -207,4 +204,3 @@ def unregister():
     bpy.utils.unregister_class(ADJT_Preference)
 
     clear_preview_cache()
-    bat_preview.unregister()
