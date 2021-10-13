@@ -128,8 +128,8 @@ class ListAction:
             pref.weight_list_index = len(pref.weight_list) - 1
 
         elif self.action == 'REMOVE':
-            pref.weight_list.remove(self.index)
-            pref.weight_list_index = self.index - 1 if self.index != 0 else 0
+            pref.weight_list.remove(pref.weight_list_index)
+            pref.weight_list_index = pref.weight_list_index - 1 if pref.weight_list_index != 0 else 0
 
         elif self.action == 'COPY':
             cur_item = pref.weight_list[self.index]
