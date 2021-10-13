@@ -22,6 +22,7 @@ import bmesh
 from ..ops_utils.op_template import ADJT_OT_ModalTemplate
 
 import os
+from ...preferences import get_pref
 from bpy.props import EnumProperty, IntProperty, FloatProperty
 
 
@@ -100,6 +101,104 @@ def bmesh_copy_from_object(obj, transform=True, triangulate=True, apply_modifier
     return bm
 
 
+class ADJT_UL_WeightList(bpy.types.UIList):
+
+    def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
+        row = layout.row(align=1)
+        row.prop(item, 'thumbnails', text='', emboss=False)
+        row.prop(item, 'name', text='', emboss=False)
+        row.prop(item, 'density', text='', emboss=False)
+        row.prop(item, 'use', text='')
+
+
+class ListAction:
+    """Add / Remove / Copy current config"""
+    bl_label = "Action List"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    index: IntProperty()
+    action = None
+
+    def execute(self, context):
+        pref = get_pref()
+
+        if self.action == 'ADD':
+            item = pref.weight_list.add()
+            item.name = f'Weight{len(pref.weight_list)}'
+            pref.weight_list_index = len(pref.weight_list) - 1
+
+        elif self.action == 'REMOVE':
+            pref.weight_list.remove(self.index)
+            pref.weight_list_index = self.index - 1 if self.index != 0 else 0
+
+        elif self.action == 'COPY':
+            cur_item = pref.weight_list[self.index]
+
+            item = pref.weight_list.add()
+            item.name = cur_item.name + '_copy'
+            item.use_config = cur_item.use_config
+            item.extension = cur_item.extension
+            item.description = cur_item.description
+            item.bl_idname = cur_item.bl_idname
+
+            for cur_prop_item in cur_item.prop_list:
+                prop_item = item.prop_list.add()
+                prop_item.name = cur_prop_item.name
+                prop_item.value = cur_prop_item.value
+
+            pref.weight_list_index = len(pref.weight_list) - 1
+
+        elif self.action in {'UP', 'DOWN'}:
+            my_list = pref.weight_list
+            index = pref.weight_list_index
+            neighbor = index + (-1 if self.action == 'UP' else 1)
+            my_list.move(neighbor, index)
+            self.move_index(context)
+
+        return {'FINISHED'}
+
+    def move_index(self, context):
+        pref = get_pref()
+        index = pref.weight_list_index
+        new_index = index + (-1 if self.action == 'UP' else 1)
+        pref.weight_list_index = max(0, min(new_index, len(pref.weight_list) - 1))
+
+
+class ADJT_OT_WeightListAdd(ListAction, bpy.types.Operator):
+    bl_idname = "adjt.weight_list_add"
+    bl_label = "Add"
+
+    action = 'ADD'
+
+
+class ADJT_OT_WeightListRemove(ListAction, bpy.types.Operator):
+    bl_idname = "adjt.weight_list_remove"
+    bl_label = "Remove"
+
+    action = 'REMOVE'
+
+
+class ADJT_OT_WeightListCopy(ListAction, bpy.types.Operator):
+    bl_idname = "adjt.weight_list_copy"
+    bl_label = "Copy Config"
+
+    action = 'COPY'
+
+
+class ADJT_OT_WeightListMoveUP(ListAction, bpy.types.Operator):
+    bl_idname = "adjt.weight_list_move_up"
+    bl_label = 'Move Up'
+
+    action = 'UP'
+
+
+class ADJT_OT_WeightListMoveDown(ListAction, bpy.types.Operator):
+    bl_idname = "adjt.weight_list_move_down"
+    bl_label = 'Move Down'
+
+    action = 'DOWN'
+
+
 class ADJT_OT_CheckWeight(bpy.types.Operator):
     bl_label = "Check Weight"
     bl_idname = "mesh.adjt_check_weight"
@@ -161,16 +260,19 @@ class ADJT_OT_CheckWeight(bpy.types.Operator):
             volume_str = clean_float(volume_unit, 4)
             volume_fmt = f"{volume_str} {symbol}"
 
-        mat_list = self.mat_list
+        pref = get_pref()
+        mat_list = pref.weight_list
         precision = self.precision
+
         def draw_ans(self, context):
             layout = self.layout
 
             layout.operator('adjt.clip_board', text=f"{volume_fmt}³").data = str(volume_fmt)
             layout.separator()
             for mat in mat_list:
-                data = str(round(mat[0] * eval(volume_str) / 1000, precision))
-                layout.operator('adjt.clip_board', text=f'{mat[1]}: {data}g').data = data
+                if not mat.use: continue
+                data = str(round(mat.density * eval(volume_str) / 1000, precision))
+                layout.operator('adjt.clip_board', text=f'{mat.name}: {data}g').data = data
 
         context.window_manager.popup_menu(draw_func=draw_ans, title='Result', icon='INFO')
 
@@ -180,6 +282,20 @@ class ADJT_OT_CheckWeight(bpy.types.Operator):
 def register():
     bpy.utils.register_class(ADJT_OT_CheckWeight)
 
+    bpy.utils.register_class(ADJT_UL_WeightList)
+    bpy.utils.register_class(ADJT_OT_WeightListAdd)
+    bpy.utils.register_class(ADJT_OT_WeightListRemove)
+    bpy.utils.register_class(ADJT_OT_WeightListCopy)
+    bpy.utils.register_class(ADJT_OT_WeightListMoveUP)
+    bpy.utils.register_class(ADJT_OT_WeightListMoveDown)
+
 
 def unregister():
     bpy.utils.unregister_class(ADJT_OT_CheckWeight)
+
+    bpy.utils.unregister_class(ADJT_UL_WeightList)
+    bpy.utils.unregister_class(ADJT_OT_WeightListAdd)
+    bpy.utils.unregister_class(ADJT_OT_WeightListRemove)
+    bpy.utils.unregister_class(ADJT_OT_WeightListCopy)
+    bpy.utils.unregister_class(ADJT_OT_WeightListMoveUP)
+    bpy.utils.unregister_class(ADJT_OT_WeightListMoveDown)

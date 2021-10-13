@@ -13,9 +13,11 @@ def get_pref():
     """get preferences of this plugin"""
     return bpy.context.preferences.addons.get(__folder_name__).preferences
 
+
 def has_adjt_modifier(obj):
     for mod in obj.modifiers:
-        if mod.name.startswith('ADJT'):return True
+        if mod.name.startswith('ADJT'): return True
+
 
 class SidebarSetup:
     bl_category = "ADJT"
@@ -120,9 +122,35 @@ class ADJT_PT_MeasurePanel(SidebarSetup, bpy.types.Panel):
     bl_options = {'DRAW_BOX', 'DEFAULT_CLOSED'}
 
     def draw_ui(self, context, layout):
-        box = layout.box()
+        pref = get_pref()
+        box = layout.box().column()
         box.label(text='Weighting', icon_value=bat_preview.get_icon('weight2'))
-        box.operator('mesh.adjt_check_weight', )
+
+        box_list = box.row(align=True)
+        box_list.template_list(
+            "ADJT_UL_WeightList", "Weight List",
+            pref, "weight_list",
+            pref, "weight_list_index")
+
+        box_btn = box_list.column(align=True)
+        box_btn.operator('adjt.weight_list_add',icon = 'ADD', text='')
+        box_btn.operator('adjt.weight_list_remove',icon = 'REMOVE', text='')
+        box_btn.separator()
+        box_btn.operator('adjt.weight_list_move_up',icon = 'TRIA_UP', text='')
+        box_btn.operator('adjt.weight_list_move_down',icon = 'TRIA_DOWN', text='')
+        box_btn.separator()
+        # box_btn.operator('adjt.weight_list_copy',icon = 'DUPLICATE', text='')
+        if len(pref.weight_list)>0:
+            item = pref.weight_list[pref.weight_list_index]
+            box.prop(item,'composition',text='',icon = 'INFO')
+
+        box.separator(factor=0.5)
+        row = box.row(align=True)
+        row.alignment = 'CENTER'
+        row.scale_y = 1.5
+        row.scale_x = 1.25
+        row.separator()
+        row.operator('mesh.adjt_check_weight')
 
         box = layout.box()
         box.label(text='Measure', icon_value=bat_preview.get_icon('measure'))

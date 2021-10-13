@@ -89,6 +89,11 @@ def enum_animate_preset(self, context):
     return enum_thumbnails_from_dir_items(pref.anim_preset_list, pref.anim_preset_list_index, context)
 
 
+def enum_jewel_icon(self, context):
+    pref = get_pref()
+    return enum_thumbnails_from_dir_items(pref.weight_list, pref.weight_list_index, context)
+
+
 def update_path_name2(self, context):
     full_dir_name = os.path.dirname(self.path) if os.path.isdir(self.path) else None
     if full_dir_name is None: return None
@@ -107,6 +112,25 @@ class AnimateThumProperty(PropertyGroup):
     thumbnails: EnumProperty(name='thumb', items=enum_animate_preset)
 
 
+from .ui.panel import bat_preview
+
+
+class WeightProperty(PropertyGroup):
+    thumbnails: EnumProperty(name='thumb', items=[
+        ('1', '', '', bat_preview.get_icon('jewel1'), 1),
+        ('2', '', '', bat_preview.get_icon('jewel2'), 2),
+        ('3', '', '', bat_preview.get_icon('jewel3'), 3),
+        ('4', '', '', bat_preview.get_icon('jewel4'), 4),
+    ])
+
+    name: StringProperty(name='Name')
+    path: StringProperty(name='dir', description='folder dir', subtype='DIR_PATH', update=update_path_name2)
+
+    composition: StringProperty(name='Composition')
+    density: FloatProperty(name='cm³/g', min=0, soft_max=20)
+    use: BoolProperty(name='Use', default=True)
+
+
 from .ui.t3dn_bip.ops import InstallPillow
 
 
@@ -120,14 +144,18 @@ class T3DN_OT_bip_showcase_install_pillow(bpy.types.Operator, InstallPillow):
 class ADJT_Preference(bpy.types.AddonPreferences):
     bl_idname = __package__
 
+    # tools
     load_ui: BoolProperty(name='Load UI')
 
+    # preset
     view_align_preset_list: CollectionProperty(type=ViewAlignThumbProperty)
     view_align_preset_list_index: IntProperty(default=0, min=0, name='Active')
 
     anim_preset_list: CollectionProperty(type=AnimateThumProperty)
     anim_preset_list_index: IntProperty(default=0, min=0, name='Active')
 
+    weight_list: CollectionProperty(type=WeightProperty)
+    weight_list_index: IntProperty(default=0, min=0, name='Active')
     # ui
     use_workflow_panel: BoolProperty(name='Use Workflow Panel', default=True)
 
@@ -154,11 +182,14 @@ def init_thumb(prop, prop_index, sub_dir):
 
 
 def register():
+    bat_preview.register()
+
     img_preview = previews.new(max_size=(512, 512))
     img_preview.img_dir = ""
     img_preview.img = ()
     __tempPreview__["adjt_thumbnails"] = img_preview
 
+    bpy.utils.register_class(WeightProperty)
     bpy.utils.register_class(ViewAlignThumbProperty)
     bpy.utils.register_class(AnimateThumProperty)
     bpy.utils.register_class(T3DN_OT_bip_showcase_install_pillow)
@@ -169,9 +200,11 @@ def register():
 
 
 def unregister():
+    bpy.utils.unregister_class(WeightProperty)
     bpy.utils.unregister_class(ViewAlignThumbProperty)
     bpy.utils.unregister_class(AnimateThumProperty)
     bpy.utils.unregister_class(T3DN_OT_bip_showcase_install_pillow)
     bpy.utils.unregister_class(ADJT_Preference)
 
     clear_preview_cache()
+    bat_preview.unregister()
