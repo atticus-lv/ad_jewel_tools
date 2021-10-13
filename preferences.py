@@ -12,6 +12,7 @@ from bpy.types import PropertyGroup
 import webbrowser
 
 from .ui.t3dn_bip import previews
+from .ui.utils import t3dn_bip_convert
 from . import __folder_name__
 
 
@@ -25,7 +26,8 @@ def get_pref():
 
 __tempPreview__ = {}  # store in global, delete in unregister
 
-image_extensions = ('.png', '.jpg', '.jpeg')
+# image_extensions = ('.png', '.jpg', '.jpeg')
+image_extensions = ('.bip')
 
 
 def check_extension(input_string: str, extensions: set) -> bool:
@@ -39,13 +41,12 @@ def clear_preview_cache():
     __tempPreview__.clear()
 
 
-def enum_thumbnails_from_dir_items(self, context):
-    pref = get_pref()
+def enum_thumbnails_from_dir_items(prop_list, prop_index, context):
     enum_items = []
     if context is None: return enum_items
 
     try:
-        item = pref.view_align_preset_list[pref.view_align_preset_list_index]
+        item = prop_list[prop_index]
         directory = item.path
     except(Exception):
         directory = ""
@@ -57,14 +58,14 @@ def enum_thumbnails_from_dir_items(self, context):
         return image_preview.img
 
     if directory and os.path.exists(directory):
-        image_paths = []
+        image_names = []
         for fn in os.listdir(directory):
             if check_extension(fn.lower(), image_extensions):
-                image_paths.append(fn)
+                image_names.append(fn)
 
-        for i, name in enumerate(image_paths):
-            # generates a thumbnail preview for a file.
+        for i, name in enumerate(image_names):
             filepath = os.path.join(directory, name)
+
             icon = image_preview.get(name)
             if not icon:
                 thumbnail = image_preview.load(name, filepath, 'IMAGE')
@@ -78,16 +79,32 @@ def enum_thumbnails_from_dir_items(self, context):
     return image_preview.img
 
 
+def enum_view_align_preset_item(self, context):
+    pref = get_pref()
+    return enum_thumbnails_from_dir_items(pref.view_align_preset_list, pref.view_align_preset_list_index, context)
+
+
+def enum_animate_preset(self, context):
+    pref = get_pref()
+    return enum_thumbnails_from_dir_items(pref.anim_preset_list, pref.anim_preset_list_index, context)
+
+
 def update_path_name2(self, context):
     full_dir_name = os.path.dirname(self.path) if os.path.isdir(self.path) else None
     if full_dir_name is None: return None
     self.name = full_dir_name.replace('\\', '/').split('/')[-1]
 
 
-class ImageDirListItemProperty(PropertyGroup):
+class ViewAlignThumbProperty(PropertyGroup):
     name: StringProperty(name='name')
     path: StringProperty(name='dir', description='folder dir', subtype='DIR_PATH', update=update_path_name2)
-    thumbnails: EnumProperty(name='thumb', items=enum_thumbnails_from_dir_items)
+    thumbnails: EnumProperty(name='thumb', items=enum_view_align_preset_item)
+
+
+class AnimateThumProperty(PropertyGroup):
+    name: StringProperty(name='name')
+    path: StringProperty(name='dir', description='folder dir', subtype='DIR_PATH', update=update_path_name2)
+    thumbnails: EnumProperty(name='thumb', items=enum_animate_preset)
 
 
 from .ui.t3dn_bip.ops import InstallPillow
@@ -105,10 +122,10 @@ class ADJT_Preference(bpy.types.AddonPreferences):
 
     load_ui: BoolProperty(name='Load UI')
 
-    view_align_preset_list: CollectionProperty(type=ImageDirListItemProperty)
+    view_align_preset_list: CollectionProperty(type=ViewAlignThumbProperty)
     view_align_preset_list_index: IntProperty(default=0, min=0, name='Active')
 
-    anim_preset_list: CollectionProperty(type=ImageDirListItemProperty)
+    anim_preset_list: CollectionProperty(type=AnimateThumProperty)
     anim_preset_list_index: IntProperty(default=0, min=0, name='Active')
 
     # ui
@@ -137,12 +154,13 @@ def init_thumb(prop, prop_index, sub_dir):
 
 
 def register():
-    img_preview = previews.new(max_size=(512,512))
+    img_preview = previews.new(max_size=(512, 512))
     img_preview.img_dir = ""
     img_preview.img = ()
     __tempPreview__["adjt_thumbnails"] = img_preview
 
-    bpy.utils.register_class(ImageDirListItemProperty)
+    bpy.utils.register_class(ViewAlignThumbProperty)
+    bpy.utils.register_class(AnimateThumProperty)
     bpy.utils.register_class(T3DN_OT_bip_showcase_install_pillow)
     bpy.utils.register_class(ADJT_Preference)
 
@@ -151,7 +169,8 @@ def register():
 
 
 def unregister():
-    bpy.utils.unregister_class(ImageDirListItemProperty)
+    bpy.utils.unregister_class(ViewAlignThumbProperty)
+    bpy.utils.unregister_class(AnimateThumProperty)
     bpy.utils.unregister_class(T3DN_OT_bip_showcase_install_pillow)
     bpy.utils.unregister_class(ADJT_Preference)
 

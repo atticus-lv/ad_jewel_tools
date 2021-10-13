@@ -10,18 +10,28 @@ def check_unit(context):
     return False
 
 
-def t3dn_bip_convert(path):
-    import os
-    path = path.replace('\\','/')
+import os
+
+
+def t3dn_bip_convert_batch(dir):
+    dir = dir.replace('\\', '/')
     src_lst = []
 
-    for file in os.listdir(path):
+    for file in os.listdir(dir):
         if file.endswith('.png'):
             src_lst.append(file)
 
     tgz_lst = [filepath.removesuffix('.png') + '.bip' for filepath in src_lst]
 
     for idx, file_name in enumerate(src_lst):
-        os.system(f'cd {path} & python -m t3dn_bip_converter {src_lst[idx]} {tgz_lst[idx]}')
+        os.system(f'cd {dir} & python -m t3dn_bip_converter {src_lst[idx]} {tgz_lst[idx]}')
 
-# t3dn_bip_convert(r'C:\Users\atticus\AppData\Roaming\Blender Foundation\Blender\3.0\scripts\addons\ad_jewl_tools\ui\icons\\')
+
+def t3dn_bip_convert(src, tgz):
+    dir = os.path.dirname(src)
+    dir = dir.replace('\\', '/')
+    os.system(f'cd {dir} & python -m t3dn_bip_converter {src} {tgz}')
+#
+# t3dn_bip_convert_batch(r'C:\Users\atticus\AppData\Roaming\Blender Foundation\Blender\3.0\scripts\addons\ad_jewl_tools\ui\icons\\')
+# t3dn_bip_convert_batch(r'C:\Users\atticus\AppData\Roaming\Blender Foundation\Blender\3.0\scripts\addons\ad_jewl_tools\preset\node_groups\thumb\animate\\')
+# t3dn_bip_convert_batch(r'C:\Users\atticus\AppData\Roaming\Blender Foundation\Blender\3.0\scripts\addons\ad_jewl_tools\preset\node_groups\thumb\view align\\')

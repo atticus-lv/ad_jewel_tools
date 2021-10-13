@@ -13,6 +13,9 @@ def get_pref():
     """get preferences of this plugin"""
     return bpy.context.preferences.addons.get(__folder_name__).preferences
 
+def has_adjt_modifier(obj):
+    for mod in obj.modifiers:
+        if mod.name.startswith('ADJT'):return True
 
 class SidebarSetup:
     bl_category = "ADJT"
@@ -64,7 +67,7 @@ class ADJT_PT_CurvePanel(SidebarSetup, bpy.types.Panel):
         box.operator('mesh.adjt_procedural_keep', icon_value=bat_preview.get_icon('delete'))
 
         box = layout.box()
-        box.label(text='Flow',     icon_value=bat_preview.get_icon('flow'))
+        box.label(text='Flow', icon_value=bat_preview.get_icon('flow'))
         box.operator('curve.adjt_offset_curve_by_length', icon_value=bat_preview.get_icon('offset_curve'))
         box.operator('curve.adjt_flow_mesh_along_curve', icon_value=bat_preview.get_icon('flow'))
         box.operator('curve.adjt_split_curve_and_flow_mesh', icon_value=bat_preview.get_icon('split'))
@@ -82,12 +85,12 @@ class ADJT_PT_AlignPanel(SidebarSetup, bpy.types.Panel):
         box.label(text='Align', icon_value=bat_preview.get_icon('align2'))
 
         # select the instance will not show the preset thumbnails
-        if not (context.active_object and context.active_object.name.startswith('ADJT_Render')):
+        if not (context.active_object and has_adjt_modifier(context.active_object)):
             pref = get_pref()
             item = pref.view_align_preset_list[pref.view_align_preset_list_index]
             if item:
                 col = box.column(align=1)
-                col.template_icon_view(item, "thumbnails", scale=5, scale_popup=8, show_labels=False)
+                col.template_icon_view(item, "thumbnails", scale=5, scale_popup=5, show_labels=False)
                 p = item.thumbnails[:-4]
 
                 col.label(text=p)
@@ -179,25 +182,25 @@ class ADJT_PT_UtilityPanel(SidebarSetup, bpy.types.Panel):
 class ADJT_PT_AnimatePanel(SidebarSetup, bpy.types.Panel):
     bl_label = 'Animate'
 
-    def draw(self, context):
-        layout = self.layout
+    def draw_ui(self, context, layout):
 
         box = layout.box()
-        box.label(text='Animate', icon='MOD_ARRAY')
+        box.label(text='Animate', icon_value=bat_preview.get_icon('animate'))
 
         # select the instance will not show the preset thumbnails
-        if not (context.active_object and context.active_object.name.startswith('ADJT_Animate')):
+        if not (context.active_object and has_adjt_modifier(context.active_object)):
             pref = get_pref()
             item = pref.anim_preset_list[pref.anim_preset_list_index]
             if item:
                 col = box.column(align=1)
-                col.template_icon_view(item, "thumbnails", scale=5, scale_popup=8, show_labels=False)
+                col.template_icon_view(item, "thumbnails", scale=5, scale_popup=5, show_labels=False)
                 p = item.thumbnails[:-4]
 
                 col.label(text=p)
-                box.operator('node.adjt_view_align', icon='IMPORT', text='Animate').node_group_name = p
+                box.operator('node.adjt_animate', text='Animate').node_group_name = p
         else:
             mod = None
+            box.operator('screen.animation_play')
             for m in context.active_object.modifiers:
                 if m.type == 'NODES':
                     mod = m
@@ -206,11 +209,8 @@ class ADJT_PT_AnimatePanel(SidebarSetup, bpy.types.Panel):
                 nt = mod.node_group
                 node = nt.nodes.get('Group')
                 box2 = box.box()
-                if node is not None and 'Object' in node.inputs:
+                if node is not None and 'FPS' in node.inputs:
                     box2.label(text='Settings', icon='OBJECT_DATA')
-                    obj = node.inputs['Object'].default_value
-                    box2.operator('adjt.set_active_object', icon='RESTRICT_SELECT_OFF',
-                                  text='Select Source').obj_name = obj.name
 
                     for input in node.inputs:
                         box2.prop(input, 'default_value', text=input.name)
@@ -354,19 +354,17 @@ class ADJT_PT_Workflow(SidebarSetup, bpy.types.Panel):
             else:
                 row.template_icon(bat_preview.get_icon(e[3] + '_dark'), scale=1.15)
 
-
         if wm.adjt_workflow == 'MODEL':
             ADJT_PT_CurvePanel.draw_ui(self, context, col)
         elif wm.adjt_workflow == 'PLACE':
             ADJT_PT_AlignPanel.draw_ui(self, context, col)
+            ADJT_PT_AnimatePanel.draw_ui(self, context, col)
         elif wm.adjt_workflow == 'MEASURE':
             ADJT_PT_MeasurePanel.draw_ui(self, context, col)
         elif wm.adjt_workflow == 'TOOLS':
             ADJT_PT_UtilityPanel.draw_ui(self, context, col)
         elif wm.adjt_workflow == 'RENDER':
             ADJT_PT_RenderPanel.draw_ui(self, context, col)
-
-
 
 
 def register():
@@ -386,7 +384,7 @@ def register():
     bpy.utils.register_class(ADJT_PT_CurvePanel)
     bpy.utils.register_class(ADJT_PT_AlignPanel)
     bpy.utils.register_class(ADJT_PT_UtilityPanel)
-    # bpy.utils.register_class(ADJT_PT_AnimatePanel)
+    bpy.utils.register_class(ADJT_PT_AnimatePanel)
     bpy.utils.register_class(ADJT_PT_RenderPanel)
 
 
@@ -400,7 +398,7 @@ def unregister():
     bpy.utils.unregister_class(ADJT_PT_CurvePanel)
     bpy.utils.unregister_class(ADJT_PT_AlignPanel)
     bpy.utils.unregister_class(ADJT_PT_UtilityPanel)
-    # bpy.utils.unregister_class(ADJT_PT_AnimatePanel)
+    bpy.utils.unregister_class(ADJT_PT_AnimatePanel)
     bpy.utils.unregister_class(ADJT_PT_RenderPanel)
 
     bat_preview.unregister()

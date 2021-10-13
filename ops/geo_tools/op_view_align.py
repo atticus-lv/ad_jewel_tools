@@ -91,7 +91,7 @@ class ADJT_OT_ViewAlign(ADJT_OT_ModalTemplate):
         # extra ob for display
         self.display_ob = self.create_obj()
         self.display_ob.name = 'ADJT_Render'
-        mod = self.display_ob.modifiers.new(name='ViewAlign', type='NODES')
+        mod = self.display_ob.modifiers.new(name='ADJT_ViewAlign', type='NODES')
         mod.node_group = self.get_preset(node_group_name=self.node_group_name)
         if 'View Align Dep' not in context.scene.collection.children:
             dep_coll_dir = bpy.data.collections.new("View Align Dep")
