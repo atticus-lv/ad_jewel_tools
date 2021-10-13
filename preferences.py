@@ -113,10 +113,9 @@ class AnimateThumProperty(PropertyGroup):
 
 
 from .ui.panel import bat_preview
-
+# bat_preview.register()
 
 class WeightProperty(PropertyGroup):
-    bat_preview.register()
     thumbnails: EnumProperty(name='thumb', items=[
         ('1', '', '', bat_preview.get_icon('jewel1'), 1),
         ('2', '', '', bat_preview.get_icon('jewel2'), 2),
