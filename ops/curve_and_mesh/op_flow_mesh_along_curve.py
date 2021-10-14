@@ -243,6 +243,7 @@ class ADJT_OT_FlowMeshAlongCurve(bpy.types.Operator):
 
     def invoke(self, context, event):
         # set modifier
+        self.mod_array = True
         self.ori_curve = context.active_object
         self.ori_mesh = [obj for obj in context.selected_objects if obj != self.ori_curve][0]
         self.mod_array, self.mod_curve = self.add_modifiers()
