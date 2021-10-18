@@ -23,7 +23,6 @@ class SidebarSetup:
     bl_category = "ADJT"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
-    bl_options = {'DRAW_BOX'}
 
     @classmethod
     def poll(self, context):
@@ -40,7 +39,7 @@ class SidebarSetup:
 class ADJT_PT_UnitPanel(SidebarSetup, bpy.types.Panel):
     bl_label = ''
 
-    bl_options = {'DRAW_BOX', 'HEADER_LAYOUT_EXPAND'}
+    bl_options = {'HEADER_LAYOUT_EXPAND'}
 
     @classmethod
     def poll(self, context):
@@ -119,7 +118,7 @@ class ADJT_PT_AlignPanel(SidebarSetup, bpy.types.Panel):
 
 class ADJT_PT_MeasurePanel(SidebarSetup, bpy.types.Panel):
     bl_label = 'Measure'
-    bl_options = {'DRAW_BOX', 'DEFAULT_CLOSED'}
+    bl_options = { 'DEFAULT_CLOSED'}
 
     def draw_ui(self, context, layout):
         pref = get_pref()
@@ -174,7 +173,7 @@ class ADJT_PT_MeasurePanel(SidebarSetup, bpy.types.Panel):
 
 class ADJT_PT_UtilityPanel(SidebarSetup, bpy.types.Panel):
     bl_label = 'Utility'
-    bl_options = {'DRAW_BOX', 'DEFAULT_CLOSED'}
+    bl_options = { 'DEFAULT_CLOSED'}
 
     def draw_ui(self, context, layout):
         pref = get_pref()
@@ -246,7 +245,7 @@ class ADJT_PT_AnimatePanel(SidebarSetup, bpy.types.Panel):
 
 class ADJT_PT_RenderPanel(SidebarSetup, bpy.types.Panel):
     bl_label = 'Render'
-    bl_options = {'DRAW_BOX', 'DEFAULT_CLOSED'}
+    bl_options = { 'DEFAULT_CLOSED'}
 
     def draw_ui(self, context, layout):
 
