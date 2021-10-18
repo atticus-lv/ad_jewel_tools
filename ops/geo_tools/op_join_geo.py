@@ -96,7 +96,7 @@ class ADJT_OT_JoinGeo(ADJT_OT_ModalTemplate):
         coll_dict = {}
 
         for obj in selected_objects:
-            if obj.type not in {'CURVE', 'MESH'}: continue
+            if obj.type not in {'CURVE', 'MESH','FONT',}: continue
 
             if obj.type == 'CURVE':
                 if obj.data.dimensions != '3D': continue
