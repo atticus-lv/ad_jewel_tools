@@ -52,17 +52,25 @@ class ADJT_OT_MeasureBind(bpy.types.Operator):
     node_group_name: StringProperty(name='Node Group Name', default='Measure')
 
     def execute(self, context):
+        # enable vertex color
+        if context.preferences.experimental.use_sculpt_vertex_colors is False:
+            context.preferences.experimental.use_sculpt_vertex_colors = True
+
         self.display_ob = self.create_obj(name='ADJT_Measure')
-        mod = self.display_ob.modifiers.new(name='Measure', type='NODES')
+        mod = self.display_ob.modifiers.new(name='ADJT_Measure', type='NODES')
         mod.node_group = self.get_preset(node_group_name=self.node_group_name)
 
         # parent object for moving
         obj1 = self.create_empty(name='Pos1')
         obj2 = self.create_empty(name='Pos2')
-        mod.node_group.nodes['Group'].inputs[0].default_value = obj1
-        mod.node_group.nodes['Group'].inputs[1].default_value = obj2
-        obj1.parent = self.display_ob
-        obj2.parent = self.display_ob
+        mod["Input_2"] = obj1
+        mod["Input_3"] = obj2
+        mod["Output_11_attribute_name"] = 'ADJT_Measure_color'
+
+        # set empty
+        obj1.parent = obj2.parent = self.display_ob
+        obj1.empty_display_type = 'SPHERE'
+        obj2.empty_display_type = 'SPHERE'
 
         obj1.location = (5, 0, 0)
         obj2.location = (-5, 0, 0)
