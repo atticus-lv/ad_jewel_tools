@@ -65,7 +65,6 @@ class ADJT_PT_CurvePanel(SidebarSetup, bpy.types.Panel):
         box = layout.box()
         box.label(text='Mesh', icon_value=bat_preview.get_icon('extract_curve'))
         box.operator('mesh.adjt_extract_edge_as_curve', icon_value=bat_preview.get_icon('extract_curve'))
-        box.operator('mesh.adjt_procedural_keep', icon_value=bat_preview.get_icon('delete'))
 
         box = layout.box()
         box.label(text='Flow', icon_value=bat_preview.get_icon('flow'))
@@ -74,6 +73,9 @@ class ADJT_PT_CurvePanel(SidebarSetup, bpy.types.Panel):
         box.operator('curve.adjt_split_curve_and_flow_mesh', icon_value=bat_preview.get_icon('split'))
 
         box = layout.box()
+        box.label(text='Procedural Nodes', icon_value=bat_preview.get_icon('join'))
+        box.operator("node.adjt_join_geo")
+        box.operator('mesh.adjt_procedural_keep', icon_value=bat_preview.get_icon('delete'))
         box.operator('node.adjt_curve', icon_value=bat_preview.get_icon('curve'))
         box.operator('node.adjt_array', icon_value=bat_preview.get_icon('circulay_array'))
         box.operator('node.curve_scatter', icon_value=bat_preview.get_icon('flow'))
@@ -83,10 +85,6 @@ class ADJT_PT_AlignPanel(SidebarSetup, bpy.types.Panel):
     bl_label = 'Geo Tools'
 
     def draw_ui(self, context, layout):
-        box = layout.box()
-        box.label(text='Instance', icon_value=bat_preview.get_icon('join'))
-        box.operator("node.adjt_join_geo")
-
         box = layout.box()
         box.label(text='Align', icon_value=bat_preview.get_icon('align2'))
 
