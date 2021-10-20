@@ -96,12 +96,13 @@ class ADJT_OT_JoinGeo(ADJT_OT_ModalTemplate):
         coll_dict = {}
 
         for obj in selected_objects:
-            if obj.type not in {'CURVE', 'MESH','FONT',}: continue
+            if obj.type not in {'CURVE', 'MESH', 'FONT', }: continue
 
             if obj.type == 'CURVE':
                 if obj.data.dimensions != '3D': continue
                 if (obj.data.bevel_mode in {'ROUND', 'PROFILE'} and obj.data.bevel_depth == 0) or (
-                        obj.data.bevel_mode == 'OBJECT' and obj.data.bevel_object is None) and obj.data.extrude == 0: continue
+                        obj.data.bevel_mode == 'OBJECT' and obj.data.bevel_object is None) and obj.data.extrude == 0 or len(
+                    obj.modifiers) == 0: continue
 
             if obj.users_collection[0].name not in coll_dict:
                 coll_dict[obj.users_collection[0].name] = []
