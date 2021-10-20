@@ -34,7 +34,7 @@ class ADJT_OT_ProceduralKeep(bpy.types.Operator):
         vertex_group.add(verts, 1.0, 'ADD')
 
         # mode modifier
-        mod = self.display_ob.modifiers.new(name='ADJT_Array_modifier', type='NODES')
+        mod = self.display_ob.modifiers.new(name='ADJT_ProceduralKeep', type='NODES')
         mod.node_group = self.get_preset(node_group_name=self.node_group_name)
 
         mod.show_on_cage = True
