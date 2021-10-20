@@ -72,6 +72,14 @@ class ADJT_PT_CurvePanel(SidebarSetup, bpy.types.Panel):
         box.operator('curve.adjt_flow_mesh_along_curve', icon_value=bat_preview.get_icon('flow'))
         box.operator('curve.adjt_split_curve_and_flow_mesh', icon_value=bat_preview.get_icon('split'))
 
+
+        box = layout.box()
+        box.label(text = 'Procedural Transform', icon_value=bat_preview.get_icon('place'))
+        box.operator("mesh.adjt_procedural_translate", icon_value=bat_preview.get_icon('transform'))
+        box.operator("mesh.adjt_procedural_rotate", icon_value=bat_preview.get_icon('rotate'))
+        box.operator("mesh.adjt_procedural_scale", icon_value=bat_preview.get_icon('scale'))
+
+
         box = layout.box()
         box.label(text='Procedural Nodes', icon_value=bat_preview.get_icon('nodes'))
         box.operator("node.adjt_join_geo", icon_value=bat_preview.get_icon('join'))
@@ -99,22 +107,7 @@ class ADJT_PT_AlignPanel(SidebarSetup, bpy.types.Panel):
 
                 col.label(text=p)
                 box.operator('node.adjt_view_align', text='Align').node_group_name = p
-        else:
-            mod = None
-            for m in context.active_object.modifiers:
-                if m.type == 'NODES' and m.name.startswith('ADJT_ViewAlign'):
-                    mod = m
-                    break
-            if mod:
-                nt = mod.node_group
-                node = nt.nodes.get('Group')
-                box2 = box.box()
-                if node is not None and 'Separate' in node.inputs:
-                    box2.label(text='Settings', icon='OBJECT_DATA')
 
-                    for input in node.inputs:
-                        if input.is_linked:continue
-                        box2.prop(input, 'default_value', text=input.name)
 
 
 class ADJT_PT_MeasurePanel(SidebarSetup, bpy.types.Panel):
@@ -157,19 +150,7 @@ class ADJT_PT_MeasurePanel(SidebarSetup, bpy.types.Panel):
 
         if not (context.active_object and context.active_object.name.startswith('ADJT_Measure')):
             box.operator('adjt.measure_bind', )
-        else:
-            mod = None
-            for m in context.active_object.modifiers:
-                if m.type == 'NODES':
-                    mod = m
-                    break
-            if mod:
-                nt = mod.node_group
-                node = nt.nodes.get('Group')
-                box2 = box.box()
-                if node is not None and 'Object 1' in node.inputs:
-                    for input in node.inputs:
-                        box2.prop(input, 'default_value', text=input.name)
+
 
 
 class ADJT_PT_UtilityPanel(SidebarSetup, bpy.types.Panel):
