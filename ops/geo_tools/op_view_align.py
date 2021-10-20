@@ -15,7 +15,7 @@ class ADJT_OT_ViewAlign(ADJT_OT_ModalTemplate):
 
     display_ob = None
     mod = None
-    mod_remove = None
+    mod_remove = True
     node_group_name: StringProperty(name='Node Group Name', default='Horizontal 4 View')
 
     # props
@@ -27,7 +27,7 @@ class ADJT_OT_ViewAlign(ADJT_OT_ModalTemplate):
             return len(context.selected_objects) == 1 and context.active_object.type == 'MESH'
 
     def finish(self, context):
-        if self._cancel and self.mod_remove:
+        if self._cancel and self.mod_remove is not None:
             self.display_ob.modifiers.remove(self.mod)
             self.mod_remove = None
         self.restore_cursor(context)
@@ -76,6 +76,7 @@ class ADJT_OT_ViewAlign(ADJT_OT_ModalTemplate):
         return {"RUNNING_MODAL"}
 
     def pre(self, context, event):
+        self.mod_remove = True
         self.cursor_set = True
 
     def main(self, context):

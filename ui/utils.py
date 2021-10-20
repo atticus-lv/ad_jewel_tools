@@ -31,7 +31,7 @@ def t3dn_bip_convert(src, tgz):
     dir = os.path.dirname(src)
     dir = dir.replace('\\', '/')
     os.system(f'cd {dir} & python -m t3dn_bip_converter {src} {tgz}')
-# #
-# t3dn_bip_convert_batch(r'C:\Users\atticus\AppData\Roaming\Blender Foundation\Blender\3.0\scripts\addons\ad_jewl_tools\ui\icons\\')
+#
+t3dn_bip_convert_batch(r'C:\Users\atticus\AppData\Roaming\Blender Foundation\Blender\3.0\scripts\addons\ad_jewl_tools\ui\icons\\')
 # t3dn_bip_convert_batch(r'C:\Users\atticus\AppData\Roaming\Blender Foundation\Blender\3.0\scripts\addons\ad_jewl_tools\preset\node_groups\thumb\animate\\')
 # t3dn_bip_convert_batch(r'C:\Users\atticus\AppData\Roaming\Blender Foundation\Blender\3.0\scripts\addons\ad_jewl_tools\preset\node_groups\thumb\view align\\')
