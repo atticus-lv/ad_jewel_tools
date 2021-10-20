@@ -76,6 +76,7 @@ class ADJT_PT_CurvePanel(SidebarSetup, bpy.types.Panel):
         box = layout.box()
         box.operator('node.adjt_curve', icon_value=bat_preview.get_icon('curve'))
         box.operator('node.adjt_array', icon_value=bat_preview.get_icon('circulay_array'))
+        box.operator('node.curve_scatter', icon_value=bat_preview.get_icon('flow'))
 
 
 class ADJT_PT_AlignPanel(SidebarSetup, bpy.types.Panel):
