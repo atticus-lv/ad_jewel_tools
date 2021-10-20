@@ -27,6 +27,9 @@ class ADJT_OT_Animate(ADJT_OT_ModalTemplate):
         mod = self.display_ob.modifiers.new(name='ADJT_Animate', type='NODES')
         mod.node_group = self.get_preset(node_group_name=self.node_group_name)
 
+        # refresh because of unfixed bug
+        mod.show_viewport = False
+        mod.show_viewport = True
         # tips
         self.tips.clear()
         self.tips.append(f'')
