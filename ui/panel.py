@@ -73,6 +73,10 @@ class ADJT_PT_CurvePanel(SidebarSetup, bpy.types.Panel):
         box.operator('curve.adjt_flow_mesh_along_curve', icon_value=bat_preview.get_icon('flow'))
         box.operator('curve.adjt_split_curve_and_flow_mesh', icon_value=bat_preview.get_icon('split'))
 
+        box = layout.box()
+        box.operator('node.adjt_curve', icon_value=bat_preview.get_icon('curve'))
+        box.operator('node.adjt_array', icon_value=bat_preview.get_icon('circulay_array'))
+
 
 class ADJT_PT_AlignPanel(SidebarSetup, bpy.types.Panel):
     bl_label = 'Geo Tools'
@@ -229,7 +233,7 @@ class ADJT_PT_AnimatePanel(SidebarSetup, bpy.types.Panel):
             mod = None
             box.operator('screen.animation_play')
             for m in context.active_object.modifiers:
-                if m.type == 'NODES':
+                if m.type == 'NODES' and m.name.startswith('ADJT_Animate'):
                     mod = m
                     break
             if mod:
