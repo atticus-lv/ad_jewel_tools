@@ -10,7 +10,7 @@ from ..ops_utils.op_template import ADJT_OT_ModalTemplate
 class ADJT_OT_ProceduralKeep(bpy.types.Operator):
     """Procedural Delete in Edit mode"""
     bl_idname = 'mesh.adjt_procedural_keep'
-    bl_label = 'Procedural Keep'
+    bl_label = 'Delete / Keep Faces'
     bl_options = {'UNDO_GROUPED'}
 
     object = None

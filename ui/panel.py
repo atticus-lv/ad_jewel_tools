@@ -73,8 +73,8 @@ class ADJT_PT_CurvePanel(SidebarSetup, bpy.types.Panel):
         box.operator('curve.adjt_split_curve_and_flow_mesh', icon_value=bat_preview.get_icon('split'))
 
         box = layout.box()
-        box.label(text='Procedural Nodes', icon_value=bat_preview.get_icon('join'))
-        box.operator("node.adjt_join_geo")
+        box.label(text='Procedural Nodes', icon_value=bat_preview.get_icon('nodes'))
+        box.operator("node.adjt_join_geo", icon_value=bat_preview.get_icon('join'))
         box.operator('mesh.adjt_procedural_keep', icon_value=bat_preview.get_icon('delete'))
         box.operator('node.adjt_curve', icon_value=bat_preview.get_icon('curve'))
         box.operator('node.adjt_array', icon_value=bat_preview.get_icon('circulay_array'))
