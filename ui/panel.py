@@ -14,9 +14,9 @@ def get_pref():
     return bpy.context.preferences.addons.get(__folder_name__).preferences
 
 
-def has_adjt_modifier(obj):
+def has_adjt_modifier(obj,prefix = 'ADJT'):
     for mod in obj.modifiers:
-        if mod.name.startswith('ADJT'): return True
+        if mod.name.startswith(prefix): return True
 
 
 class SidebarSetup:
@@ -98,7 +98,7 @@ class ADJT_PT_AlignPanel(SidebarSetup, bpy.types.Panel):
         box.label(text='Align', icon_value=bat_preview.get_icon('align2'))
 
         # select the instance will not show the preset thumbnails
-        if not (context.active_object and has_adjt_modifier(context.active_object)):
+        if context.active_object is not None and hasattr(context.active_object,'modifiers'):
             pref = get_pref()
             item = pref.view_align_preset_list[pref.view_align_preset_list_index]
             if item:
@@ -202,7 +202,7 @@ class ADJT_PT_AnimatePanel(SidebarSetup, bpy.types.Panel):
         box.label(text='Animate', icon_value=bat_preview.get_icon('animate'))
 
         # select the instance will not show the preset thumbnails
-        if not (context.active_object and has_adjt_modifier(context.active_object)):
+        if context.active_object is not None and hasattr(context.active_object,'modifiers'):
             pref = get_pref()
             item = pref.anim_preset_list[pref.anim_preset_list_index]
             if item:
