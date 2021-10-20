@@ -27,7 +27,8 @@ class ProceduralTranform(bpy.types.Operator):
         # mode modifier
         mod = self.display_ob.modifiers.new(name='ADJT_ProceduralTransform', type='NODES')
         mod.node_group = self.get_preset(node_group_name=self.node_group_name)
-        mod["Input_2"][2] = self.default_z
+        if self.default_z:
+            mod["Input_2"][2] = self.default_z
         # refresh
         mod.show_viewport = False
         mod.show_viewport = True
@@ -75,14 +76,23 @@ class ADJT_OT_ProceduralRotate(ProceduralTranform):
 
     node_group_name = 'Rotate'
 
+class ADJT_OT_CenterOrigin(ProceduralTranform):
+    bl_idname = 'mesh.adjt_center_origin'
+    bl_label = 'Center Origin'
+
+    node_group_name = 'Center Origin'
+    default_z = None
+
 
 def register():
     bpy.utils.register_class(ADJT_OT_ProceduralTranslate)
     bpy.utils.register_class(ADJT_OT_ProceduralScale)
     bpy.utils.register_class(ADJT_OT_ProceduralRotate)
+    bpy.utils.register_class(ADJT_OT_CenterOrigin)
 
 
 def unregister():
     bpy.utils.unregister_class(ADJT_OT_ProceduralTranslate)
     bpy.utils.unregister_class(ADJT_OT_ProceduralScale)
     bpy.utils.unregister_class(ADJT_OT_ProceduralRotate)
+    bpy.utils.unregister_class(ADJT_OT_CenterOrigin)

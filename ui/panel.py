@@ -78,6 +78,7 @@ class ADJT_PT_CurvePanel(SidebarSetup, bpy.types.Panel):
         box.operator("mesh.adjt_procedural_translate", icon_value=bat_preview.get_icon('transform'))
         box.operator("mesh.adjt_procedural_rotate", icon_value=bat_preview.get_icon('rotate'))
         box.operator("mesh.adjt_procedural_scale", icon_value=bat_preview.get_icon('scale'))
+        box.operator("mesh.adjt_center_origin", icon_value=bat_preview.get_icon('origin'))
 
 
         box = layout.box()
