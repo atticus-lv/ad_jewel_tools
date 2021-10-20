@@ -60,7 +60,7 @@ class ADJT_OT_FontSet(bpy.types.Operator):
             elif self.type == 'APPEND':
                 font.data.body += self.text
             elif self.type == 'NEXT':
-                font.data.body += f'\n+{self.text}'
+                font.data.body += f'\n{self.text}'
 
         return {"FINISHED"}
 
