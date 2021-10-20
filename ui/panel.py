@@ -151,6 +151,10 @@ class ADJT_PT_MeasurePanel(SidebarSetup, bpy.types.Panel):
         if not (context.active_object and context.active_object.name.startswith('ADJT_Measure')):
             box.operator('adjt.measure_bind', )
 
+        box = layout.box()
+        box.label(text='Font', icon_value=bat_preview.get_icon('rename'))
+        box.operator('mesh.adjt_set_font')
+
 
 
 class ADJT_PT_UtilityPanel(SidebarSetup, bpy.types.Panel):
@@ -174,7 +178,7 @@ class ADJT_PT_UtilityPanel(SidebarSetup, bpy.types.Panel):
         row.operator('wm.adjt_load_file', icon='FORWARD', text='Next').action = '+1'
         # box.label(text='Measure', icon='CON_DISTLIMIT')
         #
-        # if not (hasattr(context.active_object, 'adjt_measure') and context.active_object.type == 'FONT'):
+        # if not (hasattr(context.active_object, 'adjt_measure') and context.active_object.type == 'fonts'):
         #     box.operator('adjt.measure_bind', icon='OUTLINER_OB_FONT').update_object = ''
         #
         # else:
@@ -276,42 +280,16 @@ class ADJT_PT_RenderPanel(SidebarSetup, bpy.types.Panel):
                     col.label(text='No context world!')
                 else:
                     world_nt = ADJT_NodeTree(context.scene.world.node_tree)
-                    node_background = world_nt.get_node("SSM_BG")
-                    node_hsv = world_nt.get_node("SSM_HSV")
-                    node_rotate_x = world_nt.get_node("SSM_Rv_x")
-                    node_rotate_y = world_nt.get_node("SSM_Rv_y")
-                    node_rotate_z = world_nt.get_node("SSM_Rv")
+                    node_group = world_nt.get_node("Group")
 
                     col = col.box().column()
-
                     col.separator(factor=0.5)
-
                     col.prop(context.scene.render, 'film_transparent', toggle=1)
 
-                    if node_background:
-                        input = node_background.inputs[1]
-                        col.prop(input, 'default_value', text=input.name)
-
-                    col.separator(factor=0.5)
-
-                    if node_rotate_x:
-                        input = node_rotate_x.outputs[0]
-                        col.prop(input, 'default_value', text='X')
-
-                    if node_rotate_y:
-                        input = node_rotate_y.outputs[0]
-                        col.prop(input, 'default_value', text='Y')
-
-                    if node_rotate_z:
-                        input = node_rotate_z.outputs[0]
-                        col.prop(input, 'default_value', text='Z')
-
-                    col.separator(factor=0.5)
-
-                    if node_hsv:
-                        for input in node_hsv.inputs:
-                            if input.is_linked: continue
-                            col.prop(input, 'default_value', text=input.name)
+                    if not node_group: return
+                    if node_group.node_tree.name == 'adjt_quick_world':
+                        for input in node_group.inputs:
+                            col.prop(input, 'default_value',text = input.name)
 
 
 ########
