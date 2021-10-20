@@ -103,7 +103,7 @@ class ADJT_PT_AlignPanel(SidebarSetup, bpy.types.Panel):
         else:
             mod = None
             for m in context.active_object.modifiers:
-                if m.type == 'NODES':
+                if m.type == 'NODES' and m.name.startswith('ADJT_ViewAlign'):
                     mod = m
                     break
             if mod:
@@ -111,12 +111,10 @@ class ADJT_PT_AlignPanel(SidebarSetup, bpy.types.Panel):
                 node = nt.nodes.get('Group')
                 box2 = box.box()
                 if node is not None and 'Separate' in node.inputs:
-                    box2.label(text='Instance Settings', icon='OBJECT_DATA')
-                    obj = node.inputs['Object'].default_value
-                    box2.operator('adjt.set_active_object', icon='RESTRICT_SELECT_OFF',
-                                  text='Select Source').obj_name = obj.name
+                    box2.label(text='Settings', icon='OBJECT_DATA')
 
                     for input in node.inputs:
+                        if input.is_linked:continue
                         box2.prop(input, 'default_value', text=input.name)
 
 

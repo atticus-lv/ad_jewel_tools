@@ -13,8 +13,9 @@ class ADJT_OT_ViewAlign(ADJT_OT_ModalTemplate):
     bl_idname = "node.adjt_view_align"
     bl_options = {'REGISTER', 'UNDO'}
 
-    object = None
     display_ob = None
+    mod = None
+    mod_remove = None
     node_group_name: StringProperty(name='Node Group Name', default='Horizontal 4 View')
 
     # props
@@ -26,14 +27,9 @@ class ADJT_OT_ViewAlign(ADJT_OT_ModalTemplate):
             return len(context.selected_objects) == 1 and context.active_object.type == 'MESH'
 
     def finish(self, context):
-        if self._cancel and not self._finish:
-            if self.display_ob:
-                bpy.data.objects.remove(self.display_ob)
-                self.display_ob = None
-            # if self.object.hide_render == 1:
-            #     self.object.hide_render = 0
-            #     self.object.hide_set(False)
-
+        if self._cancel and self.mod_remove:
+            self.display_ob.modifiers.remove(self.mod)
+            self.mod_remove = None
         self.restore_cursor(context)
 
     def modal(self, context, event):
@@ -83,37 +79,19 @@ class ADJT_OT_ViewAlign(ADJT_OT_ModalTemplate):
         self.cursor_set = True
 
     def main(self, context):
-        # set and hide origin obj
-        self.object = context.active_object
-        # self.object.hide_render = 1
-        # self.object.hide_set(True)
-
-        # extra ob for display
-        self.display_ob = self.create_obj()
-        self.display_ob.name = 'ADJT_Render'
-        mod = self.display_ob.modifiers.new(name='ADJT_ViewAlign', type='NODES')
-        mod.node_group = self.get_preset(node_group_name=self.node_group_name)
-        if 'View Align Dep' not in context.scene.collection.children:
-            dep_coll_dir = bpy.data.collections.new("View Align Dep")
-            context.scene.collection.children.link(dep_coll_dir)
-        else:
-            dep_coll_dir = context.scene.collection.children['View Align Dep']
-
-        context.collection.objects.unlink(self.display_ob)
-        dep_coll_dir.objects.link(self.display_ob)
-
+        self.display_ob = context.active_object
+        self.mod = self.display_ob.modifiers.new(name='ADJT_ViewAlign', type='NODES')
+        self.mod.node_group = self.get_preset(node_group_name=self.node_group_name)
         # tips
         self.tips.clear()
         self.tips.append(f'')
         self.tips.append(f'Apply "{self.node_group_name}" preset')
 
         # set obj
-        nt = mod.node_group
+        nt = self.mod.node_group
         node = nt.nodes.get('Group')
-        ob_ip = node.inputs.get('Object')
-        ob_ip.default_value = self.object
 
-        self.separate = node.inputs[0]  # the first socket
+        self.separate = node.inputs['Separate']  # the first socket
 
         return {"RUNNING_MODAL"}
 
@@ -131,16 +109,6 @@ class ADJT_OT_ViewAlign(ADJT_OT_ModalTemplate):
             preset_node = bpy.data.node_groups[node_group_name]
 
         return preset_node
-
-    def create_obj(self):
-        vertices = edges = faces = []
-        new_mesh = bpy.data.meshes.new('adjt_empty_mesh')
-        new_mesh.from_pydata(vertices, edges, faces)
-        new_mesh.update()
-        obj = bpy.data.objects.new('new_object', new_mesh)
-        bpy.context.collection.objects.link(obj)
-
-        return obj
 
 
 def register():
