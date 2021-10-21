@@ -89,9 +89,13 @@ class ADJT_OT_JoinGeo(ADJT_OT_ModalTemplate):
         nt.link_node(node_mesh_line.outputs[0], node_instance_on_points.inputs[0])
         nt.link_node(node_set_position.outputs[0], node_instance_on_points.inputs['Instance'])
 
+        node_realize = nt.add_node('GeometryNodeRealizeInstances')
+        node_realize.location = (950, 0)
+        nt.link_node(node_instance_on_points.outputs[0], node_realize.inputs[0])
+
         node_output = nt.add_node('NodeGroupOutput')
-        node_output.location = (950, 0)
-        nt.link_node(node_instance_on_points.outputs[0], node_output.inputs[-1])
+        node_output.location = (1150, 0)
+        nt.link_node(node_realize.outputs[0], node_output.inputs[-1])
 
         coll_dict = {}
 
