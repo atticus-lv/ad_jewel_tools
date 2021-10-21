@@ -62,7 +62,7 @@ def init_world_nodes(context, node_group_name='adjt_quick_world'):
 
 
 import bpy
-from ..ops_utils.op_template import ADJT_OT_ModalTemplate
+from ..ops_utils.Template import ADJT_OT_ModalTemplate
 
 
 class ADJT_OT_InitShading(ADJT_OT_ModalTemplate):

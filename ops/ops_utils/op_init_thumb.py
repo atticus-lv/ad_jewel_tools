@@ -1,5 +1,5 @@
 import bpy
-from ..ops_utils.op_template import ADJT_OT_ModalTemplate
+from ..ops_utils.Template import ADJT_OT_ModalTemplate
 
 import os
 

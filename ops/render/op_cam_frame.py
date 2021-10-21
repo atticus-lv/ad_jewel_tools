@@ -2,7 +2,7 @@ import bpy
 import os
 from bpy.props import IntProperty, BoolProperty
 
-from ..ops_utils.op_template import ADJT_OT_ModalTemplate
+from ..ops_utils.Template import ADJT_OT_ModalTemplate
 from ... import __folder_name__
 
 

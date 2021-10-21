@@ -4,7 +4,7 @@ from bpy.props import StringProperty
 from ... import __folder_name__
 import bmesh
 
-from ..ops_utils.op_template import ADJT_OT_ModalTemplate
+from ..ops_utils.Template import ADJT_OT_ModalTemplate
 
 
 class ProceduralTranform(bpy.types.Operator):

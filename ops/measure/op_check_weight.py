@@ -19,7 +19,7 @@
 import bpy
 import bmesh
 
-from ..ops_utils.op_template import ADJT_OT_ModalTemplate
+from ..ops_utils.Template import ADJT_OT_ModalTemplate
 
 import os
 from ...preferences import get_pref

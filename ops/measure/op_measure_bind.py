@@ -4,7 +4,7 @@ import bmesh
 from bpy.props import StringProperty, PointerProperty, BoolProperty, CollectionProperty
 from bpy.types import PropertyGroup
 
-from ..ops_utils.op_template import ADJT_OT_ModalTemplate
+from ..ops_utils.Template import ADJT_OT_ModalTemplate
 from ... import __folder_name__
 import os
 
@@ -49,7 +49,7 @@ class ADJT_OT_MeasureBind(bpy.types.Operator):
 
     object = None
     display_ob = None
-    node_group_name: StringProperty(name='Node Group Name', default='Measure')
+    node_group_name: StringProperty(name='Node Group Name', default='Measure 1.0')
 
     def execute(self, context):
         # enable vertex color
@@ -92,18 +92,10 @@ class ADJT_OT_MeasureBind(bpy.types.Operator):
                                 'node_groups',
                                 'measure_preset.blend')
 
-        node_group_dir = os.path.join(base_dir, 'NodeTree') + '/'
+        with bpy.data.libraries.load(base_dir, link=False) as (data_from, data_to):
+            data_to.node_groups = [name for name in data_from.node_groups if name == node_group_name]
 
-        if node_group_name in bpy.data.node_groups:
-            preset_node = bpy.data.node_groups[node_group_name]
-        else:
-            bpy.ops.wm.append(filename=node_group_name, directory=node_group_dir)
-            preset_node = bpy.data.node_groups[node_group_name]
-
-        # with bpy.data.libraries.load(base_dir, link=False) as (data_from, data_to):
-        #     data_to.node_groups = [name for name in data_from.node_groups if name == node_group_name]
-        #
-        # preset_node = data_to.node_groups[0]
+        preset_node = data_to.node_groups[0]
 
         return preset_node
 

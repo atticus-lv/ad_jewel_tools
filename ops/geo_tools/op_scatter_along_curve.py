@@ -3,7 +3,7 @@ import os
 from bpy.props import StringProperty
 from ... import __folder_name__
 
-from ..ops_utils.op_template import ADJT_OT_ModalTemplate
+from ..ops_utils.Template import ADJT_OT_ModalTemplate
 
 
 class ADJT_OT_CurveScatter(ADJT_OT_ModalTemplate):

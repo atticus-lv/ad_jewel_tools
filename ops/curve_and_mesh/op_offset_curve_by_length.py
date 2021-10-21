@@ -2,7 +2,7 @@ import bpy
 from mathutils import Vector
 
 from ...ops.utils import est_curve_length
-from ...ops.ops_utils.op_template import ADJT_OT_ModalTemplate
+from ...ops.ops_utils.Template import ADJT_OT_ModalTemplate
 
 
 class ADJT_OT_OffsetCurvByLength(ADJT_OT_ModalTemplate):
