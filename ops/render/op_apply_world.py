@@ -39,8 +39,11 @@ def init_world_nodes(context, node_group_name='adjt_quick_world'):
 
     nt = context.scene.world.node_tree
     output_node = [node for node in nt.nodes if node.bl_idname == 'ShaderNodeOutputWorld'][0]
-    group_node = nt.nodes.new('ShaderNodeGroup')
-    group_node.name = 'Group'
+
+    group_node = nt.nodes.get('Group')
+    if group_node is None or not hasattr(group_node,'node_tree') or group_node.node_tree.name != 'adjt_quick_world':
+        group_node = nt.nodes.new('ShaderNodeGroup')
+        group_node.name = 'Group'
 
     base_dir = os.path.join(bpy.utils.user_resource('SCRIPTS'), 'addons', __folder_name__, 'preset',
                             'node_groups', 'world.blend')

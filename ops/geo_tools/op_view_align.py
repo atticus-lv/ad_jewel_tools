@@ -101,10 +101,13 @@ class ADJT_OT_ViewAlign(ADJT_OT_ModalTemplate):
                                 'node_groups',
                                 'view_align_preset.blend')
 
-        with bpy.data.libraries.load(base_dir, link=False) as (data_from, data_to):
-            data_to.node_groups = [name for name in data_from.node_groups if name == node_group_name]
+        if node_group_name in bpy.data.node_groups:
+            preset_node = bpy.data.node_groups[node_group_name]
+        else:
+            with bpy.data.libraries.load(base_dir, link=False) as (data_from, data_to):
+                data_to.node_groups = [name for name in data_from.node_groups if name == node_group_name]
 
-        preset_node = data_to.node_groups[0]
+            preset_node = data_to.node_groups[0]
 
         return preset_node
 
