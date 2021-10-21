@@ -30,18 +30,29 @@ class PresetTemplate(ADJT_OT_ModalTemplate):
 
     def main(self, context):
         self.apply_preset(context)
+        self.append_tips()
 
         self._finish = True
+
+    def refresh_modifier_hack(self,mod):
+        # refresh
+        mod.show_viewport = False
+        mod.show_viewport = True
+
+    def init_geo_mod(self,mod):
+        src_ng = mod.node_group
+        if src_ng: bpy.data.node_groups.remove(src_ng)
 
     def apply_preset(self, context):
         self.display_ob = context.active_object if not self.create_new_obj else self.create_obj()
 
-        mod = self.display_ob.modifiers.new(name='ADJT_Animate', type='NODES')
+        mod = self.display_ob.modifiers.new(name=self.modifier_name, type='NODES')
         src_ng = mod.node_group
         if src_ng: bpy.data.node_groups.remove(src_ng)
         mod.node_group = self.get_preset(dir_name=self.dir_name, file_name=self.file_name,
                                          node_group_name=self.node_group_name + f' {self.version}')
 
+    def append_tips(self):
         # tips
         self.tips.clear()
         self.tips.append(f'')

@@ -3,115 +3,39 @@ import os
 from bpy.props import StringProperty
 from ... import __folder_name__
 
-from ..ops_utils.Template import ADJT_OT_ModalTemplate
+from .PresetTemplate import PresetTemplate
 
 
-class ADJT_OT_ViewAlign(ADJT_OT_ModalTemplate):
+class ADJT_OT_ViewAlign(PresetTemplate):
     '''Apply Align Preset
 应用摆放预设'''
     bl_label = "View Align"
     bl_idname = "node.adjt_view_align"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {'UNDO_GROUPED'}
 
-    display_ob = None
-    mod = None
-    mod_remove = True
+    version = 'v1'
+    modifier_name = 'ADJT_ViewAlign'
+    dir_name = 'node_groups'
+    file_name = 'view_align_preset.blend'
+
     node_group_name: StringProperty(name='Node Group Name', default='Horizontal 4 View')
 
-    # props
-    separate = 0.2
+    # action
+    create_new_obj = False
 
     @classmethod
     def poll(self, context):
         if context.active_object:
             return len(context.selected_objects) == 1 and hasattr(context.active_object, 'modifiers')
 
-    def finish(self, context):
-        if self._cancel and self.mod_remove is not None:
-            self.display_ob.modifiers.remove(self.mod)
-            self.mod_remove = None
-        self.restore_cursor(context)
+    def apply_preset(self, context):
+        self.display_ob = context.active_object if not self.create_new_obj else self.create_obj()
 
-    def modal(self, context, event):
-        context.area.tag_redraw()
+        mod = self.display_ob.modifiers.new(name=self.modifier_name, type='NODES')
+        self.init_geo_mod(mod)
+        mod.node_group = self.get_preset(dir_name=self.dir_name, file_name=self.file_name,
+                                         node_group_name=self.node_group_name)
 
-        if event.type == 'TIMER':
-            # fade drawing
-            if self._cancel or self._finish:
-                self.finish(context)
-
-                if self.ui_delay > 0:
-                    self.ui_delay -= 0.01
-                else:
-                    if self.alpha > 0:
-                        self.alpha -= 0.02  # fade
-                    else:
-                        return self.remove_handle(context)
-
-        if self._finish or self._cancel:
-            return {'PASS_THROUGH'}
-
-        elif event.type in {"MIDDLEMOUSE", 'WHEELUPMOUSE', 'WHEELDOWNMOUSE'} or (
-                (event.alt or event.shift or event.ctrl) and event.type == "MIDDLEMOUSE"):
-            return {'PASS_THROUGH'}
-
-        elif event.type == 'LEFTMOUSE':
-            self._finish = True
-
-        elif event.type in {'RIGHTMOUSE', 'ESC'}:
-            self._cancel = True
-
-        elif event.type == 'MOUSEMOVE':
-            self.mouseDX = self.mouseDX - event.mouse_x
-            self.mouseDY = self.mouseDY - event.mouse_y
-
-            speed = 0.05 / 10 if event.shift else 0.05
-            # multi offset
-            offset = self.mouseDX
-            self.separate.default_value -= offset * speed
-            # reset
-            self.mouseDX = event.mouse_x
-            self.mouseDY = event.mouse_y
-
-        return {"RUNNING_MODAL"}
-
-    def pre(self, context, event):
-        self.mod_remove = True
-        self.cursor_set = True
-
-    def main(self, context):
-        self.display_ob = context.active_object
-        self.mod = self.display_ob.modifiers.new(name='ADJT_ViewAlign', type='NODES')
-        src_ng = self.mod.node_group
-        if src_ng: bpy.data.node_groups.remove(src_ng)
-        self.mod.node_group = self.get_preset(node_group_name=self.node_group_name)
-        # tips
-        self.tips.clear()
-        self.tips.append(f'')
-        self.tips.append(f'Apply "{self.node_group_name}" preset')
-
-        # set obj
-        nt = self.mod.node_group
-        node = nt.nodes.get('Group')
-
-        self.separate = node.inputs['Separate']  # the first socket
-
-        return {"RUNNING_MODAL"}
-
-    def get_preset(sellf, node_group_name):
-        base_dir = os.path.join(bpy.utils.user_resource('SCRIPTS'), 'addons', __folder_name__, 'preset',
-                                'node_groups',
-                                'view_align_preset.blend')
-
-        if node_group_name in bpy.data.node_groups:
-            preset_node = bpy.data.node_groups[node_group_name]
-        else:
-            with bpy.data.libraries.load(base_dir, link=False) as (data_from, data_to):
-                data_to.node_groups = [name for name in data_from.node_groups if name == node_group_name]
-
-            preset_node = data_to.node_groups[0]
-
-        return preset_node
 
 
 def register():
