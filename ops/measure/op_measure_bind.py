@@ -8,41 +8,9 @@ from ..ops_utils.Template import ADJT_OT_ModalTemplate
 from ... import __folder_name__
 import os
 
-
-# some code from Measurelt tools
-def get_smart_selected(obj, context):
-    index_list = []
-    loc_list = []
-    # if not mesh, no vertex
-    if obj.type != "MESH":
-        return index_list
-    # --------------------
-    # meshes
-    # --------------------
-    oldobj = context.object
-    context.view_layer.objects.active = obj
-    flag = False
-
-    if obj.mode != 'EDIT':
-        bpy.ops.object.mode_set(mode='EDIT')
-        flag = True
-
-    bm = bmesh.from_edit_mesh(obj.data)
-    for v in bm.verts:
-        if not v.select: continue
-        loc_list.append(v.co)
-
-    if flag is True:
-        bpy.ops.object.editmode_toggle()
-    # Back context object
-    context.view_layer.objects.active = oldobj
-
-    return index_list, loc_list
-
-
 class ADJT_OT_MeasureBind(bpy.types.Operator):
-    '''Generate Measure text from selected points
-从选中点生成测量字体'''
+    '''Add Measure Preset
+从生成测量字体'''
     bl_label = "Create Measure Font"
     bl_idname = "adjt.measure_bind"
     bl_options = {'UNDO'}

@@ -200,6 +200,8 @@ class ADJT_OT_WeightListMoveDown(ListAction, bpy.types.Operator):
 
 
 class ADJT_OT_CheckWeight(bpy.types.Operator):
+    """Calculate weight based on material library
+    根据材质库计算重量"""
     bl_label = "Check Weight"
     bl_idname = "mesh.adjt_check_weight"
     bl_options = {"UNDO", "INTERNAL"}

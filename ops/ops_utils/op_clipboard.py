@@ -3,7 +3,8 @@ from bpy.props import StringProperty, EnumProperty
 
 
 class ADJT_OT_ClipBoard(bpy.types.Operator):
-    """Copy"""
+    """Copy to clipboard
+复制到剪切板"""
     bl_idname = 'adjt.clip_board'
     bl_label = 'Copy'
 

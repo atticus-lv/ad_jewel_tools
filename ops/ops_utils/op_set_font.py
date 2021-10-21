@@ -6,6 +6,8 @@ import os
 
 
 class ADJT_OT_FontSet(bpy.types.Operator):
+    """Set Font with friendly input
+使用友好的输入生成字体"""
     bl_label = "Set Font"
     bl_idname = "mesh.adjt_set_font"
     bl_options = {"REGISTER", "UNDO"}

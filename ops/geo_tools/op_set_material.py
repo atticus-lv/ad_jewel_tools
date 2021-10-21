@@ -88,6 +88,8 @@ class ProceduralTranform(bpy.types.Operator):
 
 
 class ADJT_OT_SetMaterial(ProceduralTranform):
+    """Use geo node modifier to apply material
+使用几何节点修改器上材质"""
     bl_idname = 'mesh.adjt_set_material'
     bl_label = 'Set Material'
 

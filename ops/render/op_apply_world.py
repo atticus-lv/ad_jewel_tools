@@ -78,20 +78,6 @@ class ADJT_OT_InitShading(ADJT_OT_ModalTemplate):
         self._finish = True
 
 
-# class ADJT_OT_InitShading(ADJT_OT_NormalTemplate):
-#     bl_label = "Init Shading"
-#     bl_idname = "render.adjt_init_shading"
-#     bl_options = {"REGISTER", "UNDO", "INTERNAL"}
-#
-#     def execute(self, context):
-#     # def main(self, context):
-#         view = context.space_data
-#         shading = view.shading if view.type == 'VIEW_3D' else context.scene.display.shading
-#         shading.use_scene_world_render = False
-#         shading.type = 'RENDERED'
-#         # self._finish = True
-#         self.draw_ui(context,title=self.bl_label,tips=[])
-#         return {"FINISHED"}
 
 class ADJT_OT_ApplyWorld(ADJT_OT_ModalTemplate):
     '''Apply View Setting to World

@@ -7,8 +7,8 @@ from ..ops_utils.Template import ADJT_OT_ModalTemplate
 
 
 class ADJT_OT_ViewAlign(ADJT_OT_ModalTemplate):
-    '''Copy the select obj to align view
-选择并复制当前物体为三视图'''
+    '''Apply Align Preset
+应用摆放预设'''
     bl_label = "View Align"
     bl_idname = "node.adjt_view_align"
     bl_options = {'REGISTER', 'UNDO'}

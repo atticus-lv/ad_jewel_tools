@@ -7,8 +7,8 @@ from ..ops_utils.Template import ADJT_OT_ModalTemplate
 
 
 class ADJT_OT_CurveScatter(ADJT_OT_ModalTemplate):
-    '''apply Preset
-应用预设'''
+    '''Apply scatter along Preset
+应用散射于曲线预设'''
     bl_label = "Scatter Along Curve"
     bl_idname = "node.curve_scatter"
     bl_options = {'UNDO_GROUPED'}

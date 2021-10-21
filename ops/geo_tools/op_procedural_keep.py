@@ -8,7 +8,8 @@ from ..ops_utils.Template import ADJT_OT_ModalTemplate
 
 
 class ADJT_OT_ProceduralKeep(bpy.types.Operator):
-    """Procedural Delete in Edit mode"""
+    """Procedural Delete in Edit mode
+程序化删除编辑模式下的选中项"""
     bl_idname = 'mesh.adjt_procedural_keep'
     bl_label = 'Delete / Keep Faces'
     bl_options = {'UNDO_GROUPED'}

@@ -14,7 +14,7 @@ def get_pref():
     return bpy.context.preferences.addons.get(__folder_name__).preferences
 
 
-def has_adjt_modifier(obj,prefix = 'ADJT'):
+def has_adjt_modifier(obj, prefix='ADJT'):
     for mod in obj.modifiers:
         if mod.name.startswith(prefix): return True
 
@@ -63,23 +63,26 @@ class ADJT_PT_CurvePanel(SidebarSetup, bpy.types.Panel):
 
     def draw_ui(self, context, layout):
         box = layout.box()
-        box.label(text='Mesh', icon_value=bat_preview.get_icon('extract_curve'))
+        box.label(text='Mesh & Curve', icon_value=bat_preview.get_icon('extract_curve'))
         box.operator('mesh.adjt_extract_edge_as_curve', icon_value=bat_preview.get_icon('extract_curve'))
-
-        box = layout.box()
-        box.label(text='Flow', icon_value=bat_preview.get_icon('flow'))
         box.operator('curve.adjt_offset_curve_by_length', icon_value=bat_preview.get_icon('offset_curve'))
         box.operator('curve.adjt_flow_mesh_along_curve', icon_value=bat_preview.get_icon('flow'))
         box.operator('curve.adjt_split_curve_and_flow_mesh', icon_value=bat_preview.get_icon('split'))
 
-
         box = layout.box()
-        box.label(text = 'Procedural Transform', icon_value=bat_preview.get_icon('place'))
-        box.operator("mesh.adjt_procedural_translate", icon_value=bat_preview.get_icon('transform'))
-        box.operator("mesh.adjt_procedural_rotate", icon_value=bat_preview.get_icon('rotate'))
-        box.operator("mesh.adjt_procedural_scale", icon_value=bat_preview.get_icon('scale'))
-        box.operator("mesh.adjt_center_origin", icon_value=bat_preview.get_icon('origin'))
+        box.label(text='Procedural Transform', icon_value=bat_preview.get_icon('place'))
+        row = box.row()
+        row.alignment = 'CENTER'
+        row.scale_y = 1.5
+        row.operator("mesh.adjt_procedural_translate", icon_value=bat_preview.get_icon('transform'))
+        row.operator("mesh.adjt_procedural_rotate", icon_value=bat_preview.get_icon('rotate'))
+        row.operator("mesh.adjt_procedural_scale", icon_value=bat_preview.get_icon('scale'))
 
+        row = box.row()
+        row.alignment = 'CENTER'
+        row.separator()
+        row.scale_y = row.scale_x = 1.5
+        row.operator("mesh.adjt_center_origin", icon_value=bat_preview.get_icon('origin'))
 
         box = layout.box()
         box.label(text='Procedural Nodes', icon_value=bat_preview.get_icon('nodes'))
@@ -99,7 +102,7 @@ class ADJT_PT_AlignPanel(SidebarSetup, bpy.types.Panel):
         box.label(text='Align', icon_value=bat_preview.get_icon('align2'))
 
         # select the instance will not show the preset thumbnails
-        if context.active_object is not None and hasattr(context.active_object,'modifiers'):
+        if context.active_object is not None and hasattr(context.active_object, 'modifiers'):
             pref = get_pref()
             item = pref.view_align_preset_list[pref.view_align_preset_list_index]
             if item:
@@ -111,10 +114,9 @@ class ADJT_PT_AlignPanel(SidebarSetup, bpy.types.Panel):
                 box.operator('node.adjt_view_align', text='Align').node_group_name = p
 
 
-
 class ADJT_PT_MeasurePanel(SidebarSetup, bpy.types.Panel):
     bl_label = 'Measure'
-    bl_options = { 'DEFAULT_CLOSED'}
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw_ui(self, context, layout):
         pref = get_pref()
@@ -128,16 +130,16 @@ class ADJT_PT_MeasurePanel(SidebarSetup, bpy.types.Panel):
             pref, "weight_list_index")
 
         box_btn = box_list.column(align=True)
-        box_btn.operator('adjt.weight_list_add',icon = 'ADD', text='')
-        box_btn.operator('adjt.weight_list_remove',icon = 'REMOVE', text='')
+        box_btn.operator('adjt.weight_list_add', icon='ADD', text='')
+        box_btn.operator('adjt.weight_list_remove', icon='REMOVE', text='')
         box_btn.separator()
-        box_btn.operator('adjt.weight_list_move_up',icon = 'TRIA_UP', text='')
-        box_btn.operator('adjt.weight_list_move_down',icon = 'TRIA_DOWN', text='')
+        box_btn.operator('adjt.weight_list_move_up', icon='TRIA_UP', text='')
+        box_btn.operator('adjt.weight_list_move_down', icon='TRIA_DOWN', text='')
         box_btn.separator()
         # box_btn.operator('adjt.weight_list_copy',icon = 'DUPLICATE', text='')
-        if len(pref.weight_list)>0:
+        if len(pref.weight_list) > 0:
             item = pref.weight_list[pref.weight_list_index]
-            box.prop(item,'composition',text='',icon = 'INFO')
+            box.prop(item, 'composition', text='', icon='INFO')
 
         box.separator(factor=0.5)
         row = box.row(align=True)
@@ -158,10 +160,9 @@ class ADJT_PT_MeasurePanel(SidebarSetup, bpy.types.Panel):
         box.operator('mesh.adjt_set_font')
 
 
-
 class ADJT_PT_UtilityPanel(SidebarSetup, bpy.types.Panel):
     bl_label = 'Utility'
-    bl_options = { 'DEFAULT_CLOSED'}
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw_ui(self, context, layout):
         pref = get_pref()
@@ -203,7 +204,7 @@ class ADJT_PT_AnimatePanel(SidebarSetup, bpy.types.Panel):
         box.label(text='Animate', icon_value=bat_preview.get_icon('animate'))
 
         # select the instance will not show the preset thumbnails
-        if context.active_object is not None and hasattr(context.active_object,'modifiers'):
+        if context.active_object is not None and hasattr(context.active_object, 'modifiers'):
             pref = get_pref()
             item = pref.anim_preset_list[pref.anim_preset_list_index]
             if item:
@@ -233,7 +234,7 @@ class ADJT_PT_AnimatePanel(SidebarSetup, bpy.types.Panel):
 
 class ADJT_PT_RenderPanel(SidebarSetup, bpy.types.Panel):
     bl_label = 'Render'
-    bl_options = { 'DEFAULT_CLOSED'}
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw_ui(self, context, layout):
 
@@ -291,7 +292,7 @@ class ADJT_PT_RenderPanel(SidebarSetup, bpy.types.Panel):
                     if not node_group: return
                     if node_group.node_tree.name == 'adjt_quick_world':
                         for input in node_group.inputs:
-                            col.prop(input, 'default_value',text = input.name)
+                            col.prop(input, 'default_value', text=input.name)
 
 
 ########
