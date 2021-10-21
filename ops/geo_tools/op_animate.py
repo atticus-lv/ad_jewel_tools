@@ -20,7 +20,7 @@ class ADJT_OT_Animate(ADJT_OT_ModalTemplate):
     @classmethod
     def poll(self, context):
         if context.active_object:
-            return len(context.selected_objects) == 1 and context.active_object.type == 'MESH'
+            return len(context.selected_objects) == 1 and hasattr(context.active_object,'modifiers')
 
     def main(self, context):
         self.display_ob = context.active_object

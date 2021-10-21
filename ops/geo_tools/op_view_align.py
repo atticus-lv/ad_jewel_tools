@@ -24,7 +24,7 @@ class ADJT_OT_ViewAlign(ADJT_OT_ModalTemplate):
     @classmethod
     def poll(self, context):
         if context.active_object:
-            return len(context.selected_objects) == 1 and context.active_object.type == 'MESH'
+            return len(context.selected_objects) == 1 and hasattr(context.active_object, 'modifiers')
 
     def finish(self, context):
         if self._cancel and self.mod_remove is not None:

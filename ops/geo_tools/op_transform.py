@@ -56,6 +56,7 @@ class ProceduralTranform(bpy.types.Operator):
 
 
 class ADJT_OT_ProceduralTranslate(ProceduralTranform):
+    """Translate"""
     bl_idname = 'mesh.adjt_procedural_translate'
     bl_label = 'Translate'
 
@@ -63,6 +64,7 @@ class ADJT_OT_ProceduralTranslate(ProceduralTranform):
 
 
 class ADJT_OT_ProceduralScale(ProceduralTranform):
+    """Scale"""
     bl_idname = 'mesh.adjt_procedural_scale'
     bl_label = 'Scale'
 
@@ -70,6 +72,7 @@ class ADJT_OT_ProceduralScale(ProceduralTranform):
 
 
 class ADJT_OT_ProceduralRotate(ProceduralTranform):
+    """Rotate"""
     bl_idname = 'mesh.adjt_procedural_rotate'
     bl_label = 'Rotate'
 

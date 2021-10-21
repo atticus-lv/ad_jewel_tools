@@ -71,18 +71,14 @@ class ADJT_PT_CurvePanel(SidebarSetup, bpy.types.Panel):
 
         box = layout.box()
         box.label(text='Procedural Transform', icon_value=bat_preview.get_icon('place'))
-        row = box.row()
+        row = box.row(align = True)
         row.alignment = 'CENTER'
         row.scale_y = 1.5
-        row.operator("mesh.adjt_procedural_translate", icon_value=bat_preview.get_icon('transform'))
-        row.operator("mesh.adjt_procedural_rotate", icon_value=bat_preview.get_icon('rotate'))
-        row.operator("mesh.adjt_procedural_scale", icon_value=bat_preview.get_icon('scale'))
-
-        row = box.row()
-        row.alignment = 'CENTER'
-        row.separator()
-        row.scale_y = row.scale_x = 1.5
-        row.operator("mesh.adjt_center_origin", icon_value=bat_preview.get_icon('origin'))
+        row.scale_x = 1.5
+        row.operator("mesh.adjt_procedural_translate", icon_value=bat_preview.get_icon('transform'),text='')
+        row.operator("mesh.adjt_procedural_rotate", icon_value=bat_preview.get_icon('rotate'),text='')
+        row.operator("mesh.adjt_procedural_scale", icon_value=bat_preview.get_icon('scale'),text='')
+        box.operator("mesh.adjt_center_origin", icon_value=bat_preview.get_icon('origin'))
 
         box = layout.box()
         box.label(text='Procedural Nodes', icon_value=bat_preview.get_icon('nodes'))
