@@ -26,51 +26,34 @@ class ADJT_UL_MatList(bpy.types.UIList):
             layout.prop(item, "name", text="", emboss=False, icon_value=icon)
 
 
-class ProceduralTranform(bpy.types.Operator):
+class ADJT_OT_SetMaterial(ADJT_OT_ModalTemplate):
     """Procedural Delete in Edit mode"""
-    bl_options = {'REGISTER','UNDO'}
+    bl_options = {'REGISTER', 'UNDO'}
+    bl_idname = 'mesh.adjt_set_material'
+    bl_label = 'Set Material'
+
+    node_group_name = 'Set Material'
 
     object = None
     display_ob = None
-    node_group_name = 'Translate'
-
-    material = None
-    select_index: IntProperty(name='Select', default=0)
 
     @classmethod
     def poll(self, context):
         return context.active_object and context.active_object.type in {'MESH', 'CURVE', 'FONT'}
 
-    def draw(self, context):
-        layout = self.layout
-        # layout.prop(self, 'select_index')
-
-        layout.template_list(
-            "ADJT_UL_MatList", "All Mat",
-            bpy.data, "materials",
-            self, "select_index", )
-        # layout.template_ID_preview(
-        #     bpy.data.materials[self.select_index], "original",
-        #     rows=5, cols=5, hide_buttons=True
-        # )
-
-
-    def invoke(self, context, event):
-        return context.window_manager.invoke_props_dialog(self)
-
-    def execute(self, context):
+    def main(self, context):
         self.display_ob = context.active_object
 
         # mode modifier
         mod = self.display_ob.modifiers.new(name='ADJT_SetMaterial', type='NODES')
         mod.node_group = self.get_preset(node_group_name=self.node_group_name)
 
-        self.material = bpy.data.materials[self.select_index]
-        if self.material:
-            mod["Input_2"] = self.material
+        mod["Input_2"] = context.window_manager.adjt_tmp_mat
         # refresh
         mod.show_viewport = False
         mod.show_viewport = True
+
+        self._finish = True
 
         return {'FINISHED'}
 
@@ -90,20 +73,15 @@ class ProceduralTranform(bpy.types.Operator):
         return preset_node
 
 
-class ADJT_OT_SetMaterial(ProceduralTranform):
-    """Use geo node modifier to apply material
-使用几何节点修改器上材质"""
-    bl_idname = 'mesh.adjt_set_material'
-    bl_label = 'Set Material'
-
-    node_group_name = 'Set Material'
-
-
 def register():
+    bpy.types.WindowManager.adjt_tmp_mat = PointerProperty(name='Tmp Mat Pv', type=bpy.types.Material)
+
     bpy.utils.register_class(ADJT_UL_MatList)
     bpy.utils.register_class(ADJT_OT_SetMaterial)
 
 
 def unregister():
+    del bpy.types.WindowManager.adjt_tmp_mat
+
     bpy.utils.unregister_class(ADJT_UL_MatList)
     bpy.utils.unregister_class(ADJT_OT_SetMaterial)

@@ -91,7 +91,6 @@ class ADJT_PT_CurvePanel(SidebarSetup, bpy.types.Panel):
         box.operator('node.adjt_curve', icon_value=bat_preview.get_icon('curve'))
         box.operator('node.adjt_array', icon_value=bat_preview.get_icon('circulay_array'))
         box.operator('node.curve_scatter', icon_value=bat_preview.get_icon('flow'))
-        box.operator('mesh.adjt_set_material', icon_value=bat_preview.get_icon('material'))
 
 
 class ADJT_PT_AlignPanel(SidebarSetup, bpy.types.Panel):
@@ -237,6 +236,16 @@ class ADJT_PT_RenderPanel(SidebarSetup, bpy.types.Panel):
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw_ui(self, context, layout):
+
+        box = layout.box()
+        box.label(text = 'Material',icon_value=bat_preview.get_icon('material'))
+        row = box.row(align=True)
+        row.alignment = 'CENTER'
+        row.separator()
+        row.template_ID_preview(
+            context.window_manager, "adjt_tmp_mat",
+            rows=3, cols=4, hide_buttons=True)
+        box.operator('mesh.adjt_set_material')
 
         box = layout.box()
         box.label(text='Camera', icon_value=bat_preview.get_icon('frame'))
