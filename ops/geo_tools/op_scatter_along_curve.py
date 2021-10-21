@@ -17,6 +17,7 @@ class ADJT_OT_CurveScatter(ADJT_OT_ModalTemplate):
     display_ob = None
     node_group_name: StringProperty(name='Node Group Name', default='Scatter along curve')
 
+
     @classmethod
     def poll(self, context):
         return context.active_object and context.active_object.type == 'CURVE' and len(context.selected_objects) == 2
