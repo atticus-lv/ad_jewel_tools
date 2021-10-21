@@ -82,6 +82,8 @@ class ADJT_OT_ViewAlign(ADJT_OT_ModalTemplate):
     def main(self, context):
         self.display_ob = context.active_object
         self.mod = self.display_ob.modifiers.new(name='ADJT_ViewAlign', type='NODES')
+        src_ng = self.mod.node_group
+        if src_ng: bpy.data.node_groups.remove(src_ng)
         self.mod.node_group = self.get_preset(node_group_name=self.node_group_name)
         # tips
         self.tips.clear()

@@ -26,6 +26,8 @@ class ProceduralTranform(bpy.types.Operator):
 
         # mode modifier
         mod = self.display_ob.modifiers.new(name='ADJT_ProceduralTransform', type='NODES')
+        src_ng = mod.node_group
+        if src_ng: bpy.data.node_groups.remove(src_ng)
         mod.node_group = self.get_preset(node_group_name=self.node_group_name)
         if self.default_z:
             mod["Input_2"][2] = self.default_z

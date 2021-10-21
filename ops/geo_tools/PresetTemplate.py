@@ -37,6 +37,8 @@ class PresetTemplate(ADJT_OT_ModalTemplate):
         self.display_ob = context.active_object if not self.create_new_obj else self.create_obj()
 
         mod = self.display_ob.modifiers.new(name='ADJT_Animate', type='NODES')
+        src_ng = mod.node_group
+        if src_ng: bpy.data.node_groups.remove(src_ng)
         mod.node_group = self.get_preset(dir_name=self.dir_name, file_name=self.file_name,
                                          node_group_name=self.node_group_name + f' {self.version}')
 
