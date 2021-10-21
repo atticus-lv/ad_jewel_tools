@@ -88,6 +88,7 @@ class ADJT_PT_CurvePanel(SidebarSetup, bpy.types.Panel):
         box.operator('node.adjt_curve', icon_value=bat_preview.get_icon('curve'))
         box.operator('node.adjt_array', icon_value=bat_preview.get_icon('circulay_array'))
         box.operator('node.curve_scatter', icon_value=bat_preview.get_icon('flow'))
+        box.operator('mesh.adjt_set_material', icon_value=bat_preview.get_icon('material'))
 
 
 class ADJT_PT_AlignPanel(SidebarSetup, bpy.types.Panel):
