@@ -71,21 +71,28 @@ class ADJT_PT_CurvePanel(SidebarSetup, bpy.types.Panel):
 
         box = layout.box()
         box.label(text='Procedural Transform', icon_value=bat_preview.get_icon('place'))
-        row = box.row(align = True)
+        row = box.row(align=True)
         row.alignment = 'CENTER'
         row.scale_y = 1.5
         row.scale_x = 1.5
-        row.operator("mesh.adjt_procedural_translate", icon_value=bat_preview.get_icon('transform'),text='')
-        row.operator("mesh.adjt_procedural_rotate", icon_value=bat_preview.get_icon('rotate'),text='')
-        row.operator("mesh.adjt_procedural_scale", icon_value=bat_preview.get_icon('scale'),text='')
+        row.operator("mesh.adjt_procedural_translate", icon_value=bat_preview.get_icon('transform'), text='')
+        row.operator("mesh.adjt_procedural_rotate", icon_value=bat_preview.get_icon('rotate'), text='')
+        row.operator("mesh.adjt_procedural_scale", icon_value=bat_preview.get_icon('scale'), text='')
         box.operator("mesh.adjt_center_origin", icon_value=bat_preview.get_icon('origin'))
 
         box = layout.box()
-        box.label(text='Procedural Nodes', icon_value=bat_preview.get_icon('nodes'))
+        box.label(text='Procedural Tools', icon_value=bat_preview.get_icon('nodes'))
         box.operator("node.adjt_join_geo", icon_value=bat_preview.get_icon('join'))
+        box.operator("mesh.adjt_realize_instance", icon_value=bat_preview.get_icon('instance'))
+        box.operator("node.transfer_color", icon_value=bat_preview.get_icon('instance'))
         box.operator('mesh.adjt_procedural_keep', icon_value=bat_preview.get_icon('delete'))
+
+        box.separator()
         box.operator('node.adjt_curve', icon_value=bat_preview.get_icon('curve'))
-        box.operator('node.adjt_array', icon_value=bat_preview.get_icon('circulay_array'))
+        box.operator('node.adjt_array', icon_value=bat_preview.get_icon('circulay_array'),
+                     text='Circular Array').node_group_name = 'Circular Array'
+        box.operator('node.adjt_array', icon_value=bat_preview.get_icon('grid_array'),
+                     text='Grid Array').node_group_name = 'Grid Array'
         box.operator('node.curve_scatter', icon_value=bat_preview.get_icon('flow'))
 
 
@@ -234,7 +241,7 @@ class ADJT_PT_RenderPanel(SidebarSetup, bpy.types.Panel):
     def draw_ui(self, context, layout):
 
         box = layout.box()
-        box.label(text = 'Material',icon_value=bat_preview.get_icon('material'))
+        box.label(text='Material', icon_value=bat_preview.get_icon('material'))
         row = box.row(align=True)
         row.alignment = 'CENTER'
         row.separator()
