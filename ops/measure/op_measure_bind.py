@@ -4,11 +4,12 @@ import bmesh
 from bpy.props import StringProperty, PointerProperty, BoolProperty, CollectionProperty
 from bpy.types import PropertyGroup
 
-from ..ops_utils.Template import ADJT_OT_ModalTemplate
+from ..geo_tools.PresetTemplate import PresetTemplate
 from ... import __folder_name__
 import os
 
-class ADJT_OT_MeasureBind(bpy.types.Operator):
+
+class ADJT_OT_MeasureBind(PresetTemplate):
     '''Add Measure Preset
 从生成测量字体'''
     bl_label = "Create Measure Font"
@@ -19,7 +20,7 @@ class ADJT_OT_MeasureBind(bpy.types.Operator):
     display_ob = None
     node_group_name: StringProperty(name='Node Group Name', default='Measure 1.0')
 
-    def execute(self, context):
+    def main(self, context):
         # enable vertex color
         if context.preferences.experimental.use_sculpt_vertex_colors is False:
             context.preferences.experimental.use_sculpt_vertex_colors = True
@@ -53,7 +54,7 @@ class ADJT_OT_MeasureBind(bpy.types.Operator):
         obj1.select_set(True)
         obj2.select_set(True)
 
-        return {"FINISHED"}
+        self._finish = True
 
     def get_preset(sellf, node_group_name):
         base_dir = os.path.join(bpy.utils.user_resource('SCRIPTS'), 'addons', __folder_name__, 'preset',
