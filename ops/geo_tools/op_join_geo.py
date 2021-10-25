@@ -22,7 +22,7 @@ class ADJT_OT_JoinGeo(ADJT_OT_ModalTemplate):
     @classmethod
     def poll(self, context):
         if context.active_object:
-            return len(context.selected_objects) > 0 and context.active_object.type == 'MESH'
+            return len(context.selected_objects) > 0 and hasattr(context.active_object, 'modifiers')
 
     def main(self, context):
         # extra ob for display
@@ -104,9 +104,16 @@ class ADJT_OT_JoinGeo(ADJT_OT_ModalTemplate):
 
             if obj.type == 'CURVE':
                 if obj.data.dimensions != '3D': continue
-                if (obj.data.bevel_mode in {'ROUND', 'PROFILE'} and obj.data.bevel_depth == 0) or (
-                        obj.data.bevel_mode == 'OBJECT' and obj.data.bevel_object is None) and obj.data.extrude == 0 or len(
-                    obj.modifiers) == 0: continue
+
+                if len(obj.modifiers) == 0:
+                    if obj.data.bevel_mode in {'ROUND', 'PROFILE'}:
+                        if obj.data.bevel_depth == 0: continue
+
+                    elif obj.data.bevel_mode == 'OBJECT':
+                        if obj.data.bevel_object is None: continue
+
+                    elif obj.data.offset == 0 and obj.data.extrude == 0:
+                        continue
 
             if obj.users_collection[0].name not in coll_dict:
                 coll_dict[obj.users_collection[0].name] = []
