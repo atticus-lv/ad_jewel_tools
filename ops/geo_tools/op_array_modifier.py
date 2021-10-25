@@ -16,7 +16,7 @@ class ADJT_OT_Array(PresetTemplate):
     filter = {'CURVE', 'MESH'}
     # preset information
     modifier_name = 'ADJT_Array_modifier'
-    version = '1.0'
+    version:StringProperty(default = '1.0')
     dir_name = 'node_groups'
     file_name = 'array.blend'
     node_group_name: StringProperty(name='Node Group Name', default='Circular Array')

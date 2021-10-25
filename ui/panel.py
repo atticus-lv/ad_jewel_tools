@@ -84,16 +84,23 @@ class ADJT_PT_CurvePanel(SidebarSetup, bpy.types.Panel):
         box.label(text='Procedural Tools', icon_value=bat_preview.get_icon('nodes'))
         box.operator("node.adjt_join_geo", icon_value=bat_preview.get_icon('join'))
         box.operator("mesh.adjt_realize_instance", icon_value=bat_preview.get_icon('instance'))
-        box.operator("node.apply_instance", icon_value=bat_preview.get_icon('instance'))
-        box.operator("node.transfer_color", icon_value=bat_preview.get_icon('instance'))
+        box.operator("node.apply_instance", icon_value=bat_preview.get_icon('apply'))
+        box.operator("node.transfer_attribute", icon_value=bat_preview.get_icon('transfer'))
         box.operator('mesh.adjt_procedural_keep', icon_value=bat_preview.get_icon('delete'))
 
         box.separator()
         box.operator('node.adjt_curve', icon_value=bat_preview.get_icon('curve'))
-        box.operator('node.adjt_array', icon_value=bat_preview.get_icon('circulay_array'),
-                     text='Circular Array').node_group_name = 'Circular Array'
-        box.operator('node.adjt_array', icon_value=bat_preview.get_icon('grid_array'),
-                     text='Grid Array').node_group_name = 'Grid Array'
+
+        circle = box.operator('node.adjt_array', icon_value=bat_preview.get_icon('circulay_array'),
+                     text='Circular Array')
+        circle.node_group_name = 'Circular Array'
+        circle.version = '1.0'
+
+        grid = box.operator('node.adjt_array', icon_value=bat_preview.get_icon('grid_array'),
+                     text='Grid Array')
+        grid.node_group_name = 'Grid Array'
+        grid.version = '1.1'
+
         box.operator('node.curve_scatter', icon_value=bat_preview.get_icon('flow'))
 
 
