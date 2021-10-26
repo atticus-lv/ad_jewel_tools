@@ -40,7 +40,6 @@ class ADJT_OT_FontSet(bpy.types.Operator):
         if 'Fontquan-XinYiJiXiangSong Regular' not in bpy.data.fonts:
             bpy.data.fonts.load(self.font_path)
         self.font = bpy.data.fonts.get('Fontquan-XinYiJiXiangSong Regular')
-        print(self.font)
         return self.font
 
     def execute(self, context):
@@ -55,14 +54,18 @@ class ADJT_OT_FontSet(bpy.types.Operator):
                 self.report({"ERROR"}, 'Select Font object as active object')
                 return {"CANCELLED"}
 
-            font = context.active_object
-            font.data.font = self.load_font()
+            font_obj = context.active_object
+            font_obj.data.font = self.load_font()
             if self.type == 'SET':
-                font.data.body = self.text
+                font_obj.data.body = self.text
             elif self.type == 'APPEND':
-                font.data.body += self.text
+                font_obj.data.body += self.text
             elif self.type == 'NEXT':
-                font.data.body += f'\n{self.text}'
+                font_obj.data.body += f'\n{self.text}'
+
+        bpy.ops.object.delete(use_global=False)
+        context.view_layer.objects.active = font_obj
+        font_obj.select_set(True)
 
         return {"FINISHED"}
 
