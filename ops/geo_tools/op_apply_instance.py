@@ -12,7 +12,7 @@ class ADJT_OT_ApplyInstance(ADJT_OT_ModalTemplate):
     '''Apply geo data to new object
 应用几何数据到新物体'''
     bl_label = "Apply Instance"
-    bl_idname = "node.apply_instance"
+    bl_idname = "node.adjt_apply_instance"
     bl_options = {'UNDO_GROUPED'}
 
     object = None
