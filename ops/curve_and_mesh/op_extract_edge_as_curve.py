@@ -2,7 +2,7 @@ import bpy
 from ...ops.utils import copy_obj
 from ...ops.ops_utils.Template import ADJT_OT_ModalTemplate
 from ...ops.utils import draw_pre, draw_post, draw_nurbs_curve
-
+import bmesh
 
 def draw_move_object_callback_px(self, context):
     draw_pre(width=2)
@@ -46,26 +46,31 @@ class ADJT_OT_ExtractEdgeAsCurve(ADJT_OT_ModalTemplate):
         # copy
         ori_obj = context.active_object
         ori_name = ori_obj.name
-        ori_obj.name = 'Curve from ' + ori_obj.name
+        # ori_obj.name = 'Curve from ' + ori_obj.name
 
-        new_obj = copy_obj(ori_obj)
-        new_obj.name = ori_name
-        for mod in ori_obj.modifiers:
-            ori_obj.modifiers.remove(mod)
+        # new_obj = copy_obj(ori_obj)
+        bm = bmesh.from_edit_mesh(ori_obj.data).copy()
+        geo_type = getattr(bm, 'edges')
+        deselect_geom = [elem for elem in geo_type if not elem.select]
 
-        self.tips.clear()
-        self.tips.append('')
-        self.tips.append(f'"{ori_obj.name}" has been extract')
+        if deselect_geom:
+            bmesh.ops.delete(bm, geom=deselect_geom, context='EDGES')
 
-        # print("NEW", new_obj)
-        ori_obj.select_set(1)
-        new_obj.select_set(0)
-        # print("SEL", context.selected_objects)
-        # print("ACTIVE", context.active_object)
+        new_mesh = ori_obj.data.copy()
+        new_mesh.name = F"{ori_obj.data.name}_edges"
+        bm.to_mesh(new_mesh)
+        bm.free()
 
-        bpy.ops.object.mode_set(mode='EDIT')
-        bpy.ops.mesh.select_all(action='INVERT')
-        bpy.ops.mesh.delete(type='EDGE')
+        new_obj = ori_obj.copy()
+        new_obj.modifiers.clear()
+        new_obj.name = f"{ori_obj.name}_{'Copy'}"
+        new_obj.data = new_mesh
+
+        context.collection.objects.link(new_obj)
+        context.view_layer.objects.active = new_obj
+
+        new_obj.select_set(1)
+        ori_obj.select_set(0)
 
         bpy.ops.object.mode_set(mode='OBJECT')
         bpy.ops.object.convert(target='CURVE')
@@ -77,6 +82,10 @@ class ADJT_OT_ExtractEdgeAsCurve(ADJT_OT_ModalTemplate):
 
         curve = context.active_object
         curve.data.splines[0].use_endpoint_u = True
+
+        self.tips.clear()
+        self.tips.append('')
+        self.tips.append(f'"{ori_obj.name}" has been extract')
 
         self.draw_curves.clear()
         self.draw_curves.append(curve)
