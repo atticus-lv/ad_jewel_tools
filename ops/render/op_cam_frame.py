@@ -11,12 +11,8 @@ class ADJT_OT_CamFrame(ADJT_OT_ModalTemplate):
 选择你想要添加的框选相机的物体'''
     bl_label = "Frame Camera"
     bl_idname = "render.adjt_cam_frame"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {'UNDO_GROUPED','INTERNAL'}
 
-    tips = [
-        '',
-        'Ready for Render'
-    ]
 
     safe_pixel: IntProperty(name='Safe area pixel', description="Empty area for the selection and camera frame",
                             default=50)
@@ -32,6 +28,9 @@ class ADJT_OT_CamFrame(ADJT_OT_ModalTemplate):
         if self._cancel and self.cam:
             bpy.data.objects.remove(self.cam)
             self.cam = None
+
+            self.tips.clear()
+            self.title = 'Cancelled !'
 
         self.restore_cursor(context)
 
@@ -74,6 +73,11 @@ class ADJT_OT_CamFrame(ADJT_OT_ModalTemplate):
             # reset
             self.mouseDX = event.mouse_x
             self.mouseDY = event.mouse_y
+
+        self.tips = [
+            '',
+            f'Ortho Scale: {round(self.cam.data.ortho_scale, 2)}',
+        ]
 
         return {"RUNNING_MODAL"}
 
@@ -120,8 +124,8 @@ class ADJT_OT_CamFrame(ADJT_OT_ModalTemplate):
         bpy.ops.view3d.camera_to_view(override)
 
         # set frame obj
-        self.cam.select_set(0)
-        ori_select.select_set(1)
+        self.cam.select_set(False)
+        ori_select.select_set(True)
 
         # set safe area
         safe_scale = self.safe_pixel * 2 / context.scene.render.resolution_x
