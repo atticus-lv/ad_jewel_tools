@@ -20,6 +20,10 @@ class ADJT_OT_MeasureBind(PresetTemplate):
     display_ob = None
     node_group_name: StringProperty(name='Node Group Name', default='Measure 1.0')
 
+    @classmethod
+    def poll(self, context):
+        return context.scene
+
     def main(self, context):
         # enable vertex color
         if context.preferences.experimental.use_sculpt_vertex_colors is False:
@@ -50,6 +54,8 @@ class ADJT_OT_MeasureBind(PresetTemplate):
 
         obj1.show_in_front = obj2.show_in_front = True
 
+        bpy.ops.object.select_all(action='DESELECT')
+        context.view_layer.objects.active = self.display_ob
         self.display_ob.select_set(False)
         obj1.select_set(True)
         obj2.select_set(True)
