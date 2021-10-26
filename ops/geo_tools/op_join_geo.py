@@ -150,6 +150,7 @@ class ADJT_OT_JoinGeo(ADJT_OT_ModalTemplate):
                 node_obj = nt.add_node('GeometryNodeObjectInfo', name=obj.name)
                 node_obj.transform_space = 'RELATIVE'
                 node_obj.label = obj.name
+                node_obj.inputs[1].default_value = True # set instance
 
                 node_obj.location = (col_count * -1 * col_step, line_count * row_step)
 
