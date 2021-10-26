@@ -327,11 +327,19 @@ class ADJT_PT_RenderPanel(SidebarSetup, bpy.types.Panel):
 
 
 class ADJT_PT_Workflow(SidebarSetup, bpy.types.Panel):
-    bl_label = 'Workflow'
+    bl_label = ''
+
+    bl_options = {"HEADER_LAYOUT_EXPAND"}
 
     @classmethod
     def poll(self, context):
         return get_pref().use_workflow_panel is True
+
+    def draw_header(self, context):
+        layout = self.layout
+        row = layout.row(align=True)
+        row.operator('wm.adjt_load_file', icon='BACK', text='Load Pre').action = '-1'
+        row.operator('wm.adjt_load_file', icon='FORWARD', text='Load Next').action = '+1'
 
     def draw(self, context):
         layout = self.layout
