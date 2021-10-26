@@ -90,11 +90,12 @@ class ADJT_OT_CamFrame(ADJT_OT_ModalTemplate):
         self.cursor_set = True
 
         # use bound geo nodes to measure instances
-        self.use_bound = False
-        for n in context.active_object.dimensions:
-            if n == 0:
-                self.use_bound = True
-                break
+        self.use_bound = True
+        # depsgraph = context.view_layer.depsgraph
+        # for object_instance in depsgraph.object_instances:
+        #     if object_instance.is_instance and context.active_object.data == object_instance:
+        #         self.use_bound = True
+        #         break
 
         ori_select = context.active_object
 
