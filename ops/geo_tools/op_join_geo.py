@@ -68,7 +68,7 @@ class ADJT_OT_JoinGeo(ADJT_OT_ModalTemplate):
         node_value.location = (150, -350)
 
         nt.link_node(node_join_all.outputs[0], node_set_position.inputs[0])
-        nt.link_node(node_vector_math.outputs[0], node_set_position.inputs[1])
+        nt.link_node(node_vector_math.outputs[0], node_set_position.inputs[2])
 
         nt.link_node(node_position.outputs[0], node_vector_math.inputs[0])
         nt.link_node(node_value.outputs[0], node_vector_math.inputs[1])
