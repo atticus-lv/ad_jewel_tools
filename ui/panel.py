@@ -84,7 +84,7 @@ class ADJT_PT_CurvePanel(SidebarSetup, bpy.types.Panel):
         box.label(text='Procedural Tools', icon_value=bat_preview.get_icon('nodes'))
         box.operator("node.adjt_join_geo", icon_value=bat_preview.get_icon('join'))
         box.operator("mesh.adjt_realize_instance", icon_value=bat_preview.get_icon('instance'))
-        box.operator("node.apply_instance", icon_value=bat_preview.get_icon('apply'))
+        box.operator("node.adjt_apply_instance", icon_value=bat_preview.get_icon('apply'))
         box.operator("node.transfer_attribute", icon_value=bat_preview.get_icon('transfer'))
         box.operator('mesh.adjt_procedural_keep', icon_value=bat_preview.get_icon('delete'))
 
