@@ -101,7 +101,7 @@ class ADJT_OT_ApplyWorld(ADJT_OT_ModalTemplate):
         group_node, node_hdr_image = init_world_nodes(context)
 
         group_node.inputs['Rotation'].default_value[2] = math.radians(shading.studiolight_rotate_z)
-        group_node.inputs['BG Strength'].default_value = shading.studiolight_intensity
+        group_node.inputs['Strength'].default_value = shading.studiolight_intensity
 
         if cur_hdr in bl_img_list:
             ans = load_image(node_hdr_image, dir=bl_dir, image_name=cur_hdr)
