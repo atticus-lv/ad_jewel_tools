@@ -25,6 +25,7 @@ class ADJT_OT_ApplyInstance(ADJT_OT_ModalTemplate):
             return len(context.selected_objects) == 1 and hasattr(context.active_object, 'modifiers')
 
     def main(self, context):
+        ori_loc = context.active_object.location.copy()
         # extra ob for display
         self.display_ob = self.create_obj()
         self.display_ob.name = f'{context.active_object.name}_Apply Instance'
@@ -39,6 +40,7 @@ class ADJT_OT_ApplyInstance(ADJT_OT_ModalTemplate):
         bpy.ops.object.select_all(action='DESELECT')
         self.display_ob.select_set(True)
         context.view_layer.objects.active = self.display_ob
+        self.display_ob.location = ori_loc
         # remove
         bpy.ops.object.modifier_apply(modifier=mod.name)
         bpy.data.node_groups.remove(nt)
