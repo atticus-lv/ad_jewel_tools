@@ -81,7 +81,8 @@ class ADJT_OT_ExtractEdgeAsCurve(ADJT_OT_ModalTemplate):
         bpy.ops.object.mode_set(mode='OBJECT')
 
         curve = context.active_object
-        curve.data.splines[0].use_endpoint_u = True
+        for splines in curve.data.splines:
+            splines.use_endpoint_u = True
 
         self.tips.clear()
         self.tips.append('')
