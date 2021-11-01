@@ -32,7 +32,7 @@ def load_image(image_node, dir, image_name):
         return
 
 
-def init_world_nodes(context, node_group_name='adjt_quick_world'):
+def init_world_nodes(context, node_group_name='adjt_quick_world_v1'):
     if context.scene.world is None:
         world = bpy.data.worlds.new('World')
         context.scene.world = world
