@@ -40,10 +40,11 @@ def init_world_nodes(context, node_group_name='adjt_quick_world_v1'):
     nt = context.scene.world.node_tree
     output_node = [node for node in nt.nodes if node.bl_idname == 'ShaderNodeOutputWorld'][0]
 
-    group_node = nt.nodes.get('Group')
-    if group_node is None or not hasattr(group_node,'node_tree') or group_node.node_tree.name != 'adjt_quick_world':
+    group_node = nt.nodes.get('adjt_quick_world_v1')
+    if group_node is None or not hasattr(group_node, 'node_tree') or group_node.node_tree.name != 'adjt_quick_world_v1':
+        if group_node is not None: nt.nodes.remove(group_node)
         group_node = nt.nodes.new('ShaderNodeGroup')
-        group_node.name = 'Group'
+        group_node.name = 'adjt_quick_world_v1'
 
     base_dir = os.path.join(bpy.utils.user_resource('SCRIPTS'), 'addons', __folder_name__, 'preset',
                             'node_groups', 'world.blend')
@@ -59,7 +60,7 @@ def init_world_nodes(context, node_group_name='adjt_quick_world_v1'):
     group_node.node_tree = preset_node
     image_node = preset_node.nodes.get('Image')
 
-    nt.links.new(group_node.outputs[0],output_node.inputs['Surface'])
+    nt.links.new(group_node.outputs[0], output_node.inputs['Surface'])
 
     return group_node, image_node
 
@@ -79,7 +80,6 @@ class ADJT_OT_InitShading(ADJT_OT_ModalTemplate):
         shading.use_scene_world_render = False
         shading.type = 'RENDERED'
         self._finish = True
-
 
 
 class ADJT_OT_ApplyWorld(ADJT_OT_ModalTemplate):

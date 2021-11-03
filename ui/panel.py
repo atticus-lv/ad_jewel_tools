@@ -303,14 +303,14 @@ class ADJT_PT_RenderPanel(SidebarSetup, bpy.types.Panel):
                     col.label(text='No context world!')
                 else:
                     world_nt = ADJT_NodeTree(context.scene.world.node_tree)
-                    node_group = world_nt.get_node("Group")
+                    node_group = world_nt.get_node("adjt_quick_world_v1")
 
                     col = col.box().column()
                     col.separator(factor=0.5)
                     col.prop(context.scene.render, 'film_transparent', toggle=1)
 
                     if not node_group: return
-                    if node_group.node_tree.name == 'adjt_quick_world':
+                    if node_group.node_tree.name == 'adjt_quick_world_v1':
                         for input in node_group.inputs:
                             col.prop(input, 'default_value', text=input.name)
 
