@@ -16,7 +16,7 @@ class ADJT_OT_Curve(PresetTemplate):
     filter = {'CURVE', 'FONT'}
     # preset information
     modifier_name = 'ADJT_Curve_modifier'
-    version = '1.2'
+    version = '1.3'
     dir_name = 'node_groups'
     file_name = 'array.blend'
     node_group_name: StringProperty(name='Node Group Name', default='MS')
