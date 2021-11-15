@@ -162,8 +162,7 @@ class ADJT_PT_MeasurePanel(SidebarSetup, bpy.types.Panel):
         box = layout.box()
         box.label(text='Measure', icon_value=bat_preview.get_icon('measure'))
 
-        if not (context.active_object and context.active_object.name.startswith('ADJT_Measure')):
-            box.operator('adjt.measure_bind', )
+        box.operator('adjt.measure_bind', )
 
         box = layout.box()
         box.label(text='Font', icon_value=bat_preview.get_icon('rename'))
@@ -175,7 +174,6 @@ class ADJT_PT_UtilityPanel(SidebarSetup, bpy.types.Panel):
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw_ui(self, context, layout):
-        pref = get_pref()
         box = layout.box()
 
         box.operator('wm.adjt_batch_rename', icon='FONT_DATA')
@@ -189,20 +187,7 @@ class ADJT_PT_UtilityPanel(SidebarSetup, bpy.types.Panel):
         row = box.row(align=True)
         row.operator('wm.adjt_load_file', icon='BACK', text='Previous').action = '-1'
         row.operator('wm.adjt_load_file', icon='FORWARD', text='Next').action = '+1'
-        # box.label(text='Measure', icon='CON_DISTLIMIT')
-        #
-        # if not (hasattr(context.active_object, 'adjt_measure') and context.active_object.type == 'fonts'):
-        #     box.operator('adjt.measure_bind', icon='OUTLINER_OB_FONT').update_object = ''
-        #
-        # else:
-        #     box2 = box.box().column()
-        #     box2.label(text='Font Settings', icon='OUTLINER_OB_FONT')
-        #     box2.operator('adjt.measure_bind', text='Update Font',
-        #                   icon='FILE_REFRESH').update_object = context.active_object.name
-        #     box2.prop(context.active_object.data, 'space_character', text='Space')
-        #
-        #     box2.prop(context.active_object.data, 'offset_x')
-        #     box2.prop(context.active_object.data, 'offset_y')
+
 
 
 class ADJT_PT_AnimatePanel(SidebarSetup, bpy.types.Panel):
