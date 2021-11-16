@@ -26,6 +26,9 @@ class ADJT_OT_ApplyInstance(ADJT_OT_ModalTemplate):
 
     def main(self, context):
         ori_loc = context.active_object.location.copy()
+        ori_rotation_euler = context.active_object.rotation_euler.copy()
+        ori_scale = context.active_object.scale.copy()
+
         # extra ob for display
         self.display_ob = self.create_obj()
         self.display_ob.name = f'{context.active_object.name}_Apply Instance'
@@ -39,8 +42,11 @@ class ADJT_OT_ApplyInstance(ADJT_OT_ModalTemplate):
 
         bpy.ops.object.select_all(action='DESELECT')
         self.display_ob.select_set(True)
+        # restore
         context.view_layer.objects.active = self.display_ob
         self.display_ob.location = ori_loc
+        self.display_ob.rotation_euler = ori_rotation_euler
+        self.display_ob.ori_scale = ori_scale
         # remove
         bpy.ops.object.modifier_apply(modifier=mod.name)
         bpy.data.node_groups.remove(nt)
