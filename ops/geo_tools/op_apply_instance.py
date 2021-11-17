@@ -46,7 +46,7 @@ class ADJT_OT_ApplyInstance(ADJT_OT_ModalTemplate):
         context.view_layer.objects.active = self.display_ob
         self.display_ob.location = ori_loc
         self.display_ob.rotation_euler = ori_rotation_euler
-        self.display_ob.ori_scale = ori_scale
+        self.display_ob.scale = ori_scale
         # remove
         bpy.ops.object.modifier_apply(modifier=mod.name)
         bpy.data.node_groups.remove(nt)
