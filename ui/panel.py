@@ -90,11 +90,11 @@ class ADJT_PT_CurvePanel(SidebarSetup, bpy.types.Panel):
 
         box.separator()
         curve = box.operator('node.adjt_curve', icon_value=bat_preview.get_icon('curve'))
-        curve.version = '1.3'
+        curve.version = '1.31'
         curve.node_group_name = 'MS'
 
         mesh_curve = box.operator('node.adjt_curve',text ='Mesh Preset', icon_value=bat_preview.get_icon('curve'))
-        mesh_curve.version = '1.3'
+        mesh_curve.version = '1.31'
         mesh_curve.node_group_name = 'MS MESH'
 
         circle = box.operator('node.adjt_array', icon_value=bat_preview.get_icon('circulay_array'),
