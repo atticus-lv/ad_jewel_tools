@@ -13,7 +13,7 @@ class ADJT_OT_Curve(PresetTemplate):
     bl_idname = "node.adjt_curve"
     bl_options = {'UNDO_GROUPED'}
 
-    filter = {'CURVE', 'FONT'}
+    filter = {'CURVE', 'FONT', 'MESH'}
     # preset information
     modifier_name = 'ADJT_Curve_modifier'
     version = '1.3'

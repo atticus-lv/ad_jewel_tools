@@ -12,6 +12,7 @@ data = {
     'Apply Instance':'复制并应用实例',
     'Array Preset':'阵列预设',
     'Curve Preset':'曲线预设',
+    'MS MESH':'网格麻绳预设',
     'Join Geometry':'合并',
     'Delete / Keep Faces':'删除/保留面',
     'Scatter Along Curve':'沿曲线散布物体',

@@ -12,10 +12,10 @@ class PresetTemplate(ADJT_OT_ModalTemplate):
     # filter
     filter = {'MESH'}
     # preset information
-    modifier_name = 'ADJT_Template'
-    version = '1.0'
-    dir_name = 'node_groups'
-    file_name = 'array.blend'
+    modifier_name: StringProperty(default='ADJT_Template')
+    version: StringProperty(default='1.0')
+    dir_name: StringProperty(default='node_groups')
+    file_name: StringProperty(default='array.blend')
     node_group_name: StringProperty(name='Node Group Name')
 
     # action
@@ -34,12 +34,12 @@ class PresetTemplate(ADJT_OT_ModalTemplate):
 
         self._finish = True
 
-    def refresh_modifier_hack(self,mod):
+    def refresh_modifier_hack(self, mod):
         # refresh
         mod.show_viewport = False
         mod.show_viewport = True
 
-    def init_geo_mod(self,mod):
+    def init_geo_mod(self, mod):
         src_ng = mod.node_group
         if src_ng: bpy.data.node_groups.remove(src_ng)
 
