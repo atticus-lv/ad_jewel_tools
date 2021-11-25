@@ -93,17 +93,17 @@ class ADJT_PT_CurvePanel(SidebarSetup, bpy.types.Panel):
         curve.version = '1.31'
         curve.node_group_name = 'MS'
 
-        mesh_curve = box.operator('node.adjt_curve',text ='Mesh Preset', icon_value=bat_preview.get_icon('curve'))
+        mesh_curve = box.operator('node.adjt_curve', text='Mesh Preset', icon_value=bat_preview.get_icon('curve'))
         mesh_curve.version = '1.31'
         mesh_curve.node_group_name = 'MS MESH'
 
         circle = box.operator('node.adjt_array', icon_value=bat_preview.get_icon('circulay_array'),
-                     text='Circular Array')
+                              text='Circular Array')
         circle.node_group_name = 'Circular Array'
         circle.version = '1.1'
 
         grid = box.operator('node.adjt_array', icon_value=bat_preview.get_icon('grid_array'),
-                     text='Grid Array')
+                            text='Grid Array')
         grid.node_group_name = 'Grid Array'
         grid.version = '1.1'
 
@@ -127,7 +127,12 @@ class ADJT_PT_AlignPanel(SidebarSetup, bpy.types.Panel):
                 p = item.thumbnails[:-4]
 
                 col.label(text=p)
-                box.operator('node.adjt_view_align', text='Align').node_group_name = p
+                b = box.operator('node.adjt_view_align', text='Align')
+                b.node_group_name = p
+                b.version = 'v1'
+                b.modifier_name = 'ADJT_ViewAlign'
+                b.dir_name = 'node_groups'
+                b.file_name = 'view_align_preset.blend'
 
 
 class ADJT_PT_MeasurePanel(SidebarSetup, bpy.types.Panel):
@@ -193,7 +198,6 @@ class ADJT_PT_UtilityPanel(SidebarSetup, bpy.types.Panel):
         row = box.row(align=True)
         row.operator('wm.adjt_load_file', icon='BACK', text='Previous').action = '-1'
         row.operator('wm.adjt_load_file', icon='FORWARD', text='Next').action = '+1'
-
 
 
 class ADJT_PT_AnimatePanel(SidebarSetup, bpy.types.Panel):
