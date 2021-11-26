@@ -83,7 +83,7 @@ class Shader():
         self.width = width
         self.context = context
         self.fade_time = 3
-        self.color = 1,1,1
+        self.color = 1, 1, 1
         self.alpha = 0.8
 
     def append_handle(self):
@@ -150,6 +150,10 @@ class Shader():
         draw_pre()
 
 
+# only handle that allow draw
+from ..runtime import curr_draw_handle, curr_draw_timer
+
+
 class ADJT_OT_DrawUI(bpy.types.Operator):
     bl_label = 'Draw UI'
     bl_idname = 'adjt.draw_ui'
@@ -158,11 +162,21 @@ class ADJT_OT_DrawUI(bpy.types.Operator):
     shader = None
 
     def invoke(self, context, event):
+        global curr_draw_handle, curr_draw_timer
+        if curr_draw_handle is not None:
+            context.window_manager.draw_handler_remove(curr_draw_handle)
+        if curr_draw_timer is not None:
+            context.window_manager.event_timer_remove(curr_draw_timer)
+
         start_time = time.time()
         self.shader = Shader(context, draw_title, draw_tips)
         self.shader.append_handle()
 
         self.timer = context.window_manager.event_timer_add(0.025, window=context.window)
+
+        curr_draw_handle = self.shader
+        curr_draw_timer = self.timer
+
         context.window_manager.modal_handler_add(self)
 
         return {'RUNNING_MODAL'}
@@ -179,15 +193,18 @@ class ADJT_OT_DrawUI(bpy.types.Operator):
 
     def finished(self, context):
         '''Remove the timer, shader, and reset Data'''
-        print('finished drawing')
+        global curr_draw_handle, curr_draw_timer
+
         if self.timer is not None:
             context.window_manager.event_timer_remove(self.timer)
+            curr_draw_timer = None
 
         if context.area is not None:
             context.area.tag_redraw()
 
         if self.shader is not None:
             self.shader.remove_handle()
+            curr_draw_handle = None
 
 
 class ADJT_OT_NormalTemplate(bpy.types.Operator):
@@ -211,8 +228,8 @@ class ADJT_OT_NormalTemplate(bpy.types.Operator):
     draw_curves = []
     draw_meshes = []
 
-    def draw_ui(self, context,title,tips):
-        global draw_title,draw_tips
+    def draw_ui(self, context, title, tips):
+        global draw_title, draw_tips
         draw_title = title
         draw_tips = tips
         bpy.ops.adjt.draw_ui('INVOKE_DEFAULT')

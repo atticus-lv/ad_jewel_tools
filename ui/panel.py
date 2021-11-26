@@ -190,6 +190,8 @@ class ADJT_PT_UtilityPanel(SidebarSetup, bpy.types.Panel):
         box.operator('wm.adjt_batch_rename', icon='FONT_DATA')
         box.operator('adjt.init_thumb', icon='BLENDER')
 
+        box.operator('wm.call_menu_pie').name = 'ADJT_MT_pop_menu'
+
         box = box.box()
         row = box.row(align=True)
         row.label(text='Load Files', icon='FILEBROWSER')

@@ -11,8 +11,7 @@ class ADJT_OT_CamFrame(ADJT_OT_ModalTemplate):
 选择你想要添加的框选相机的物体'''
     bl_label = "Frame Camera"
     bl_idname = "render.adjt_cam_frame"
-    bl_options = {'UNDO_GROUPED','INTERNAL'}
-
+    bl_options = {'UNDO_GROUPED', 'INTERNAL', 'GRAB_CURSOR', 'BLOCKING', }
 
     safe_pixel: IntProperty(name='Safe area pixel', description="Empty area for the selection and camera frame",
                             default=50)

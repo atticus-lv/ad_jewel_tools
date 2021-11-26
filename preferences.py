@@ -140,6 +140,9 @@ class T3DN_OT_bip_showcase_install_pillow(bpy.types.Operator, InstallPillow):
 # Preference
 ####################
 
+import rna_keymap_ui
+
+
 class ADJT_Preference(bpy.types.AddonPreferences):
     bl_idname = __package__
 
@@ -162,6 +165,82 @@ class ADJT_Preference(bpy.types.AddonPreferences):
         layout = self.layout
         layout.prop(self, 'use_workflow_panel')
         # layout.operator('t3dn.bip_showcase_install_pillow', text='安装Pillow（加快预览加载）')
+        self.drawKeymap()
+
+    def drawKeymap(self):
+        col = self.layout.box().column()
+        # col.label(text="Keymap", icon="KEYINGSET")
+        km = None
+        wm = bpy.context.window_manager
+        kc = wm.keyconfigs.user
+
+        old_km_name = ""
+        get_kmi_l = []
+
+        for km_add, kmi_add in addon_keymaps:
+            for km_con in kc.keymaps:
+                if km_add.name == km_con.name:
+                    km = km_con
+                    break
+
+            for kmi_con in km.keymap_items:
+                if kmi_add.idname == kmi_con.idname and kmi_add.name == kmi_con.name:
+                    get_kmi_l.append((km, kmi_con))
+
+        get_kmi_l = sorted(set(get_kmi_l), key=get_kmi_l.index)
+
+        for km, kmi in get_kmi_l:
+            if not km.name == old_km_name:
+                col.label(text=str(km.name), icon="DOT")
+
+            col.context_pointer_set("keymap", km)
+            rna_keymap_ui.draw_kmi([], kc, km, kmi, col, 0)
+
+            old_km_name = km.name
+
+
+addon_keymaps = []
+
+from .ui.panel import ADJT_PT_UtilityPanel, ADJT_PT_AnimatePanel, ADJT_PT_AlignPanel, ADJT_PT_CurvePanel
+from .ui.panel import ADJT_PT_MeasurePanel, ADJT_PT_RenderPanel
+
+
+class ADJT_MT_pop_menu(bpy.types.Menu):
+    bl_label = "ADJT"
+    bl_idname = "ADJT_MT_pop_menu"
+
+    @classmethod
+    def poll(self, context):
+        return context.area.ui_type == 'VIEW_3D'
+
+    def draw(self, context):
+        layout = self.layout
+        pie = layout.menu_pie()
+
+        col = pie.column(align=True)
+        ADJT_PT_RenderPanel.draw_ui(self, context, col)
+        col = pie.column(align = True)
+        ADJT_PT_CurvePanel.draw_ui(self, context, col)
+
+
+
+def add_keybind():
+    wm = bpy.context.window_manager
+    if wm.keyconfigs.addon:
+        km = wm.keyconfigs.addon.keymaps.new(name='3D View', space_type='VIEW_3D')
+        kmi = km.keymap_items.new('wm.call_menu_pie', 'A', 'PRESS', ctrl=True, shift=True)
+        kmi.properties.name = "ADJT_MT_pop_menu"
+        addon_keymaps.append((km, kmi))
+
+
+def remove_keybind():
+    wm = bpy.context.window_manager
+    kc = wm.keyconfigs.addon
+    if kc:
+        for km, kmi in addon_keymaps:
+            km.keymap_items.remove(kmi)
+
+    addon_keymaps.clear()
 
 
 def init_thumb(prop, prop_index, sub_dir):
@@ -191,9 +270,12 @@ def register():
     bpy.utils.register_class(AnimateThumProperty)
     bpy.utils.register_class(T3DN_OT_bip_showcase_install_pillow)
     bpy.utils.register_class(ADJT_Preference)
+    bpy.utils.register_class(ADJT_MT_pop_menu)
 
     init_thumb('view_align_preset_list', 'view_align_preset_list_index', 'view align')
     init_thumb('anim_preset_list', 'anim_preset_list_index', 'animate')
+
+    # add_keybind()
 
 
 def unregister():
@@ -202,5 +284,8 @@ def unregister():
     bpy.utils.unregister_class(AnimateThumProperty)
     bpy.utils.unregister_class(T3DN_OT_bip_showcase_install_pillow)
     bpy.utils.unregister_class(ADJT_Preference)
+    bpy.utils.unregister_class(ADJT_MT_pop_menu)
 
     clear_preview_cache()
+
+    # remove_keybind()
