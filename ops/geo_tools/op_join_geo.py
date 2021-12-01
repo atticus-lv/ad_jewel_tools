@@ -27,10 +27,10 @@ class ADJT_OT_JoinGeo(ADJT_OT_ModalTemplate):
     def main(self, context):
         # extra ob for display
         self.display_ob = self.create_obj()
-        self.display_ob.name = 'Join Geo'
+        self.display_ob.name = f'{context.active_object.name} Join'
 
         # mode modifier
-        nt = bpy.data.node_groups.new(name='Join Geo', type='GeometryNodeTree')
+        nt = bpy.data.node_groups.new(name=f'{context.active_object.name} Join', type='GeometryNodeTree')
         mesh_count = self.create_join_geo_nodetree(nt, context.selected_objects, join_object=self.display_ob)
 
         mod = self.display_ob.modifiers.new(name='Join Geo', type='NODES')
@@ -93,6 +93,9 @@ class ADJT_OT_JoinGeo(ADJT_OT_ModalTemplate):
         # node_realize.location = (950, 0)
         # nt.link_node(node_instance_on_points.outputs[0], node_realize.inputs[0])
 
+        node_input = nt.add_node('NodeGroupInput')
+        node_input.location = (0,0)
+
         node_output = nt.add_node('NodeGroupOutput')
         node_output.location = (1150, 0)
         nt.link_node(node_instance_on_points.outputs[0], node_output.inputs[-1])
@@ -141,7 +144,16 @@ class ADJT_OT_JoinGeo(ADJT_OT_ModalTemplate):
 
             node_join = nt.add_node('GeometryNodeJoinGeometry', name=f'Join {coll}')
             node_join.location = Vector((0, frame.location[1] + 250))
-            nt.link_node(node_join.outputs[-1], node_join_all.inputs[0])
+
+            node_switch= nt.add_node('GeometryNodeSwitch', name=f'Switch {coll}')
+            node_switch.location = Vector((150, frame.location[1] + 250))
+
+            nt.link_node(node_input.outputs[-1], node_switch.inputs[1])
+            node_switch.inputs[1].default_value = True
+            nt.nt.inputs[-1].name = f'{coll}'
+
+            nt.link_node(node_join.outputs[-1], node_switch.inputs[14])
+            nt.link_node(node_switch.outputs[6], node_join_all.inputs[0])
 
             for obj in items:
                 col_count += 1
