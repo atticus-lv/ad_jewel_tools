@@ -99,6 +99,8 @@ class ADJT_OT_JoinGeo(ADJT_OT_ModalTemplate):
         node_output = nt.add_node('NodeGroupOutput')
         node_output.location = (1150, 0)
         nt.link_node(node_instance_on_points.outputs[0], node_output.inputs[-1])
+        nt.link_node(node_instance_on_points.inputs[3], node_input.outputs[-1])
+        nt.link_node(node_instance_on_points.inputs[4], node_input.outputs[-1])
 
         coll_dict = {}
 
