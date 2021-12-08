@@ -168,7 +168,7 @@ class ADJT_OT_DrawUI(bpy.types.Operator):
         if curr_draw_timer is not None:
             context.window_manager.event_timer_remove(curr_draw_timer)
 
-        start_time = time.time()
+        self.start_time = time.time()
         self.shader = Shader(context, draw_title, draw_tips)
         self.shader.append_handle()
 
@@ -185,7 +185,7 @@ class ADJT_OT_DrawUI(bpy.types.Operator):
         if context.area != None:
             context.area.tag_redraw()
 
-        if time.time() - start_time > self.shader.fade_time: self.finished(context)
+        if time.time() - self.start_time > self.shader.fade_time: self.finished(context)
 
         self.shader.draw(context)
 

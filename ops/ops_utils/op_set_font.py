@@ -63,7 +63,6 @@ class ADJT_OT_FontSet(bpy.types.Operator):
             elif self.type == 'NEXT':
                 font_obj.data.body += f'\n{self.text}'
 
-        bpy.ops.object.delete(use_global=False)
         context.view_layer.objects.active = font_obj
         font_obj.select_set(True)
 
