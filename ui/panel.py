@@ -224,6 +224,7 @@ class ADJT_PT_AnimatePanel(SidebarSetup, bpy.types.Panel):
         else:
             mod = None
             box.operator('screen.animation_play')
+            if context.active_object is None: return 
             for m in context.active_object.modifiers:
                 if m.type == 'NODES' and m.name.startswith('ADJT_Animate'):
                     mod = m
