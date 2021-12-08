@@ -5,6 +5,7 @@ from bpy.props import EnumProperty
 from ..utils import ADJT_NodeTree
 import os
 import math
+import shutil
 
 
 def get_hdr_list() -> tuple[list[str], list[str], str, str]:
@@ -13,10 +14,17 @@ def get_hdr_list() -> tuple[list[str], list[str], str, str]:
     # user
     user_dir = os.path.join(bpy.utils.user_resource('DATAFILES'), 'studiolights', 'world')
 
-    bl_image_list = [file for file in os.listdir(bl_dir)]
-    user_image_list = [file for file in os.listdir(user_dir)] if os.path.isdir(user_dir) else []
+    if not os.path.isdir(user_dir):
+        os.mkdir(user_dir)
 
-    return bl_image_list, user_image_list, bl_dir, user_dir
+    # copy image to user instead of loading from blender (cause error when switching daily blender)
+    user_image_list = [file for file in os.listdir(user_dir)]
+    copy_list = [file for file in os.listdir(bl_dir) if file not in user_image_list]
+
+    for file in copy_list:
+        shutil.copy(os.path.join(bl_dir, file), os.path.join(user_dir, file))
+
+    return user_image_list, bl_dir, user_dir
 
 
 def load_image(image_node, dir, image_name):
@@ -97,20 +105,18 @@ class ADJT_OT_ApplyWorld(ADJT_OT_ModalTemplate):
 
         cur_hdr = shading.studio_light
 
-        bl_img_list, user_img_list, bl_dir, user_dir = get_hdr_list()
+        user_img_list, bl_dir, user_dir = get_hdr_list()
         group_node, node_hdr_image = init_world_nodes(context)
 
         group_node.inputs['Rotation'].default_value[2] = shading.studiolight_rotate_z
         group_node.inputs['Strength'].default_value = shading.studiolight_intensity
 
-        if cur_hdr in bl_img_list:
-            ans = load_image(node_hdr_image, dir=bl_dir, image_name=cur_hdr)
-            from_user = False
-        elif cur_hdr in user_img_list:
+        if cur_hdr in user_img_list:
             ans = load_image(node_hdr_image, dir=user_dir, image_name=cur_hdr)
             from_user = True
         else:
             ans = False
+            from_user = False
 
         if ans:
             self.tips.clear()
