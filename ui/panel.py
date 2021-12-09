@@ -93,9 +93,13 @@ class ADJT_PT_CurvePanel(SidebarSetup, bpy.types.Panel):
         curve.version = '1.31'
         curve.node_group_name = 'MS'
 
-        mesh_curve = box.operator('node.adjt_curve', text='Mesh Preset', icon_value=bat_preview.get_icon('curve'))
+        mesh_curve = box.operator('node.adjt_curve', text='MS MESH', icon_value=bat_preview.get_icon('curve'))
         mesh_curve.version = '1.31'
         mesh_curve.node_group_name = 'MS MESH'
+
+        mesh_curve = box.operator('node.adjt_curve', text='Custom Mesh Curve', icon_value=bat_preview.get_icon('curve'))
+        mesh_curve.version = '1.0'
+        mesh_curve.node_group_name = 'Custom Mesh Curve'
 
         circle = box.operator('node.adjt_array', icon_value=bat_preview.get_icon('circulay_array'),
                               text='Circular Array')
@@ -187,10 +191,13 @@ class ADJT_PT_UtilityPanel(SidebarSetup, bpy.types.Panel):
     def draw_ui(self, context, layout):
         box = layout.box()
 
-        box.operator('wm.adjt_batch_rename', icon='FONT_DATA')
+        box.operator('ajdt.check_update', icon='INFO')
+
         box.operator('adjt.init_thumb', icon='BLENDER')
 
         box.operator('wm.call_menu_pie').name = 'ADJT_MT_pop_menu'
+
+        box.operator('wm.adjt_batch_rename', icon='FONT_DATA')
 
         box = box.box()
         row = box.row(align=True)
