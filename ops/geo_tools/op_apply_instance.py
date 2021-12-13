@@ -25,6 +25,7 @@ class ADJT_OT_ApplyInstance(ADJT_OT_ModalTemplate):
             return len(context.selected_objects) == 1 and hasattr(context.active_object, 'modifiers')
 
     def main(self, context):
+        ori_obj = context.active_object
         ori_loc = context.active_object.location.copy()
         ori_rotation_euler = context.active_object.rotation_euler.copy()
         ori_scale = context.active_object.scale.copy()
@@ -50,6 +51,10 @@ class ADJT_OT_ApplyInstance(ADJT_OT_ModalTemplate):
         # remove
         bpy.ops.object.modifier_apply(modifier=mod.name)
         bpy.data.node_groups.remove(nt)
+
+        # hide
+        ori_obj.hide_set(True)
+
         # tips
         self.tips.clear()
         self.tips.append(f'Apply {context.active_object.name}')
