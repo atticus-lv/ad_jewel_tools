@@ -218,10 +218,13 @@ class ADJT_MT_pop_menu(bpy.types.Menu):
         pie = layout.menu_pie()
 
         col = pie.column(align=True)
+        ADJT_PT_AlignPanel.draw_ui(self, context, col)
+        col.separator()
         ADJT_PT_RenderPanel.draw_ui(self, context, col)
         col = pie.column(align = True)
         ADJT_PT_CurvePanel.draw_ui(self, context, col)
 
+        pie.separator()
 
 
 def add_keybind():

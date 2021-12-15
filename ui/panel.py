@@ -59,7 +59,7 @@ class ADJT_PT_UnitPanel(SidebarSetup, bpy.types.Panel):
 
 
 class ADJT_PT_CurvePanel(SidebarSetup, bpy.types.Panel):
-    bl_label = 'Curve and Mesh'
+    bl_label = 'Model'
 
     def draw_ui(self, context, layout):
         box = layout.box()
@@ -75,9 +75,9 @@ class ADJT_PT_CurvePanel(SidebarSetup, bpy.types.Panel):
         row.alignment = 'CENTER'
         row.scale_y = 1.5
         row.scale_x = 1.5
-        row.operator("mesh.adjt_procedural_translate", icon_value=bat_preview.get_icon('transform'))
-        row.operator("mesh.adjt_procedural_rotate", icon_value=bat_preview.get_icon('rotate'))
-        row.operator("mesh.adjt_procedural_scale", icon_value=bat_preview.get_icon('scale'))
+        row.operator("mesh.adjt_procedural_translate", icon_value=bat_preview.get_icon('transform'), text='')
+        row.operator("mesh.adjt_procedural_rotate", icon_value=bat_preview.get_icon('rotate'), text='')
+        row.operator("mesh.adjt_procedural_scale", icon_value=bat_preview.get_icon('scale'), text='')
         box.operator("mesh.adjt_center_origin", icon_value=bat_preview.get_icon('origin'))
 
         box.operator("node.adjt_join_geo", icon_value=bat_preview.get_icon('join'))
@@ -93,7 +93,8 @@ class ADJT_PT_CurvePanel(SidebarSetup, bpy.types.Panel):
         mesh_curve.version = '1.0'
         mesh_curve.node_group_name = 'General MS'
 
-        mesh_curve = box.operator('node.adjt_curve', text='General Custom Curve', icon_value=bat_preview.get_icon('curve'))
+        mesh_curve = box.operator('node.adjt_curve', text='General Custom Curve',
+                                  icon_value=bat_preview.get_icon('curve'))
         mesh_curve.version = '1.0'
         mesh_curve.node_group_name = 'General Custom Curve'
 
@@ -111,7 +112,7 @@ class ADJT_PT_CurvePanel(SidebarSetup, bpy.types.Panel):
 
 
 class ADJT_PT_AlignPanel(SidebarSetup, bpy.types.Panel):
-    bl_label = 'Geo Tools'
+    bl_label = 'Align'
 
     def draw_ui(self, context, layout):
         box = layout.box()
@@ -137,11 +138,10 @@ class ADJT_PT_AlignPanel(SidebarSetup, bpy.types.Panel):
 
 class ADJT_PT_MeasurePanel(SidebarSetup, bpy.types.Panel):
     bl_label = 'Measure'
-    bl_options = {'DEFAULT_CLOSED'}
 
     def draw_ui(self, context, layout):
-        pref = get_pref()
         box = layout.box().column()
+        pref = get_pref()
         box.label(text='Weighting', icon_value=bat_preview.get_icon('weight2'))
 
         box_list = box.row(align=True)
@@ -227,7 +227,7 @@ class ADJT_PT_AnimatePanel(SidebarSetup, bpy.types.Panel):
         else:
             mod = None
             box.operator('screen.animation_play')
-            if context.active_object is None: return 
+            if context.active_object is None: return
             for m in context.active_object.modifiers:
                 if m.type == 'NODES' and m.name.startswith('ADJT_Animate'):
                     mod = m
