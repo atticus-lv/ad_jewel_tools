@@ -70,36 +70,32 @@ class ADJT_PT_CurvePanel(SidebarSetup, bpy.types.Panel):
         box.operator('curve.adjt_split_curve_and_flow_mesh', icon_value=bat_preview.get_icon('split'))
 
         box = layout.box()
-        box.label(text='Procedural Transform', icon_value=bat_preview.get_icon('place'))
-        row = box.row(align=True)
+        box.label(text='Procedural Tools', icon_value=bat_preview.get_icon('place'))
+        row = box.row(align=False)
         row.alignment = 'CENTER'
         row.scale_y = 1.5
         row.scale_x = 1.5
-        row.operator("mesh.adjt_procedural_translate", icon_value=bat_preview.get_icon('transform'), text='')
-        row.operator("mesh.adjt_procedural_rotate", icon_value=bat_preview.get_icon('rotate'), text='')
-        row.operator("mesh.adjt_procedural_scale", icon_value=bat_preview.get_icon('scale'), text='')
+        row.operator("mesh.adjt_procedural_translate", icon_value=bat_preview.get_icon('transform'))
+        row.operator("mesh.adjt_procedural_rotate", icon_value=bat_preview.get_icon('rotate'))
+        row.operator("mesh.adjt_procedural_scale", icon_value=bat_preview.get_icon('scale'))
         box.operator("mesh.adjt_center_origin", icon_value=bat_preview.get_icon('origin'))
 
-        box = layout.box()
-        box.label(text='Procedural Tools', icon_value=bat_preview.get_icon('nodes'))
         box.operator("node.adjt_join_geo", icon_value=bat_preview.get_icon('join'))
         box.operator("mesh.adjt_realize_instance", icon_value=bat_preview.get_icon('instance'))
         box.operator("node.adjt_apply_instance", icon_value=bat_preview.get_icon('apply'))
         box.operator("node.transfer_attribute", icon_value=bat_preview.get_icon('transfer'))
         box.operator('mesh.adjt_procedural_keep', icon_value=bat_preview.get_icon('delete'))
 
-        box.separator()
-        curve = box.operator('node.adjt_curve', icon_value=bat_preview.get_icon('curve'))
-        curve.version = '1.31'
-        curve.node_group_name = 'MS'
+        box = layout.box()
+        box.label(text='Procedural Preset', icon_value=bat_preview.get_icon('nodes'))
 
-        mesh_curve = box.operator('node.adjt_curve', text='MS MESH', icon_value=bat_preview.get_icon('curve'))
-        mesh_curve.version = '1.31'
-        mesh_curve.node_group_name = 'MS MESH'
-
-        mesh_curve = box.operator('node.adjt_curve', text='Custom Mesh Curve', icon_value=bat_preview.get_icon('curve'))
+        mesh_curve = box.operator('node.adjt_curve', text='General MS', icon_value=bat_preview.get_icon('curve'))
         mesh_curve.version = '1.0'
-        mesh_curve.node_group_name = 'Custom Mesh Curve'
+        mesh_curve.node_group_name = 'General MS'
+
+        mesh_curve = box.operator('node.adjt_curve', text='General Custom Curve', icon_value=bat_preview.get_icon('curve'))
+        mesh_curve.version = '1.0'
+        mesh_curve.node_group_name = 'General Custom Curve'
 
         circle = box.operator('node.adjt_array', icon_value=bat_preview.get_icon('circulay_array'),
                               text='Circular Array')

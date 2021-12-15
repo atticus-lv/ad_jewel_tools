@@ -52,7 +52,7 @@ class ProceduralTranform(PresetTemplate):
 class ADJT_OT_ProceduralTranslate(ProceduralTranform, PresetTemplate):
     """Translate"""
     bl_idname = 'mesh.adjt_procedural_translate'
-    bl_label = 'Translate'
+    bl_label = 'Move'
 
     node_group_name: StringProperty(default='Translate')
 
