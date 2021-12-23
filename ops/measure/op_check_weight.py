@@ -23,7 +23,7 @@ from ..ops_utils.Template import ADJT_OT_ModalTemplate
 
 import os
 from ...preferences import get_pref
-from bpy.props import EnumProperty, IntProperty, FloatProperty
+from bpy.props import EnumProperty, IntProperty, FloatProperty, StringProperty, BoolProperty
 
 
 def clean_float(value: float, precision: int = 0) -> str:
@@ -105,7 +105,7 @@ class ADJT_UL_WeightList(bpy.types.UIList):
 
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
         row = layout.row(align=1)
-        row.prop(item, 'thumbnails', text='',icon_only=True,emboss=False)
+        row.prop(item, 'thumbnails', text='', icon_only=True, emboss=False)
         row.prop(item, 'name', text='', emboss=False)
         row.prop(item, 'density', text='', emboss=False)
         row.prop(item, 'use', text='')
@@ -281,7 +281,87 @@ class ADJT_OT_CheckWeight(bpy.types.Operator):
         return {"FINISHED"}
 
 
+from bpy_extras.io_utils import ExportHelper, ImportHelper
+import json
+
+
+class ADJT_OT_import_weight_list(bpy.types.Operator, ImportHelper):
+    """Import config from a json file"""
+
+    bl_idname = "adjt.import_weight_list"
+    bl_label = "Import Weight List"
+    bl_options = {"REGISTER", "UNDO"}
+
+    filename_ext = ".json"
+
+    filter_glob: StringProperty(
+        default="*.json",
+        options={'HIDDEN'}
+    )
+
+    def execute(self, context):
+        pref = get_pref()
+        weight_list = pref.weight_list
+
+        with open(self.filepath, "r", encoding='utf-8') as f:
+            data = json.load(f)
+            for name, config_dict in data.items():
+                if name not in weight_list:
+                    item = weight_list.add()
+                    for key, value in config_dict.items():
+                        # apply normal attribute
+                        setattr(item, key, config_dict.get(key))
+
+            self.report({"INFO"}, f'Load config from "{self.filepath}"')
+
+        return {"FINISHED"}
+
+
+class ADJT_OT_export_weight_list(bpy.types.Operator, ExportHelper):
+    """Export marked configs to a json file"""
+
+    bl_idname = "adjt.export_weight_list"
+    bl_label = "Export Weight List"
+    bl_options = {"REGISTER", "UNDO"}
+
+    filename_ext = ".json"
+
+    filter_glob: StringProperty(
+        default="*.json",
+        options={'HIDDEN'}
+    )
+
+    def draw(self, context):
+        layout = self.layout
+        layout.prop(self, 'export_all')
+
+    def execute(self, context):
+        config_list = dict()
+        index_list = []
+
+        weight_list = get_pref().weight_list
+
+        for config_list_index, item in enumerate(weight_list):
+            config = dict()
+            # get define property
+
+            for key in item.__annotations__.keys():
+                value = getattr(item, key)
+                config[key] = value
+
+                index_list.append(config_list_index)
+                config_list[item.name] = config
+
+        with open(self.filepath, "w", encoding='utf-8') as f:
+            json.dump(config_list, f, indent=4, ensure_ascii=False)
+            self.report({"INFO"}, f'Save config to "{self.filepath}"')
+
+        return {"FINISHED"}
+
+
 def register():
+    bpy.types.WindowManager.adjt_weight_result = StringProperty()
+
     bpy.utils.register_class(ADJT_OT_CheckWeight)
 
     bpy.utils.register_class(ADJT_UL_WeightList)
@@ -291,8 +371,13 @@ def register():
     bpy.utils.register_class(ADJT_OT_WeightListMoveUP)
     bpy.utils.register_class(ADJT_OT_WeightListMoveDown)
 
+    bpy.utils.register_class(ADJT_OT_import_weight_list)
+    bpy.utils.register_class(ADJT_OT_export_weight_list)
+
 
 def unregister():
+    del bpy.types.WindowManager.adjt_weight_result
+
     bpy.utils.unregister_class(ADJT_OT_CheckWeight)
 
     bpy.utils.unregister_class(ADJT_UL_WeightList)
@@ -301,3 +386,6 @@ def unregister():
     bpy.utils.unregister_class(ADJT_OT_WeightListCopy)
     bpy.utils.unregister_class(ADJT_OT_WeightListMoveUP)
     bpy.utils.unregister_class(ADJT_OT_WeightListMoveDown)
+
+    bpy.utils.unregister_class(ADJT_OT_import_weight_list)
+    bpy.utils.unregister_class(ADJT_OT_export_weight_list)

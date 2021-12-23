@@ -113,18 +113,16 @@ class AnimateThumProperty(PropertyGroup):
 
 
 class WeightProperty(PropertyGroup):
-    thumbnails: EnumProperty(name='thumb', items=[('SEQUENCE_COLOR_01', '01', '', 'SEQUENCE_COLOR_01', 1),
-                                                  ('SEQUENCE_COLOR_02', '02', '', 'SEQUENCE_COLOR_02', 2),
-                                                  ('SEQUENCE_COLOR_03', '03', '', 'SEQUENCE_COLOR_03', 3),
-                                                  ('SEQUENCE_COLOR_04', '04', '', 'SEQUENCE_COLOR_04', 4),
-                                                  ('SEQUENCE_COLOR_05', '05', '', 'SEQUENCE_COLOR_05', 5),
-                                                  ('SEQUENCE_COLOR_06', '06', '', 'SEQUENCE_COLOR_06', 6),
-                                                  ('SEQUENCE_COLOR_07', '07', '', 'SEQUENCE_COLOR_07', 7),
-                                                  ('SEQUENCE_COLOR_08', '08', '', 'SEQUENCE_COLOR_08', 8)])
+    thumbnails: EnumProperty(name='thumb', items=[('COLOR_01', '01', '', 'SEQUENCE_COLOR_01', 1),
+                                                  ('COLOR_02', '02', '', 'SEQUENCE_COLOR_02', 2),
+                                                  ('COLOR_03', '03', '', 'SEQUENCE_COLOR_03', 3),
+                                                  ('COLOR_04', '04', '', 'SEQUENCE_COLOR_04', 4),
+                                                  ('COLOR_05', '05', '', 'SEQUENCE_COLOR_05', 5),
+                                                  ('COLOR_06', '06', '', 'SEQUENCE_COLOR_06', 6),
+                                                  ('COLOR_07', '07', '', 'SEQUENCE_COLOR_07', 7),
+                                                  ('COLOR_08', '08', '', 'SEQUENCE_COLOR_08', 8)])
 
     name: StringProperty(name='Name')
-    path: StringProperty(name='dir', description='folder dir', subtype='DIR_PATH', update=update_path_name2)
-
     composition: StringProperty(name='Composition')
     density: FloatProperty(name='cm³/g', min=0, soft_max=20)
     use: BoolProperty(name='Use', default=True)
@@ -221,10 +219,13 @@ class ADJT_MT_pop_menu(bpy.types.Menu):
         ADJT_PT_AlignPanel.draw_ui(self, context, col)
         col.separator()
         ADJT_PT_RenderPanel.draw_ui(self, context, col)
-        col = pie.column(align = True)
+        col = pie.column(align=True)
         ADJT_PT_CurvePanel.draw_ui(self, context, col)
 
         pie.separator()
+
+        pie.popover(panel='ADJT_PT_MeasurePanel')
+
 
 
 def add_keybind():
