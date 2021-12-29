@@ -90,8 +90,9 @@ class ADJT_PT_CurvePanel(SidebarSetup, bpy.types.Panel):
         box.label(text='Procedural Preset', icon_value=bat_preview.get_icon('nodes'))
 
         mesh_curve = box.operator('node.adjt_curve', text='General MS', icon_value=bat_preview.get_icon('curve'))
-        mesh_curve.version = '1.0'
+        mesh_curve.version = '2.0'
         mesh_curve.node_group_name = 'General MS'
+        mesh_curve.file_name = 'General MS 2.0.blend'
 
         mesh_curve = box.operator('node.adjt_curve', text='General Custom Curve',
                                   icon_value=bat_preview.get_icon('curve'))
