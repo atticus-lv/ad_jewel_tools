@@ -1,7 +1,7 @@
 import bpy
 import os
 from bpy.props import StringProperty
-from ... import __folder_name__
+from ... import __folder_name__, addon_dir
 
 from ..ops_utils.Template import ADJT_OT_ModalTemplate
 
@@ -69,7 +69,7 @@ class PresetTemplate(ADJT_OT_ModalTemplate):
         return obj
 
     def get_preset(self, dir_name, file_name, node_group_name):
-        base_dir = os.path.join(bpy.utils.user_resource('SCRIPTS'), 'addons', __folder_name__, 'preset',
+        base_dir = os.path.join(addon_dir, 'preset',
                                 dir_name, file_name)
 
         if node_group_name in bpy.data.node_groups:
@@ -78,6 +78,11 @@ class PresetTemplate(ADJT_OT_ModalTemplate):
             with bpy.data.libraries.load(base_dir, link=False) as (data_from, data_to):
                 data_to.node_groups = [name for name in data_from.node_groups if name == node_group_name]
 
+                print('Target node group:', node_group_name)
+                print('Get node groups in with:', data_to.node_groups)
+            print('Get node groups out with:', data_to.node_groups)
+
             preset_node = data_to.node_groups[0]
+            print('Return node group', preset_node)
 
         return preset_node

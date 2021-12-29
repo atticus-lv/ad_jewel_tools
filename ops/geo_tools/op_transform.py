@@ -1,7 +1,7 @@
 import bpy
 import os
 from bpy.props import StringProperty
-from ... import __folder_name__
+from ... import __folder_name__, addon_dir
 import bmesh
 
 from .PresetTemplate import PresetTemplate
@@ -32,7 +32,7 @@ class ProceduralTranform(PresetTemplate):
         self._finish = True
 
     def get_preset(self, node_group_name):
-        base_dir = os.path.join(bpy.utils.user_resource('SCRIPTS'), 'addons', __folder_name__, 'preset',
+        base_dir = os.path.join(addon_dir, 'preset',
                                 'node_groups',
                                 'utils.blend')
 

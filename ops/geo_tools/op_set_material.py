@@ -1,7 +1,7 @@
 import bpy
 import os
 from bpy.props import StringProperty, PointerProperty, IntProperty
-from ... import __folder_name__
+from ... import __folder_name__, addon_dir
 import bmesh
 
 from ..ops_utils.Template import ADJT_OT_ModalTemplate
@@ -58,7 +58,7 @@ class ADJT_OT_SetMaterial(ADJT_OT_ModalTemplate):
         return {'FINISHED'}
 
     def get_preset(sellf, node_group_name):
-        base_dir = os.path.join(bpy.utils.user_resource('SCRIPTS'), 'addons', __folder_name__, 'preset',
+        base_dir = os.path.join(addon_dir, 'preset',
                                 'node_groups',
                                 'material.blend')
 
