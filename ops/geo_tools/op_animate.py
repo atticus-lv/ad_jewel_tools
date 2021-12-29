@@ -1,7 +1,7 @@
 import bpy
 import os
 from bpy.props import StringProperty
-from ... import __folder_name__
+from ... import __folder_name__, addon_dir
 
 from ..ops_utils.Template import ADJT_OT_ModalTemplate
 
@@ -40,7 +40,7 @@ class ADJT_OT_Animate(ADJT_OT_ModalTemplate):
         self._finish = True
 
     def get_preset(sellf, node_group_name):
-        base_dir = os.path.join(bpy.utils.user_resource('SCRIPTS'), 'addons', __folder_name__, 'preset',
+        base_dir = os.path.join(addon_dir, 'preset',
                                 'node_groups',
                                 'animate_preset.blend')
 

@@ -142,7 +142,13 @@ class ADJT_PT_MeasurePanel(SidebarSetup, bpy.types.Panel):
     def draw_ui(self, context, layout):
         box = layout.box().column()
         pref = get_pref()
-        box.label(text='Weighting', icon_value=bat_preview.get_icon('weight2'))
+
+        row = box.row()
+        row.scale_x = 1.15
+        row.scale_y = 1.15
+        row.label(text='Weighting', icon_value=bat_preview.get_icon('weight2'))
+        row.operator('adjt.import_weight_list',icon = 'IMPORT',text = '')
+        row.operator('adjt.export_weight_list',icon = 'EXPORT',text = '')
 
         box_list = box.row(align=True)
         box_list.template_list(
@@ -405,6 +411,7 @@ def register():
     bpy.utils.register_class(ADJT_PT_UtilityPanel)
     bpy.utils.register_class(ADJT_PT_AnimatePanel)
     bpy.utils.register_class(ADJT_PT_RenderPanel)
+    bpy.utils.register_class(ADJT_PT_MeasurePanel)
 
 
 def unregister():
@@ -419,5 +426,6 @@ def unregister():
     bpy.utils.unregister_class(ADJT_PT_UtilityPanel)
     bpy.utils.unregister_class(ADJT_PT_AnimatePanel)
     bpy.utils.unregister_class(ADJT_PT_RenderPanel)
+    bpy.utils.unregister_class(ADJT_PT_MeasurePanel)
 
     bat_preview.unregister()
