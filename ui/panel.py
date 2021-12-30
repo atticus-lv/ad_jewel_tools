@@ -102,7 +102,8 @@ class ADJT_PT_CurvePanel(SidebarSetup, bpy.types.Panel):
         circle = box.operator('node.adjt_array', icon_value=bat_preview.get_icon('circulay_array'),
                               text='Circular Array')
         circle.node_group_name = 'Circular Array'
-        circle.version = '1.1'
+        circle.version = '2.0'
+        circle.file_name = 'Circular Array 2.0.blend'
 
         grid = box.operator('node.adjt_array', icon_value=bat_preview.get_icon('grid_array'),
                             text='Grid Array')
